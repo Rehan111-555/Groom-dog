@@ -349,7 +349,7 @@ function Footer(){
         <div>
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-2xl bg-indigo-600 text-white grid place-items-center shadow"><Icon.Scissors/></div>
-            <div className="font-semibold">Joyzzer</div>
+            <div className="font-semibold">Joyzze</div>
           </div>
           <p className="text-sm text-slate-400">AI grooming preview that keeps everything identical—only a neater dog.</p>
         </div>
