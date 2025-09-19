@@ -167,6 +167,7 @@ function UploadAndResult(){
           <Icon.Scissors />
         </div>
         <div>
+          <div className="badge mb-1"></div>
           <h1 className="text-3xl font-semibold leading-tight tracking-tight">Joyzze-Dog Groomer</h1>
           <p className="text-sm text-slate-600">
             Upload a dog photo → AI grooms the dog → compare before &amp; after
