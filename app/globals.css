@@ -1,18 +1,78 @@
+/* Tailwind directives MUST be at the top */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html { scroll-behavior: smooth; }
-body { @apply antialiased text-slate-800 bg-slate-50; }
-
-.bg-hero {
-  background: radial-gradient(1200px 600px at 80% -10%, rgba(255,90,63,.25), transparent 45%),
-              linear-gradient(180deg, #0b1020 0%, #12172a 60%, #0b1020 100%);
+/* --------- Base layer tweaks (optional) ---------- */
+@layer base {
+  html, body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
 }
 
-.card { @apply rounded-2xl bg-white shadow-soft border border-slate-100; }
+/* --------- Design tokens / primitives you used ---------- */
+:root{
+  --primary: #4f46e5; /* indigo-600 */
+  --primary-700: #4338ca;
+  --primary-800: #3730a3;
+  --brand: #4f46e5;
+  --safe-border: rgba(2, 6, 23, 0.08);
+}
 
-.btn { @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition; }
-.btn-primary { @apply bg-brand-600 hover:bg-brand-700 text-white shadow; }
-.btn-ghost { @apply bg-white hover:bg-slate-50 border border-slate-200 text-slate-800; }
-.btn-accent { @apply bg-accent-500 hover:bg-accent-600 text-white shadow; }
+/* Cards, buttons, badges used throughout the app */
+.card {
+  @apply bg-white rounded-2xl shadow-soft ring-1 ring-slate-200;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium transition
+         focus:outline-none focus-visible:ring-4;
+}
+
+.btn-primary {
+  @apply text-white bg-[var(--primary)]
+         hover:bg-[var(--primary-700)]
+         focus-visible:ring-indigo-200;
+}
+
+.btn-secondary {
+  @apply text-slate-800 bg-white border border-slate-300 hover:bg-slate-50
+         focus-visible:ring-slate-200;
+}
+
+.btn-ghost {
+  @apply text-slate-700 bg-white border border-slate-300 hover:bg-slate-50;
+}
+
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs
+         text-white bg-[var(--primary)];
+}
+
+/* Hero fallback layout if you want it without utilities (optional) */
+.hero {
+  background: linear-gradient(to bottom, #0b1222, #0b1222);
+  color: #fff;
+  padding: 4rem 0 2.5rem;
+}
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.25rem;
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 1024px) {
+  .hero-inner {
+    grid-template-columns: 1fr 520px;
+    align-items: center;
+  }
+}
+.hero-img {
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 18px 40px rgba(2,6,23,.35);
+  height: 420px;
+}
+.hero-img img { width: 100%; height: 100%; object-fit: cover; }
