@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ---------------- Icons (inline) ---------------- */
+/* ---------------- Small SVG icons ---------------- */
 const Icon = {
   Upload: (props) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
@@ -41,7 +41,10 @@ const Card = ({ className="", children }) => <div className={`card ${className}`
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
-    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50">
+    <div
+      className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none"
+      style={{ touchAction: 'none' }}
+    >
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
       <img
         src={beforeSrc}
@@ -50,17 +53,12 @@ function CompareSlider({ beforeSrc, afterSrc }) {
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
         draggable={false}
       />
-      <div className="absolute inset-x-0 bottom-2 px-4">
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={pos}
-          onChange={(e)=>setPos(Number(e.target.value)||55)}
-          className="w-full"
-        />
-      </div>
+      {/* handle line */}
       <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
+      {/* range control, constrained to avoid any overflow */}
+      <div className="absolute bottom-2 left-3 right-3">
+        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
+      </div>
     </div>
   );
 }
@@ -75,7 +73,6 @@ function pickResultUrl(data){
   }
   return null;
 }
-
 function validateImageFile(f,maxMB){
   const MAX = typeof maxMB==="number" ? maxMB : 12;
   if (!f || typeof f!=="object") return "Invalid file.";
@@ -85,9 +82,7 @@ function validateImageFile(f,maxMB){
   if (size > MAX*1024*1024) return `Image too large. Please keep it under ${MAX}MB.`;
   return null;
 }
-
 async function safeReadText(res){ try{return await res.text();}catch(e){return "";} }
-
 function readImageSize(url){
   return new Promise((resolve,reject)=>{
     const img=new Image();
@@ -96,7 +91,6 @@ function readImageSize(url){
     img.src=url;
   });
 }
-
 async function padToSize(dataUrl, targetW, targetH) {
   const img = new Image(); img.src = dataUrl; await new Promise(r => (img.onload = r));
   const canvas = document.createElement("canvas"); canvas.width = targetW; canvas.height = targetH;
@@ -108,7 +102,7 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result (title row above cards; equal heights)
+   Upload + Result: equal-height panels, title on right card
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
@@ -121,8 +115,10 @@ function UploadAndResult(){
   const [imgH, setImgH] = useState(0);
   const controllerRef=useRef(null);
 
-  // unified panel height (same for both cards)
+  // unified inner panel height
   const [panelH, setPanelH] = useState(640);
+  const ACTION_H = 56; // reserved height for left action bar, mirrored on right
+
   useEffect(() => {
     const setH = () => {
       const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
@@ -148,7 +144,6 @@ function UploadAndResult(){
     setFile(f); setResultUrl(null); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
-
   const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
@@ -187,10 +182,9 @@ function UploadAndResult(){
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
-      {/* Top title row with avatar + download */}
+      {/* Title row with your favicon & download */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          {/* your favicon instead of scissors */}
           <img
             src="/dog-5.png"
             alt="logo"
@@ -203,8 +197,6 @@ function UploadAndResult(){
             </p>
           </div>
         </div>
-
-        {/* Download — appears only when result exists */}
         {resultUrl ? (
           <a className="btn btn-primary" href={resultUrl} download>
             <Icon.Download /> Download
@@ -212,16 +204,11 @@ function UploadAndResult(){
         ) : <div className="h-9" />}
       </div>
 
-      {/* Small section heading (as you wanted visible) */}
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-base font-semibold">Groomed dog using hornet</h2>
-      </div>
-
       {/* Two equal-height panels */}
       <div className="grid lg:grid-cols-2 gap-8 items-start">
         {/* Left: Upload */}
         <Card className="p-4">
-          {error && (
+          {!previewUrl && error && (
             <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">
               {String(error)}
             </div>
@@ -243,12 +230,12 @@ function UploadAndResult(){
             </label>
           ) : (
             <div className="flex flex-col">
+              {/* fixed-height image area */}
               <div className="rounded-2xl overflow-hidden bg-slate-50" style={{ height: panelH }}>
                 <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
               </div>
-
-              {/* Actions bar (fixed height so total card height matches right) */}
-              <div className="mt-3 flex flex-wrap items-center gap-3">
+              {/* fixed-height action bar */}
+              <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
                 {!loading ? (
                   <>
                     <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
@@ -265,8 +252,10 @@ function UploadAndResult(){
           )}
         </Card>
 
-        {/* Right: Result (always same height as left) */}
+        {/* Right: Result */}
         <Card className="p-4">
+          {/* card heading INSIDE right window */}
+          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
               <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 text-sm text-slate-600">
@@ -276,6 +265,8 @@ function UploadAndResult(){
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
+          {/* spacer that matches the left action bar so bottoms align */}
+          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
@@ -316,7 +307,7 @@ function Hero(){
   );
 }
 
-/* ---------------- How it works (unchanged layout, equal buttons) ---------------- */
+/* ---------------- How it works ---------------- */
 function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
@@ -333,7 +324,6 @@ function HowItWorks() {
             <a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a>
           </div>
         </Card>
-
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
@@ -344,7 +334,6 @@ function HowItWorks() {
             <a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a>
           </div>
         </Card>
-
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
@@ -390,9 +379,7 @@ function Footer(){
           <img src="/dog-5.png" alt="logo" className="w-8 h-8 rounded-2xl object-cover bg-white ring-1 ring-white/10" />
           <div>
             <div className="font-semibold">Joyzze</div>
-            <p className="text-sm text-slate-400">
-              AI grooming preview that keeps everything identical—only a neater dog.
-            </p>
+            <p className="text-sm text-slate-400">AI grooming preview that keeps everything identical—only a neater dog.</p>
           </div>
         </div>
         <div>
