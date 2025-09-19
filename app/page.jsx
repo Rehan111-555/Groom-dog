@@ -213,7 +213,7 @@ function UploadAndResult(){
         <div className="lg:sticky lg:top-6">
           <Card className="p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold">Result</h2>
+              <h2 className="text-lg font-semibold">Groomed dog using hornet</h2>
               {resultUrl && <a className="btn btn-primary" href={resultUrl} download><Icon.Download/> Download</a>}
             </div>
             {!resultUrl ? (
