@@ -167,8 +167,7 @@ function UploadAndResult(){
           <Icon.Scissors />
         </div>
         <div>
-          <div className="badge mb-1">Joyzze</div>
-          <h1 className="text-3xl font-semibold leading-tight tracking-tight">Dog Groomer</h1>
+          <h1 className="text-3xl font-semibold leading-tight tracking-tight">Joyzze-Dog Groomer</h1>
           <p className="text-sm text-slate-600">
             Upload a dog photo → AI grooms the dog → compare before &amp; after
           </p>
@@ -349,7 +348,7 @@ function Footer(){
         <div>
           <div className="flex items-center gap-2 mb-3">
             <div className="w-8 h-8 rounded-2xl bg-indigo-600 text-white grid place-items-center shadow"><Icon.Scissors/></div>
-            <div className="font-semibold">Dog Groomer</div>
+            <div className="font-semibold">Joyzzer</div>
           </div>
           <p className="text-sm text-slate-400">AI grooming preview that keeps everything identical—only a neater dog.</p>
         </div>
@@ -371,7 +370,7 @@ function Footer(){
       </div>
       <div className="border-t border-white/10">
         <div className="container mx-auto px-6 py-4 text-xs text-slate-400">
-          © {new Date().getFullYear()} Dog Groomer. All rights reserved.
+          © {new Date().getFullYear()} Joyzze. All rights reserved.
         </div>
       </div>
     </footer>
