@@ -100,30 +100,46 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
+
 /* ============ Upload + Result app (prompt hidden server-side) ============ */
 function UploadAndResult(){
-  const [file,setFile]=useState(null);
-  const [previewUrl,setPreviewUrl]=useState(null);
-  const [resultUrl,setResultUrl]=useState(null);
+  const [file,setFile]=useState<File|null>(null);
+  const [previewUrl,setPreviewUrl]=useState<string|null>(null);
+  const [resultUrl,setResultUrl]=useState<string|null>(null);
   const [loading,setLoading]=useState(false);
-  const [error,setError]=useState(null);
+  const [error,setError]=useState<string|null>(null);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const controllerRef=useRef(null);
+  const controllerRef=useRef<AbortController|null>(null);
 
-  useEffect(()=>()=>{ if(previewUrl)URL.revokeObjectURL(previewUrl); if(resultUrl?.startsWith?.("blob:"))URL.revokeObjectURL(resultUrl); },[previewUrl,resultUrl]);
+  // ONE shared aspect ratio for both boxes (keeps identical size)
+  const defaultAR = 3/4;                       // 3:4 until we know the photo size
+  const aspect    = imgH ? (imgW / imgH) : defaultAR;
+  const paddingTopPercent = `${(1 / aspect) * 100}%`; // same on both sides
 
-  const handleFile=async (f)=>{
+  useEffect(()=>{
+    return () => {
+      if (previewUrl?.startsWith?.('blob:')) URL.revokeObjectURL(previewUrl);
+      if (resultUrl?.startsWith?.('blob:'))  URL.revokeObjectURL(resultUrl);
+    };
+  },[previewUrl,resultUrl]);
+
+  const handleFile = async (f: File) => {
     setError(null);
     const validationError=validateImageFile(f,12);
-    if(validationError){ setError(validationError); return; }
+    if (validationError){ setError(validationError); return; }
     const url = URL.createObjectURL(f);
     setFile(f); setResultUrl(null); setPreviewUrl(url);
-    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
+    try {
+      const { w, h } = await readImageSize(url);
+      setImgW(w); setImgH(h);
+    } catch {/* noop */}
   };
 
-  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
+  const selectFile=(e: React.ChangeEvent<HTMLInputElement>)=>{
+    const f=e?.target?.files?.[0]; if(f)handleFile(f);
+  };
 
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
 
@@ -133,9 +149,12 @@ function UploadAndResult(){
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
-      form.append("image",file); // prompt is hidden & enforced in /api/groom
+      form.append("image",file);                 // prompt hidden on server
       form.append("dog_only","true");
-      if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
+      if (imgW && imgH) {
+        form.append("target_w", String(imgW));
+        form.append("target_h", String(imgH));
+      }
 
       const res=await fetch("/api/groom",{ method:"POST", body:form, signal:controllerRef.current?.signal });
       setProgress(60);
@@ -143,6 +162,8 @@ function UploadAndResult(){
       const data=await res.json();
       const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
+
+      // Keep original dimensions identical if model changed them
       try {
         const { w, h } = await readImageSize(url);
         if (imgW && imgH && (w !== imgW || h !== imgH)) {
@@ -151,63 +172,116 @@ function UploadAndResult(){
         } else {
           setResultUrl(url);
         }
-      } catch { setResultUrl(url); }
+      } catch {
+        setResultUrl(url);
+      }
       setProgress(100);
-    }catch(e){ setError(e?.message||"Something went wrong."); }
+    }catch(e:any){ setError(e?.message||"Something went wrong."); }
     finally{ setLoading(false); }
   };
 
   const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
-  const aspect = imgH ? (imgW / imgH) : 0;
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
-      <div className="flex items-center gap-3 mb-8">
-        <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white grid place-items-center shadow">
-          <Icon.Scissors />
+      {/* Title row with Download on the RIGHT (outside of card) */}
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-indigo-600 text-white grid place-items-center shadow">
+            <Icon.Scissors />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">Joyzze-Dog Groomer</h2>
+            <p className="text-xs text-slate-600">
+              Upload a dog photo → AI grooms the dog → compare before &amp; after
+            </p>
+          </div>
         </div>
-        <div>
-          <div className="badge mb-1"></div>
-          <h1 className="text-3xl font-semibold leading-tight tracking-tight">Joyzze-Dog Groomer</h1>
-          <p className="text-sm text-slate-600">
-            Upload a dog photo → AI grooms the dog → compare before &amp; after
-          </p>
-        </div>
+
+        {resultUrl && (
+          <a className="btn btn-primary inline-flex" href={resultUrl} download>
+            <Icon.Download/> Download
+          </a>
+        )}
       </div>
 
+      {error && (
+        <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">
+          {String(error)}
+        </div>
+      )}
+
+      {/* Two columns — both image boxes share the exact same aspect & height */}
       <div className="grid lg:grid-cols-2 gap-8 items-start">
-        {/* Left */}
+        {/* LEFT: Upload card */}
         <Card className="p-6">
-          {error && <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>}
-          {!previewUrl ? (
-            <label className="block rounded-3xl border border-dashed border-slate-300 p-12 text-center cursor-pointer hover:bg-white">
-              <div className="mx-auto w-16 h-16 rounded-2xl bg-white grid place-items-center shadow mb-4">
-                <Icon.Upload />
-              </div>
-              <div className="font-medium mb-1">Drag &amp; drop or click to upload</div>
-              <div className="text-xs text-slate-600">PNG, JPG up to 12MB</div>
-              <input type="file" accept="image/*" className="hidden" onChange={selectFile} />
-            </label>
-          ) : (
-            <div className="space-y-6">
-              <img src={previewUrl} alt="Uploaded" className="w-full rounded-2xl shadow" />
-              {/* Prompt UI removed (prompt is hidden & enforced on server) */}
-              <div className="flex flex-wrap items-center gap-3">
-                {!loading ? (
-                  <>
-                    <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
-                    <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
-                  </>
-                ) : (
-                  <>
-                    <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
-                    <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
-                  </>
-                )}
-              </div>
+          {/* MATCHED-HEIGHT IMAGE BOX */}
+          <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 ring-1 ring-slate-200">
+            <div style={{ paddingTop: paddingTopPercent }} />
+            <div className="absolute inset-0">
+              {!previewUrl ? (
+                <label className="flex h-full w-full items-center justify-center text-center cursor-pointer">
+                  <div className="border-2 border-dashed border-slate-300 rounded-2xl p-10 grid place-items-center">
+                    <div className="mx-auto w-16 h-16 rounded-2xl bg-white grid place-items-center shadow mb-4">
+                      <Icon.Upload />
+                    </div>
+                    <div className="font-medium mb-1">Drag &amp; drop or click to upload</div>
+                    <div className="text-xs text-slate-600">PNG, JPG up to 12MB</div>
+                    <input type="file" accept="image/*" className="hidden" onChange={selectFile} />
+                  </div>
+                </label>
+              ) : (
+                <img
+                  src={previewUrl}
+                  alt="Uploaded"
+                  className="w-full h-full object-cover"
+                  draggable={false}
+                />
+              )}
+            </div>
+          </div>
+
+          {/* ACTIONS */}
+          {previewUrl && (
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              {!loading ? (
+                <>
+                  <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
+                  <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
+                </>
+              ) : (
+                <>
+                  <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
+                  <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
+                </>
+              )}
             </div>
           )}
         </Card>
+
+        {/* RIGHT: Result card (NO header inside, to keep the height identical) */}
+        <Card className="p-6">
+          {/* MATCHED-HEIGHT IMAGE BOX */}
+          <div className="relative w-full rounded-2xl overflow-hidden bg-slate-50 ring-1 ring-slate-200">
+            <div style={{ paddingTop: paddingTopPercent }} />
+            <div className="absolute inset-0">
+              {!resultUrl ? (
+                <div className="flex h-full w-full items-center justify-center text-center">
+                  <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-sm text-slate-600 bg-white/50">
+                    Your groomed image will appear here. After processing, use the slider to compare before/after.
+                  </div>
+                </div>
+              ) : (
+                <CompareSlider beforeSrc={previewUrl!} afterSrc={resultUrl} aspect={aspect} />
+              )}
+            </div>
+          </div>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
 
         {/* Right (sticky result) */}
         <div className="lg:sticky lg:top-6">
