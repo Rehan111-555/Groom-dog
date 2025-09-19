@@ -1,4 +1,3 @@
-
 import "./globals.css";
 
 export const metadata = {
@@ -9,7 +8,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      {/* Helpful base classes for crisp text + full-height background */}
+      <body className="min-h-screen antialiased">
+        {children}
+      </body>
     </html>
   );
 }
