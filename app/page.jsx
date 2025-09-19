@@ -282,7 +282,7 @@ function HowItWorks() {
 
           {/* Push button to bottom */}
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px]">Upload now</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[140px] text-center">Upload now</a>
           </div>
         </Card>
 
@@ -296,7 +296,7 @@ function HowItWorks() {
 
           {/* Push button to bottom */}
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px]">Start grooming</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[140px] text-center">Start grooming</a>
           </div>
         </Card>
 
@@ -310,7 +310,7 @@ function HowItWorks() {
 
           {/* Push button to bottom */}
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px]">Try the slider</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[140px] text-center">Try the slider</a>
           </div>
         </Card>
       </div>
