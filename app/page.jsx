@@ -249,7 +249,7 @@ function Hero(){
           <div className="mt-6 flex items-center gap-3">
             {/* NOTICE: add base `btn` class here */}
             <a href="#app" className="btn btn-primary !bg-rose-500 hover:!bg-rose-600">Try it free</a>
-            <a href="#how" className="btn btn-ghost text-white border-white/20 hover:bg-white/5">See how it works</a>
+            <a href="#how"className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b] focus:bg-[#121a2b] active:bg-[#121a2b] focus:outline-none">See how it work</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
