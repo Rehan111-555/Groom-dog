@@ -167,7 +167,7 @@ function UploadAndResult(){
           <Icon.Scissors />
         </div>
         <div>
-          <div className="badge mb-1">Flash 2.5</div>
+          <div className="badge mb-1">Joyzze</div>
           <h1 className="text-3xl font-semibold leading-tight tracking-tight">Dog Groomer</h1>
           <p className="text-sm text-slate-600">
             Upload a dog photo → AI grooms the dog → compare before &amp; after
@@ -237,7 +237,7 @@ function Hero(){
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">
-            Flash 2.5 • Image Preview
+            Joyzze
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
             Make your dog look freshly groomed—<span className="text-indigo-300">with AI</span>
