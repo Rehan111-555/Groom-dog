@@ -2,35 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ---------------- Base (keep from purge) ---------------- */
-@layer base {
-  :root { --bg: #f6f7fb; }
-
-  html, body { height: 100%; }
-
-  body {
-    background: radial-gradient(1200px 700px at 10% -10%, #ffffff 0%, var(--bg) 45%, #eef2f9 100%);
-    color: #0f172a;
-    font-feature-settings: "ss01" on, "liga" on;
-  }
+:root { --bg: #f6f7fb; }
+html, body { height: 100%; }
+body {
+  background: radial-gradient(1200px 700px at 10% -10%, #ffffff 0%, var(--bg) 45%, #eef2f9 100%);
+  color: #0f172a;
+  font-feature-settings: "ss01" on, "liga" on;
 }
 
-/* ---------------- Components (your reusable classes) ---------------- */
+.container { max-width: 1160px; }
+
+/* Put custom component classes inside @layer so Tailwind doesn’t purge them */
 @layer components {
-  .container { @apply max-w-[1160px]; }
-
   .card { @apply rounded-3xl bg-white border border-black/5 shadow-soft; }
-
-  .btn {
-    @apply inline-flex items-center gap-2 rounded-full px-4 py-2
-           font-medium transition-colors duration-150
-           focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-300;
-  }
-  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow; }
-  .btn-ghost   { @apply bg-white text-slate-900 hover:shadow; }
-
+  .btn  { @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 transition; }
+  .btn-primary { @apply bg-brand-600 text-white hover:bg-brand-700 shadow; }
+  .btn-ghost   { @apply bg-white hover:shadow; }
   .badge { @apply inline-flex items-center gap-1 text-xs rounded-full px-2 py-1 bg-brand-50 text-brand-700; }
 }
 
-/* ---------------- Misc ---------------- */
 input[type="range"] { accent-color: #4f46e5; }
