@@ -243,7 +243,7 @@ function UploadAndResult() {
         <div className="flex items-start gap-3">
           {/* Your favicon image instead of the scissor icon */}
           <img
-            src="/dog-5.jpg"
+            src="/dog-5.png"
             alt="Brand"
             className="w-10 h-10 rounded-2xl object-cover shadow"
           />
@@ -460,7 +460,7 @@ function Footer() {
       <div className="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <img src="/dog-5.jpg" alt="Brand" className="w-8 h-8 rounded-2xl object-cover shadow" />
+            <img src="/dog-5.png" alt="Brand" className="w-8 h-8 rounded-2xl object-cover shadow" />
             <div className="font-semibold">Joyzze</div>
           </div>
           <p className="text-sm text-slate-400">AI grooming preview that keeps everything identical—only a neater dog.</p>
