@@ -233,7 +233,7 @@ function UploadAndResult(){
 /* ============ HERO ============ */
 function Hero(){
   return (
-    <header className="relative overflow-hidden bg-gradient-to-b from-[#0d1324] via-[#0d1324] to-[#0d1324] text-white">
+    <header className="relative overflow-hidden bg-[#0d1324] text-white">
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">
@@ -247,8 +247,9 @@ function Hero(){
             Compare before &amp; after with a slider.
           </p>
           <div className="mt-6 flex items-center gap-3">
-            <a href="#app" className="btn-primary !bg-rose-500 hover:!bg-rose-600">Try it free</a>
-            <a href="#how" className="btn-ghost text-white border-white/20 hover:bg-white/5">See how it works</a>
+            {/* NOTICE: add base `btn` class here */}
+            <a href="#app" className="btn btn-primary !bg-rose-500 hover:!bg-rose-600">Try it free</a>
+            <a href="#how" className="btn btn-ghost text-white border-white/20 hover:bg-white/5">See how it works</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -259,7 +260,7 @@ function Hero(){
   );
 }
 
-/* ============ 3-step section (kept) ============ */
+/* ============ 3-step section ============ */
 function HowItWorks(){
   return (
     <section id="how" className="container mx-auto px-6 py-16">
@@ -272,7 +273,8 @@ function HowItWorks(){
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600 mb-4">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
-          <a href="#app" className="btn-primary inline-flex">Upload now</a>
+          {/* add base `btn` */}
+          <a href="#app" className="btn btn-primary">Upload now</a>
         </Card>
         <Card className="p-6">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">2</div>
@@ -280,20 +282,20 @@ function HowItWorks(){
           <p className="text-sm text-slate-600 mb-4">
             We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.
           </p>
-          <a href="#app" className="btn-primary inline-flex">Start grooming</a>
+          <a href="#app" className="btn btn-primary">Start grooming</a>
         </Card>
         <Card className="p-6">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 mb-4">Use the slider to compare before/after. Download the result in one click.</p>
-          <a href="#app" className="btn-primary inline-flex">Try the slider</a>
+          <a href="#app" className="btn btn-primary">Try the slider</a>
         </Card>
       </div>
     </section>
   );
 }
 
-/* ============ Sample results — MOVED BELOW APP ============ */
+/* ============ Sample results — below app, before footer ============ */
 function Samples(){
   return (
     <section id="examples" className="container mx-auto px-6 py-16">
@@ -360,8 +362,7 @@ export default function Page(){
       <Hero />
       <HowItWorks />
       <UploadAndResult />
-      {/* CTA section removed as requested */}
-      <Samples />  {/* moved directly below the app, before the footer */}
+      <Samples />
       <Footer />
     </main>
   );
