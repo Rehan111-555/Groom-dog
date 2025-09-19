@@ -261,34 +261,57 @@ function Hero(){
 }
 
 /* ============ 3-step section ============ */
-function HowItWorks(){
+/* ============ 3-step section (aligned buttons) ============ */
+function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
       <p className="text-center text-slate-600 mb-10">
         Upload your photo → AI grooms the dog → compare before &amp; after.
       </p>
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-6">
+
+      {/* items-stretch ensures equal card heights */}
+      <div className="grid md:grid-cols-3 gap-6 items-stretch">
+        {/* Card 1 */}
+        <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
-          <p className="text-sm text-slate-600 mb-4">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
-          {/* add base `btn` */}
-          <a href="#app" className="btn btn-primary">Upload now</a>
+          <p className="text-sm text-slate-600">
+            PNG or JPG up to ~12MB. Works best with a clear subject.
+          </p>
+
+          {/* Push button to bottom */}
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary inline-flex">Upload now</a>
+          </div>
         </Card>
-        <Card className="p-6">
+
+        {/* Card 2 */}
+        <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600 mb-4">
+          <p className="text-sm text-slate-600">
             We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.
           </p>
-          <a href="#app" className="btn btn-primary">Start grooming</a>
+
+          {/* Push button to bottom */}
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary inline-flex">Start grooming</a>
+          </div>
         </Card>
-        <Card className="p-6">
+
+        {/* Card 3 */}
+        <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
-          <p className="text-sm text-slate-600 mb-4">Use the slider to compare before/after. Download the result in one click.</p>
-          <a href="#app" className="btn btn-primary">Try the slider</a>
+          <p className="text-sm text-slate-600">
+            Use the slider to compare before/after. Download the result in one click.
+          </p>
+
+          {/* Push button to bottom */}
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary inline-flex">Try the slider</a>
+          </div>
         </Card>
       </div>
     </section>
