@@ -30,7 +30,7 @@ export async function POST(req) {
     // 👉 Hidden default prompt (ENV first, then fallback)
     const defaultPrompt =
       process.env.GROOM_DEFAULT_PROMPT ||
-      "Groom the dog in this image so it looks freshly cleaned and well-trimmed, while keeping everything else in the photo exactly the same. Do not alter the background, lighting, colors, or any other details besides the dog's grooming.";
+      "Keep the image exactly the same: preserve the dog’s breed, hair color, pose, accessories, and overall look. Do not alter the background, proportions, lighting, or aspect ratio. The only change should be trimming the dog’s coat evenly with a 3mm trimmer blade, including the face, styled to look like a professional grooming job.";
 
     // Guardrails to preserve composition and ensure an image response
     const hardRules = [
