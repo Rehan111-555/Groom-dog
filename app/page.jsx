@@ -205,9 +205,12 @@ function UploadAndResult(){
       </div>
 
       {/* Two equal-height panels */}
-      <div className="grid lg:grid-cols-2 gap-8 items-start">
+      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         {/* Left: Upload */}
         <Card className="p-4">
+          {/* Add an invisible header to match the height of the right card's heading */}
+          <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
+
           {!previewUrl && error && (
             <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">
               {String(error)}
@@ -391,7 +394,7 @@ function Footer(){
           </ul>
         </div>
         <div>
-          <div className="font-semibold mb-2">Legal</div>
+          <div class 'font-semibold mb-2'>Legal</div>
           <ul className="space-y-1 text-sm text-slate-400">
             <li><a className="hover:text-white">Terms</a></li>
             <li><a className="hover:text-white">Privacy</a></li>
