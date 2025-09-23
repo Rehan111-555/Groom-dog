@@ -55,7 +55,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
       />
       {/* handle line */}
       <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
-      {/* range control, constrained to avoid any overflow */}
+      {/* range control */}
       <div className="absolute bottom-2 left-3 right-3">
         <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
       </div>
@@ -208,7 +208,7 @@ function UploadAndResult(){
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         {/* Left: Upload */}
         <Card className="p-4">
-          {/* Add an invisible header to match the height of the right card's heading */}
+          {/* Invisible header to match the right card's header height */}
           <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
 
           {!previewUrl && error && (
@@ -394,7 +394,7 @@ function Footer(){
           </ul>
         </div>
         <div>
-          <div class 'font-semibold mb-2'>Legal</div>
+          <div className="font-semibold mb-2">Legal</div>
           <ul className="space-y-1 text-sm text-slate-400">
             <li><a className="hover:text-white">Terms</a></li>
             <li><a className="hover:text-white">Privacy</a></li>
