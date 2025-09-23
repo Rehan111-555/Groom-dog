@@ -1,30 +1,46 @@
+// middleware.js (Edge-safe auth gate – no next-auth imports)
 import { NextResponse } from "next/server";
-import { auth } from "next-auth";
 
-const PUBLIC_FILE = /\.(.*)$/;
+/**
+ * NextAuth uses one of these cookie names:
+ * - "__Secure-next-auth.session-token" (on HTTPS / production)
+ * - "next-auth.session-token" (on HTTP / localhost)
+ */
+function readSessionCookie(cookies) {
+  return (
+    cookies.get("__Secure-next-auth.session-token")?.value ||
+    cookies.get("next-auth.session-token")?.value ||
+    null
+  );
+}
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+export function middleware(req) {
+  const { nextUrl, cookies } = req;
+  const token = readSessionCookie(cookies);
+  const isAuthed = Boolean(token);
 
-  // Allow NextAuth routes, public files and the sign-in page itself
-  if (
-    pathname.startsWith("/api/auth") ||
-    pathname === "/signin" ||
-    PUBLIC_FILE.test(pathname)
-  ) {
-    return NextResponse.next();
+  const isAuthPage = nextUrl.pathname === "/login";
+  const isNextAuthAPI = nextUrl.pathname.startsWith("/api/auth");
+
+  // Not logged in → redirect to /login
+  if (!isAuthed && !isAuthPage && !isNextAuthAPI) {
+    const url = new URL("/login", nextUrl.origin);
+    url.searchParams.set("callbackUrl", nextUrl.pathname + nextUrl.search);
+    return NextResponse.redirect(url);
   }
 
-  // If authenticated, continue as normal
-  if (req.auth) return NextResponse.next();
+  // Logged in and trying to view /login → send to callback or home
+  if (isAuthed && isAuthPage) {
+    const to = nextUrl.searchParams.get("callbackUrl") || "/";
+    return NextResponse.redirect(new URL(to, nextUrl.origin));
+  }
 
-  // Otherwise, send to /signin and remember where they came from
-  const url = req.nextUrl.clone();
-  url.pathname = "/signin";
-  url.searchParams.set("from", pathname);
-  return NextResponse.redirect(url);
-});
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/:path*"],
+  // Protect everything except the NextAuth endpoints, your image/API routes, and static assets
+  matcher: [
+    "/((?!api/auth|api/groom|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)).*)",
+  ],
 };
