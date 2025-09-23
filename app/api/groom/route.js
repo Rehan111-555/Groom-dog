@@ -45,8 +45,8 @@ export async function POST(req) {
       .join("\n");
 
     const guard = dogOnly
-      ? "Edit ONLY the DOG: tidy fur around face and paws; subtle clean-up. KEEP breed, pose, lighting, and BACKGROUND IDENTICAL."
-      : "Edit the image as described, preserving composition.";
+      ? "Edit ONLY the DOG: Keep the image exactly the same: preserve the dog’s breed, hair color, pose, accessories, and overall look. Do not alter the background, proportions, lighting, or aspect ratio. The only change should be trimming the dog’s coat evenly with a 3mm trimmer blade, including the face, styled to look like a professional grooming job"
+      : "Keep the image exactly the same: preserve the dog’s breed, hair color, pose, accessories, and overall look. Do not alter the background, proportions, lighting, or aspect ratio. The only change should be trimming the dog’s coat evenly with a 3mm trimmer blade, including the face, styled to look like a professional grooming job.";
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     const body = {
