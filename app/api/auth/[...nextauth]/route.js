@@ -1,16 +1,24 @@
+// app/api/auth/[...nextauth]/route.js
 import NextAuth from "next-auth";
-import Google from "next-auth/providers/google";
+import GoogleProvider from "next-auth/providers/google";
 
-// NextAuth v5 minimal setup. Users are created automatically on first sign-in.
-export const { handlers, auth, signIn, signOut } = NextAuth({
+// (optional) force Node runtime for safety (avoids Edge runtime issues)
+export const runtime = "nodejs";
+
+// NextAuth v4 config
+export const authOptions = {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
     }),
   ],
   session: { strategy: "jwt" },
-});
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
-export const GET = handlers.GET;
-export const POST = handlers.POST;
+// Create handler for App Router
+const handler = NextAuth(authOptions);
+
+// App Router needs GET/POST exports
+export { handler as GET, handler as POST };
