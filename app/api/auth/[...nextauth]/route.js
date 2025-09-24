@@ -1,11 +1,10 @@
 // app/api/auth/[...nextauth]/route.js
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";               // v4 handler for App Router
 import GoogleProvider from "next-auth/providers/google";
 
-// (optional) force Node runtime for safety (avoids Edge runtime issues)
+// Force Node runtime (good for server-only libs)
 export const runtime = "nodejs";
 
-// NextAuth v4 config
 export const authOptions = {
   providers: [
     GoogleProvider({
@@ -17,8 +16,6 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// Create handler for App Router
-const handler = NextAuth(authOptions);
-
 // App Router needs GET/POST exports
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
