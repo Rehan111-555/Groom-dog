@@ -1,7 +1,7 @@
-// Force v4 handler + Node runtime (Edge will break)
-export const runtime = "nodejs";
+// app/api/auth/[...nextauth]/route.js
+export const runtime = "nodejs"; // force Node runtime (not Edge)
 
-import NextAuth from "next-auth/next";                 // <— use /next to force v4 API
+import NextAuth from "next-auth/next";                 // <-- v4 API
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
@@ -15,8 +15,5 @@ export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// v4 returns a request handler function
 const handler = NextAuth(authOptions);
-
-// App Router requires these named exports
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST };            // App Router shape
