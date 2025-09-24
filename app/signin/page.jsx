@@ -6,11 +6,11 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-/** Single source of truth for color */
+/** Brand palette */
 const BRAND = {
-  teal: '#24c9bb',      // primary
-  tealDark: '#16a899',  // hover/active
-  charcoal: '#3d3d3f',  // header/footer
+  teal: '#24c9bb',       // primary button
+  tealDark: '#16a899',   // hover
+  charcoal: '#3d3d3f',   // header/footer + all outlines you asked to match
 };
 
 export default function SignInPage() {
@@ -28,10 +28,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div
-      className="min-h-screen bg-[#f3f6f8] flex flex-col"
-      style={{ ['--brand']: BRAND.teal }}
-    >
+    <div className="min-h-screen bg-[#f3f6f8] flex flex-col">
       {/* Top bar */}
       <header className="w-full" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="container mx-auto px-6 py-3 flex items-center justify-between text-white/90">
@@ -40,7 +37,8 @@ export default function SignInPage() {
               src="/dog-5.png"
               alt="Joyzze mark"
               className="w-7 h-7 rounded-xl bg-white object-cover"
-              style={{ boxShadow: '0 0 0 1px rgba(255,255,255,.2)' }}
+              /* ring color switched to charcoal */
+              style={{ boxShadow: '0 0 0 1px rgba(61,61,63,.4)' }}
             />
             <div className="text-sm md:text-base">
               <span className="font-semibold">Joyzze</span>
@@ -51,7 +49,7 @@ export default function SignInPage() {
           <Link
             href="https://joyzze.com"
             target="_blank"
-            className="text-xs md:text-sm underline decoration-white/30 hover:decoration-[color:var(--brand)]"
+            className="text-xs md:text-sm underline decoration-white/30 hover:decoration-white"
             prefetch={false}
           >
             joyzze.com
@@ -65,7 +63,8 @@ export default function SignInPage() {
           {/* Left card */}
           <div
             className="rounded-3xl bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
-            style={{ border: '1px solid rgba(36,201,187,.18)' }}
+            /* card border switched to charcoal */
+            style={{ border: '1px solid rgba(61,61,63,.18)' }}
           >
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-3 mb-5">
@@ -73,7 +72,8 @@ export default function SignInPage() {
                   src="/dog-5.png"
                   alt="Joyzze"
                   className="w-9 h-9 rounded-2xl bg-white object-cover"
-                  style={{ boxShadow: '0 0 0 1px rgba(36,201,187,.35)' }}
+                  /* little logo ring switched to charcoal */
+                  style={{ boxShadow: '0 0 0 1px rgba(61,61,63,.35)' }}
                 />
                 <div>
                   <h1 className="text-xl md:text-2xl font-semibold">
@@ -85,7 +85,7 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              {/* Unified brand button (no Tailwind ring defaults) */}
+              {/* Primary button stays teal */}
               <button
                 onClick={handleGoogle}
                 disabled={loading}
@@ -116,14 +116,14 @@ export default function SignInPage() {
                 First-time users are created automatically after Google confirms your account.
               </p>
 
-              {/* Badges (title + border use the same teal) */}
+              {/* Badges now use CHARCOAL for title + border */}
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <Badge title="PROFESSIONAL" subtitle="Approved" />
                 <Badge title="1-YEAR" subtitle="Defect Guarantee" />
                 <Badge title="FLAT-RATE" subtitle="Shipping" />
               </div>
 
-              {/* Image tiles */}
+              {/* Image tiles (borders switched to charcoal) */}
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <Tile src="/dog-1.jpg" alt="Sample dog" />
                 <Tile src="/dog-2.jpg" alt="Sample dog" />
@@ -133,16 +133,16 @@ export default function SignInPage() {
             </div>
           </div>
 
-          {/* Right hero */}
+          {/* Right hero (border switched to charcoal) */}
           <div
             className="rounded-3xl overflow-hidden bg-white relative shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
-            style={{ border: '1px solid rgba(36,201,187,.18)' }}
+            style={{ border: '1px solid rgba(61,61,63,.18)' }}
           >
             <div
               className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(36,201,187,.08) 0%, rgba(36,201,187,0) 65%)',
+                  'linear-gradient(180deg, rgba(61,61,63,.06) 0%, rgba(61,61,63,0) 65%)',
               }}
             />
             <img src="/dog-4.jpg" alt="Grooming hero" className="w-full h-full object-cover" />
@@ -165,19 +165,19 @@ export default function SignInPage() {
   );
 }
 
-/* ---------- Components with unified teal ---------- */
+/* ---------- Components now using CHARCOAL instead of teal ---------- */
 
 function Badge({ title, subtitle }) {
   return (
     <div
       className="rounded-xl bg-white p-3 text-center"
-      style={{
-        border: '1px solid rgba(36,201,187,.35)', // same teal, soft border
-      }}
+      /* border color set to charcoal */
+      style={{ border: '1px solid rgba(61,61,63,.28)' }}
     >
       <div
         className="text-[11px] uppercase tracking-wide font-semibold"
-        style={{ color: BRAND.teal }}
+        /* title text color set to charcoal */
+        style={{ color: BRAND.charcoal }}
       >
         {title}
       </div>
@@ -190,14 +190,15 @@ function Tile({ src, alt }) {
   return (
     <div
       className="rounded-2xl overflow-hidden bg-white h-28 transition-shadow"
-      style={{ border: '1px solid rgba(36,201,187,.18)' }}
+      /* border color set to charcoal */
+      style={{ border: '1px solid rgba(61,61,63,.18)' }}
     >
       <img
         src={src}
         alt={alt}
         className="w-full h-full object-cover"
         onMouseEnter={(e) =>
-          (e.currentTarget.style.boxShadow = '0 0 0 3px rgba(36,201,187,.9)')
+          (e.currentTarget.style.boxShadow = '0 0 0 3px rgba(61,61,63,.45)')
         }
         onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
       />
