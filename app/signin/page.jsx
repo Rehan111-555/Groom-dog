@@ -3,21 +3,19 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
-// Force dynamic rendering and disable all caching for this page
 export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
-  const [logoSrc, setLogoSrc] = useState('/dog-6.ai'); // .ai asset
-  const onLogoError = () => setLogoSrc('/dog-5.png');  // fallback for browsers that can't render .ai
+  const [logoSrc, setLogoSrc] = useState('/dog-6.ai'); // your requested file
+  const onLogoError = () => setLogoSrc('/dog-5.png');  // PNG fallback
 
   async function handleGoogle() {
     setLoading(true);
     try {
       const params = new URLSearchParams(window.location.search);
       const to = params.get('from') || '/';
-      await signIn('google', { callbackUrl: to }); // first time => signs up, next times => logs in
+      await signIn('google', { callbackUrl: to }); // first time => signs up
     } finally {
       setLoading(false);
     }
