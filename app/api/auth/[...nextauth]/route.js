@@ -1,4 +1,4 @@
-// --- Safe ESM/CJS interop imports ---
+// Safe ESM/CJS interop imports
 import NextAuthImport from "next-auth/next";
 import GoogleProviderImport from "next-auth/providers/google";
 
@@ -13,7 +13,6 @@ if (!NextAuth || !GoogleProvider) {
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 const authOptions = {
