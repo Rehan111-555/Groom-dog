@@ -1,9 +1,25 @@
 // app/api/auth/[...nextauth]/route.js
-import NextAuth from "next-auth/next";           // v4 API (Node runtime)
-import GoogleProvider from "next-auth/providers/google";
 
-export const runtime = "nodejs";                 // make sure NOT Edge
-export const dynamic = "force-dynamic";          // never statically analyzed
+// --- Safe ESM/CJS interop imports (handle .default or function) ---
+import NextAuthImport from "next-auth/next";
+import GoogleProviderImport from "next-auth/providers/google";
+
+const NextAuth =
+  typeof NextAuthImport === "function" ? NextAuthImport : NextAuthImport?.default;
+const GoogleProvider =
+  typeof GoogleProviderImport === "function" ? GoogleProviderImport : GoogleProviderImport?.default;
+
+if (!NextAuth || !GoogleProvider) {
+  throw new Error("Failed to import next-auth or providers/google (interop).");
+}
+
+// --- Force Node runtime & disable static rendering for this API route ---
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// (Optional – extra belt & suspenders)
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 const authOptions = {
   providers: [
@@ -18,5 +34,5 @@ const authOptions = {
 
 const handler = NextAuth(authOptions);
 
-// App Router needs these exports for v4
+// v4 App Router exports
 export { handler as GET, handler as POST };
