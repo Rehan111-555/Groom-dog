@@ -2,9 +2,16 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
-// Ensure SSR doesn't try to prerender any session state here
 export const dynamic = 'force-dynamic';
+
+const JOYZZE = {
+  teal: '#24c9bb',       // main accent
+  tealDark: '#16a899',   // darker hover
+  charcoal: '#3d3d3f',   // header/footer bg
+  graphite: '#4b4b4d',   // deeper shadowy gray
+};
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
@@ -21,124 +28,145 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f3f6fb]">
-      {/* Top bar */}
-      <div className="border-b border-black/5 bg-white/70 backdrop-blur">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-[#f3f6f8] flex flex-col">
+      {/* Top bar (charcoal) */}
+      <header
+        className="w-full"
+        style={{ backgroundColor: JOYZZE.charcoal }}
+      >
+        <div className="container mx-auto px-6 py-3 flex items-center justify-between text-white/90">
           <div className="flex items-center gap-3">
             <img
               src="/dog-5.png"
               alt="Joyzze mark"
-              className="w-9 h-9 rounded-xl object-cover ring-1 ring-black/5"
+              className="w-7 h-7 rounded-xl bg-white object-cover ring-1 ring-white/20"
             />
-            <span className="text-lg font-semibold tracking-tight">Joyzze — Dog Groomer</span>
+            <div className="text-sm md:text-base">
+              <span className="font-semibold">Joyzze</span>
+              <span className="mx-2">—</span>
+              <span>Dog Groomer</span>
+            </div>
           </div>
-          <a
+          <Link
             href="https://joyzze.com"
             target="_blank"
-            className="text-sm text-slate-600 hover:text-slate-900"
+            className="text-xs md:text-sm underline decoration-white/30 hover:decoration-white"
+            prefetch={false}
           >
             joyzze.com
-          </a>
+          </Link>
         </div>
-      </div>
+      </header>
 
-      {/* Hero section */}
-      <section className="container mx-auto px-6 py-14">
+      {/* Main content */}
+      <main className="container mx-auto px-6 py-10 grow">
         <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-          {/* Left: brand card */}
-          <div className="card overflow-hidden p-0">
-            {/* brand header */}
-            <div className="p-6 border-b border-black/5 bg-white">
-              <div className="flex items-center gap-3">
+          {/* Left: Card with CTA */}
+          <div className="rounded-3xl bg-white border border-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
+            <div className="p-6 md:p-8">
+              <div className="flex items-center gap-3 mb-5">
                 <img
                   src="/dog-5.png"
                   alt="Joyzze"
-                  className="w-10 h-10 rounded-xl object-cover ring-1 ring-black/5"
+                  className="w-9 h-9 rounded-2xl bg-white object-cover ring-1 ring-black/10"
                 />
                 <div>
-                  <h1 className="text-2xl font-semibold leading-tight">Joyzze — Dog Groomer</h1>
-                  <p className="text-sm text-slate-600">Sign in / Sign up to continue</p>
+                  <h1 className="text-xl md:text-2xl font-semibold">
+                    Joyzze — Dog Groomer
+                  </h1>
+                  <p className="text-xs text-slate-600">
+                    Sign in / Sign up to continue
+                  </p>
                 </div>
               </div>
-            </div>
 
-            {/* body */}
-            <div className="p-6">
-              {/* Google CTA */}
               <button
                 onClick={handleGoogle}
                 disabled={loading}
-                className="w-full inline-flex items-center justify-center gap-3 rounded-2xl px-5 py-3 bg-indigo-600 text-white hover:bg-indigo-700 transition shadow ring-1 ring-indigo-600/20 disabled:opacity-70"
+                className="w-full rounded-xl px-4 py-3 text-white font-medium shadow hover:shadow-md transition
+                           ring-1 ring-black/5 disabled:opacity-70 disabled:cursor-not-allowed"
+                style={{
+                  background: `linear-gradient(180deg, ${JOYZZE.teal} 0%, ${JOYZZE.tealDark} 100%)`,
+                }}
               >
-                <svg width="18" height="18" viewBox="0 0 533.5 544.3" aria-hidden="true">
-                  <path fill="#fff" d="M0 0h533.5v544.3H0z" opacity="0" />
-                  <path fill="#4285f4" d="M533.5 278.4c0-18.9-1.7-37-4.9-54.6H272.1v103.5h146.9c-6.3 34-25 62.9-53.3 82.3l86.1 66.7c50.1-46.2 81.7-114.3 81.7-198z" />
-                  <path fill="#34a853" d="M272.1 544.3c71.6 0 131.8-23.7 175.8-64.4l-86.1-66.7c-23.9 16.1-54.5 25.7-89.7 25.7-68.9 0-127.2-46.5-148-109.1H36.1v68.6C79.7 484.4 170.7 544.3 272.1 544.3z" />
-                  <path fill="#fbbc05" d="M124.1 329.8c-10.3-30.9-10.3-64.2 0-95.1V166.1H36.1c-39.1 78.2-39.1 171.8 0 250.1l88-86.4z" />
-                  <path fill="#ea4335" d="M272.1 106.2c37.9-.6 74.2 13.6 101.8 39.8l76.2-76.2C397.7 24.9 338 0 272.1 0 170.7 0 79.7 59.9 36.1 166.1l88 68.6c20.8-62.7 79.1-109.1 148-109.1z" />
-                </svg>
-                <span className="font-medium">
-                  {loading ? 'Connecting…' : 'Continue with Google'}
-                </span>
+                {loading ? 'Connecting…' : 'Continue with Google'}
               </button>
 
-              {/* fine print */}
               <p className="mt-3 text-xs text-slate-500">
                 First-time users are created automatically after Google confirms your account.
               </p>
 
-              {/* trust badges */}
-              <div className="mt-8 grid grid-cols-3 gap-4">
-                <div className="rounded-2xl border border-black/5 bg-white p-4 text-center">
-                  <div className="text-sm font-semibold">Professional</div>
-                  <div className="text-xs text-slate-500">Approved</div>
-                </div>
-                <div className="rounded-2xl border border-black/5 bg-white p-4 text-center">
-                  <div className="text-sm font-semibold">1-Year</div>
-                  <div className="text-xs text-slate-500">Defect Guarantee</div>
-                </div>
-                <div className="rounded-2xl border border-black/5 bg-white p-4 text-center">
-                  <div className="text-sm font-semibold">Flat-Rate</div>
-                  <div className="text-xs text-slate-500">Shipping</div>
-                </div>
+              {/* Trust badges */}
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                <Badge title="Professional" subtitle="Approved" />
+                <Badge title="1-Year" subtitle="Defect Guarantee" />
+                <Badge title="Flat-Rate" subtitle="Shipping" />
               </div>
 
-              {/* small feature tiles */}
-              <div className="mt-6 grid grid-cols-2 gap-4">
-                <div className="rounded-2xl overflow-hidden ring-1 ring-black/5">
-                  <img src="/dog-1.jpg" alt="Sample dog" className="w-full h-32 object-cover" />
-                </div>
-                <div className="rounded-2xl overflow-hidden ring-1 ring-black/5">
-                  <img src="/dog-2.jpg" alt="Sample dog" className="w-full h-32 object-cover" />
-                </div>
+              {/* Small image tiles */}
+              <div className="mt-6 grid grid-cols-2 gap-3">
+                <Tile src="/dog-1.jpg" alt="Sample dog" />
+                <Tile src="/dog-2.jpg" alt="Sample dog" />
+                <Tile src="/dog-3.jpg" alt="Sample dog" />
+                <Tile src="/dog-4.jpg" alt="Sample dog" />
               </div>
             </div>
           </div>
 
-          {/* Right: hero image */}
-          <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-black/5 bg-white relative">
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/5 pointer-events-none" />
+          {/* Right: Hero panel with gradient & image */}
+          <div className="rounded-3xl overflow-hidden border border-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.08)] bg-white relative">
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(36,201,187,0.08) 0%, rgba(36,201,187,0.00) 65%)',
+              }}
+            />
             <img
-              src="/dog-2.jpg"
+              src="/dog-4.jpg"
               alt="Grooming hero"
-              className="w-full h-full object-cover min-h-[420px]"
+              className="w-full h-full object-cover mix-blend-normal"
             />
           </div>
         </div>
-      </section>
+      </main>
 
-      {/* Footer mini */}
-      <footer className="border-t border-black/5 bg-white/70 backdrop-blur">
-        <div className="container mx-auto px-6 py-6 flex flex-col md:flex-row gap-3 items-center justify-between">
-          <div className="flex items-center gap-2 text-slate-600 text-sm">
+      {/* Footer (charcoal) */}
+      <footer
+        className="w-full text-white/85"
+        style={{ backgroundColor: JOYZZE.charcoal }}
+      >
+        <div className="container mx-auto px-6 py-4 text-xs flex flex-col md:flex-row items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
             <span className="font-semibold">Joyzze</span>
-            <span>·</span>
+            <span className="opacity-60">·</span>
             <span>Joy of Grooming Made Easy™</span>
           </div>
-          <div className="text-xs text-slate-500">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
+          <div className="opacity-80">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
         </div>
       </footer>
-    </main>
+    </div>
+  );
+}
+
+/* ---------- small components ---------- */
+
+function Badge({ title, subtitle }) {
+  return (
+    <div className="rounded-xl border border-black/5 bg-white p-3 text-center">
+      <div className="text-[11px] uppercase tracking-wide font-semibold"
+           style={{ color: JOYZZE.teal }}>
+        {title}
+      </div>
+      <div className="text-[11px] text-slate-600">{subtitle}</div>
+    </div>
+  );
+}
+
+function Tile({ src, alt }) {
+  return (
+    <div className="rounded-2xl overflow-hidden border border-black/5 bg-slate-50 h-28">
+      <img src={src} alt={alt} className="w-full h-full object-cover" />
+    </div>
   );
 }
