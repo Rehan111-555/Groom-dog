@@ -29,7 +29,8 @@ export default function SignInPage() {
   return (
     <div
       className="min-h-screen bg-[#f3f6f8] flex flex-col"
-      style={{ ['--brand' as any]: BRAND.teal } as React.CSSProperties}
+      // ✅ plain JS: define a CSS variable without TS casts
+      style={{ ['--brand']: BRAND.teal }}
     >
       {/* Top bar */}
       <header className="w-full" style={{ backgroundColor: BRAND.charcoal }}>
@@ -60,14 +61,15 @@ export default function SignInPage() {
       {/* Main */}
       <main className="container mx-auto px-6 py-10 grow">
         <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-          {/* Card */}
+          {/* Left card */}
           <div className="rounded-3xl bg-white border border-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-3 mb-5">
                 <img
                   src="/dog-5.png"
                   alt="Joyzze"
-                  className="w-9 h-9 rounded-2xl bg-white object-cover ring-1 ring-[color:var(--brand)]/30"
+                  className="w-9 h-9 rounded-2xl bg-white object-cover ring-1"
+                  style={{ boxShadow: '0 0 0 1px rgba(36,201,187,.30)' }}
                 />
                 <div>
                   <h1 className="text-xl md:text-2xl font-semibold">
@@ -79,7 +81,7 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              {/* Brand teal button */}
+              {/* Brand button */}
               <button
                 onClick={handleGoogle}
                 disabled={loading}
@@ -87,8 +89,7 @@ export default function SignInPage() {
                            ring-2 focus:outline-none focus-visible:ring-4 disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{
                   background: `linear-gradient(180deg, ${BRAND.teal} 0%, ${BRAND.tealDark} 100%)`,
-                  boxShadow:
-                    '0 8px 18px rgba(36, 201, 187, 0.25)',
+                  boxShadow: '0 8px 18px rgba(36, 201, 187, 0.25)',
                   borderColor: 'var(--brand)',
                 }}
               >
@@ -99,11 +100,11 @@ export default function SignInPage() {
                 First-time users are created automatically after Google confirms your account.
               </p>
 
-              {/* Badges (teal everywhere) */}
+              {/* Badges */}
               <div className="mt-6 grid grid-cols-3 gap-3">
-                <Badge title="Professional" subtitle="Approved" />
-                <Badge title="1-Year" subtitle="Defect Guarantee" />
-                <Badge title="Flat-Rate" subtitle="Shipping" />
+                <Badge title="PROFESSIONAL" subtitle="Approved" />
+                <Badge title="1-YEAR" subtitle="Defect Guarantee" />
+                <Badge title="FLAT-RATE" subtitle="Shipping" />
               </div>
 
               {/* Image tiles */}
@@ -117,7 +118,8 @@ export default function SignInPage() {
           </div>
 
           {/* Right hero */}
-          <div className="rounded-3xl overflow-hidden border border-[color:var(--brand)]/20 shadow-[0_12px_30px_rgba(0,0,0,0.08)] bg-white relative">
+          <div className="rounded-3xl overflow-hidden border shadow-[0_12px_30px_rgba(0,0,0,0.08)] bg-white relative"
+               style={{ borderColor: 'rgba(36,201,187,.20)' }}>
             <div
               className="absolute inset-0"
               style={{
@@ -151,13 +153,13 @@ export default function SignInPage() {
   );
 }
 
-/* --------- pieces that reuse --brand --------- */
+/* ---------- Components (no color-mix) ---------- */
 
 function Badge({ title, subtitle }) {
   return (
     <div
       className="rounded-xl bg-white p-3 text-center border"
-      style={{ borderColor: 'color-mix(in oklab, var(--brand) 25%, black 90%)' }}
+      style={{ borderColor: 'rgba(36,201,187,.25)' }}
     >
       <div
         className="text-[11px] uppercase tracking-wide font-semibold"
@@ -174,12 +176,15 @@ function Tile({ src, alt }) {
   return (
     <div
       className="rounded-2xl overflow-hidden bg-white h-28 border transition-shadow"
-      style={{ borderColor: 'color-mix(in oklab, var(--brand) 20%, white 85%)' }}
+      style={{ borderColor: 'rgba(36,201,187,.20)' }}
     >
       <img
         src={src}
         alt={alt}
-        className="w-full h-full object-cover hover:shadow-[0_0_0_3px_var(--brand)] transition-shadow"
+        className="w-full h-full object-cover transition-shadow"
+        style={{ boxShadow: '0 0 0 0 rgba(36,201,187,0)' }}
+        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 0 0 3px rgba(36,201,187,.9)')}
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 0 0 0 rgba(36,201,187,0)')}
       />
     </div>
   );
