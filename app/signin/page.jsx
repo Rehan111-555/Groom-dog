@@ -1,27 +1,23 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useState } from 'react';
+import { signIn } from 'next-auth/react';
+
+// Tell Next.js not to statically prerender this page
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default function SignInPage() {
-  const { status } = useSession(); // if you don't use SessionProvider, this will be "unauthenticated" but safe
   const [loading, setLoading] = useState(false);
-
-  // Prefer PNG fallback (browsers can't render .ai)
-  const [logoSrc, setLogoSrc] = useState('/dog-6.ai');
-  const onLogoError = () => setLogoSrc('/dog-5.png');
-
-  // Read NextAuth's callbackUrl param (NOT "from")
-  const [callbackUrl, setCallbackUrl] = useState('/');
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setCallbackUrl(params.get('callbackUrl') || '/');
-  }, []);
+  const [logoSrc, setLogoSrc] = useState('/dog-6.ai'); // your .ai asset
+  const onLogoError = () => setLogoSrc('/dog-5.png');  // fallback for browsers that can't render .ai
 
   async function handleGoogle() {
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl }); // First time = creates account
+      const params = new URLSearchParams(window.location.search);
+      const to = params.get('from') || '/';
+      await signIn('google', { callbackUrl: to }); // first time => signs up automatically
     } finally {
       setLoading(false);
     }
