@@ -6,10 +6,11 @@ import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
+/** Single source of truth for color */
 const BRAND = {
-  teal: '#24c9bb',
-  tealDark: '#16a899',
-  charcoal: '#3d3d3f',
+  teal: '#24c9bb',      // primary
+  tealDark: '#16a899',  // hover/active
+  charcoal: '#3d3d3f',  // header/footer
 };
 
 export default function SignInPage() {
@@ -29,7 +30,6 @@ export default function SignInPage() {
   return (
     <div
       className="min-h-screen bg-[#f3f6f8] flex flex-col"
-      // ✅ plain JS: define a CSS variable without TS casts
       style={{ ['--brand']: BRAND.teal }}
     >
       {/* Top bar */}
@@ -39,7 +39,8 @@ export default function SignInPage() {
             <img
               src="/dog-5.png"
               alt="Joyzze mark"
-              className="w-7 h-7 rounded-xl bg-white object-cover ring-1 ring-white/20"
+              className="w-7 h-7 rounded-xl bg-white object-cover"
+              style={{ boxShadow: '0 0 0 1px rgba(255,255,255,.2)' }}
             />
             <div className="text-sm md:text-base">
               <span className="font-semibold">Joyzze</span>
@@ -62,14 +63,17 @@ export default function SignInPage() {
       <main className="container mx-auto px-6 py-10 grow">
         <div className="grid lg:grid-cols-2 gap-8 items-stretch">
           {/* Left card */}
-          <div className="rounded-3xl bg-white border border-black/5 shadow-[0_12px_30px_rgba(0,0,0,0.08)]">
+          <div
+            className="rounded-3xl bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
+            style={{ border: '1px solid rgba(36,201,187,.18)' }}
+          >
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-3 mb-5">
                 <img
                   src="/dog-5.png"
                   alt="Joyzze"
-                  className="w-9 h-9 rounded-2xl bg-white object-cover ring-1"
-                  style={{ boxShadow: '0 0 0 1px rgba(36,201,187,.30)' }}
+                  className="w-9 h-9 rounded-2xl bg-white object-cover"
+                  style={{ boxShadow: '0 0 0 1px rgba(36,201,187,.35)' }}
                 />
                 <div>
                   <h1 className="text-xl md:text-2xl font-semibold">
@@ -81,17 +85,29 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              {/* Brand button */}
+              {/* Unified brand button (no Tailwind ring defaults) */}
               <button
                 onClick={handleGoogle}
                 disabled={loading}
-                className="w-full rounded-xl px-4 py-3 text-white font-medium shadow transition
-                           ring-2 focus:outline-none focus-visible:ring-4 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full rounded-xl px-4 py-3 text-white font-medium transition disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{
-                  background: `linear-gradient(180deg, ${BRAND.teal} 0%, ${BRAND.tealDark} 100%)`,
-                  boxShadow: '0 8px 18px rgba(36, 201, 187, 0.25)',
-                  borderColor: 'var(--brand)',
+                  backgroundColor: BRAND.teal,
+                  boxShadow: '0 10px 22px rgba(36,201,187,.28)',
                 }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundColor = BRAND.tealDark)
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundColor = BRAND.teal)
+                }
+                onFocus={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    '0 0 0 3px rgba(36,201,187,.9), 0 10px 22px rgba(36,201,187,.28)')
+                }
+                onBlur={(e) =>
+                  (e.currentTarget.style.boxShadow =
+                    '0 10px 22px rgba(36,201,187,.28)')
+                }
               >
                 {loading ? 'Connecting…' : 'Continue with Google'}
               </button>
@@ -100,7 +116,7 @@ export default function SignInPage() {
                 First-time users are created automatically after Google confirms your account.
               </p>
 
-              {/* Badges */}
+              {/* Badges (title + border use the same teal) */}
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <Badge title="PROFESSIONAL" subtitle="Approved" />
                 <Badge title="1-YEAR" subtitle="Defect Guarantee" />
@@ -118,20 +134,18 @@ export default function SignInPage() {
           </div>
 
           {/* Right hero */}
-          <div className="rounded-3xl overflow-hidden border shadow-[0_12px_30px_rgba(0,0,0,0.08)] bg-white relative"
-               style={{ borderColor: 'rgba(36,201,187,.20)' }}>
+          <div
+            className="rounded-3xl overflow-hidden bg-white relative shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
+            style={{ border: '1px solid rgba(36,201,187,.18)' }}
+          >
             <div
-              className="absolute inset-0"
+              className="absolute inset-0 pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(180deg, rgba(36,201,187,0.10) 0%, rgba(36,201,187,0.00) 65%)',
+                  'linear-gradient(180deg, rgba(36,201,187,.08) 0%, rgba(36,201,187,0) 65%)',
               }}
             />
-            <img
-              src="/dog-4.jpg"
-              alt="Grooming hero"
-              className="w-full h-full object-cover"
-            />
+            <img src="/dog-4.jpg" alt="Grooming hero" className="w-full h-full object-cover" />
           </div>
         </div>
       </main>
@@ -144,26 +158,26 @@ export default function SignInPage() {
             <span className="opacity-60">·</span>
             <span>Joy of Grooming Made Easy™</span>
           </div>
-          <div className="opacity-80">
-            © {new Date().getFullYear()} Joyzze. All rights reserved.
-          </div>
+          <div className="opacity-80">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
         </div>
       </footer>
     </div>
   );
 }
 
-/* ---------- Components (no color-mix) ---------- */
+/* ---------- Components with unified teal ---------- */
 
 function Badge({ title, subtitle }) {
   return (
     <div
-      className="rounded-xl bg-white p-3 text-center border"
-      style={{ borderColor: 'rgba(36,201,187,.25)' }}
+      className="rounded-xl bg-white p-3 text-center"
+      style={{
+        border: '1px solid rgba(36,201,187,.35)', // same teal, soft border
+      }}
     >
       <div
         className="text-[11px] uppercase tracking-wide font-semibold"
-        style={{ color: 'var(--brand)' }}
+        style={{ color: BRAND.teal }}
       >
         {title}
       </div>
@@ -175,16 +189,17 @@ function Badge({ title, subtitle }) {
 function Tile({ src, alt }) {
   return (
     <div
-      className="rounded-2xl overflow-hidden bg-white h-28 border transition-shadow"
-      style={{ borderColor: 'rgba(36,201,187,.20)' }}
+      className="rounded-2xl overflow-hidden bg-white h-28 transition-shadow"
+      style={{ border: '1px solid rgba(36,201,187,.18)' }}
     >
       <img
         src={src}
         alt={alt}
-        className="w-full h-full object-cover transition-shadow"
-        style={{ boxShadow: '0 0 0 0 rgba(36,201,187,0)' }}
-        onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 0 0 3px rgba(36,201,187,.9)')}
-        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 0 0 0 rgba(36,201,187,0)')}
+        className="w-full h-full object-cover"
+        onMouseEnter={(e) =>
+          (e.currentTarget.style.boxShadow = '0 0 0 3px rgba(36,201,187,.9)')
+        }
+        onMouseLeave={(e) => (e.currentTarget.style.boxShadow = 'none')}
       />
     </div>
   );
