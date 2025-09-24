@@ -1,19 +1,27 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+import { signIn, useSession } from 'next-auth/react';
 
 export default function SignInPage() {
+  const { status } = useSession(); // if you don't use SessionProvider, this will be "unauthenticated" but safe
   const [loading, setLoading] = useState(false);
-  const [logoSrc, setLogoSrc] = useState('/dog-6.ai'); // your requested file
-  const onLogoError = () => setLogoSrc('/dog-5.png');  // PNG fallback (browsers can't render .ai)
+
+  // Prefer PNG fallback (browsers can't render .ai)
+  const [logoSrc, setLogoSrc] = useState('/dog-6.ai');
+  const onLogoError = () => setLogoSrc('/dog-5.png');
+
+  // Read NextAuth's callbackUrl param (NOT "from")
+  const [callbackUrl, setCallbackUrl] = useState('/');
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCallbackUrl(params.get('callbackUrl') || '/');
+  }, []);
 
   async function handleGoogle() {
     setLoading(true);
     try {
-      const params = new URLSearchParams(window.location.search);
-      const to = params.get('from') || '/';
-      await signIn('google', { callbackUrl: to }); // first time -> signs up automatically
+      await signIn('google', { callbackUrl }); // First time = creates account
     } finally {
       setLoading(false);
     }
