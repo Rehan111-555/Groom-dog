@@ -1,10 +1,11 @@
 // app/api/auth/[...nextauth]/route.js
-export const runtime = "nodejs"; // force Node runtime (not Edge)
-
-import NextAuth from "next-auth/next";                 // <-- v4 API
+import NextAuth from "next-auth/next";           // v4 API (Node runtime)
 import GoogleProvider from "next-auth/providers/google";
 
-export const authOptions = {
+export const runtime = "nodejs";                 // make sure NOT Edge
+export const dynamic = "force-dynamic";          // never statically analyzed
+
+const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -16,4 +17,6 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-export { handler as GET, handler as POST };            // App Router shape
+
+// App Router needs these exports for v4
+export { handler as GET, handler as POST };
