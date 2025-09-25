@@ -1,11 +1,10 @@
-// middleware.ts
+// middleware.js (pure JS)
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
-export function middleware(req: NextRequest) {
+export function middleware(req) {
   const { pathname } = req.nextUrl;
 
-  // 1) Always allow Next internals, auth endpoints and the signin page
+  // Always allow Next internals, auth endpoints, and the signin page
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||
@@ -18,13 +17,12 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // 2) Allow ANY request for a file in /public (has an extension)
-  //    e.g. /dog-1.jpg, /logo.svg, /assets/whatever.css
+  // Allow any public asset (has an extension: .jpg, .png, .css, .js, etc.)
   if (/\.[a-zA-Z0-9]+$/.test(pathname)) {
     return NextResponse.next();
   }
 
-  // 3) Gate the rest of the app
+  // Gate the rest of the app by session cookie
   const token =
     req.cookies.get('__Secure-next-auth.session-token')?.value ??
     req.cookies.get('next-auth.session-token')?.value;
@@ -39,7 +37,7 @@ export function middleware(req: NextRequest) {
   return NextResponse.next();
 }
 
-// Run for everything (we do the filtering above)
+// Run for everything; filtering is handled in the function above
 export const config = {
   matcher: ['/:path*'],
 };
