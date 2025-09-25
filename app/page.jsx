@@ -279,7 +279,7 @@ function UploadAndResult(){
 /* ---------------- HERO ---------------- */
 function Hero(){
   return (
-    <header className="relative overflow-hidden bg-[#0d1324] text-white">
+    <header className="relative overflow-hidden bg-[#323030] text-white">
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">
