@@ -293,7 +293,7 @@ function Hero(){
             Compare before &amp; after with a slider.
           </p>
           <div className="mt-6 flex items-center gap-3">
-            <a href="#app" className="btn btn-primary !bg-rose-500 hover:!bg-rose-600">Try it free</a>
+            <a href="#app" className="btn btn-primary !bg-[#323030]">Try it free</a>
             <a
               href="#how"
               className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b] focus:bg-[#121a2b] active:bg-[#121a2b] focus:outline-none"
