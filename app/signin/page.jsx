@@ -11,7 +11,7 @@ const BRAND = {
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'login' | 'signup'>('login');  // 'login' or 'signup'
+  const [mode, setMode] = useState('login'); // generic types removed
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,26 +28,24 @@ export default function AuthPage() {
     }
   }
 
-  async function handleCredentials(e: React.FormEvent<HTMLFormElement>) {
+  // Note: no type annotation on `e`; remove `: React.FormEvent<HTMLFormElement>`
+  async function handleCredentials(e) {
     e.preventDefault();
     setLoading(true);
     try {
-      // When in signup mode, hit your /api/register route first to create the user.
-      // Adjust the URL/logic here if your registration endpoint is different.
       if (mode === 'signup') {
+        // Register the user first. Adjust this endpoint as needed.
         await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password }),
         });
       }
-
       const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
-
       if (result?.error) {
         alert('Authentication failed. Please check your credentials.');
       } else {
@@ -61,13 +59,24 @@ export default function AuthPage() {
   return (
     <main className="min-h-screen flex flex-col bg-[radial-gradient(1200px_700px_at_10%_-10%,#ffffff_0%,#f6f7fb_45%,#eef2f9_100%)]">
       {/* Header */}
-      <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
+      <header
+        className="w-full text-xs text-white"
+        style={{ backgroundColor: BRAND.charcoal }}
+      >
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/dog-5.png" width={24} height={24} alt="Joyzze" className="rounded" />
+            <img
+              src="/dog-5.png"
+              width={24}
+              height={24}
+              alt="Joyzze"
+              className="rounded"
+            />
             <span>Joyzze — Dog Groomer</span>
           </div>
-          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">joyzze.com</a>
+          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">
+            joyzze.com
+          </a>
         </div>
       </header>
 
@@ -76,20 +85,32 @@ export default function AuthPage() {
         <div className="max-w-md w-full">
           <section className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
             <div className="flex items-center gap-3 mb-4">
-              <img src="/dog-5.png" alt="Joyzze logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5" />
+              <img
+                src="/dog-5.png"
+                alt="Joyzze logo"
+                className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5"
+              />
               <div>
-                <h1 className="text-xl font-semibold text-slate-800">Joyzze — Dog Groomer</h1>
+                <h1 className="text-xl font-semibold text-slate-800">
+                  Joyzze — Dog Groomer
+                </h1>
                 <p className="text-xs text-slate-500">
-                  {mode === 'login' ? 'Sign in to continue' : 'Sign up to get started'}
+                  {mode === 'login'
+                    ? 'Sign in to continue'
+                    : 'Sign up to get started'}
                 </p>
               </div>
             </div>
 
-            {/* Form */}
             <form onSubmit={handleCredentials} className="mb-4">
               {mode === 'signup' && (
                 <div className="mb-4">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Name
+                  </label>
                   <input
                     id="name"
                     type="text"
@@ -101,7 +122,12 @@ export default function AuthPage() {
                 </div>
               )}
               <div className="mb-4">
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -112,7 +138,12 @@ export default function AuthPage() {
                 />
               </div>
               <div className="mb-6">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Password
+                </label>
                 <input
                   id="password"
                   type="password"
@@ -186,7 +217,10 @@ export default function AuthPage() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full text-xs text-white mt-auto" style={{ backgroundColor: BRAND.charcoal }}>
+      <footer
+        className="w-full text-xs text-white mt-auto"
+        style={{ backgroundColor: BRAND.charcoal }}
+      >
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <span>Joyzze · Joy of Grooming Made Easy™</span>
           <span>© {new Date().getFullYear()} Joyzze. All rights reserved.</span>
