@@ -74,7 +74,7 @@ export default function AuthPage() {
         {/* Main nav */}
         <div className="bg-[#323030] text-white">
           <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-3">
-            <img src="/joyzze-logo.png" alt="Joyzze" className="h-8" />
+            <img src="/dog-5.png" alt="Joyzze" className="h-8" />
             <nav className="flex gap-6 text-sm">
               <a href="#">All Products</a>
               <a href="#">Clippers</a>
@@ -257,7 +257,7 @@ export default function AuthPage() {
           </div>
 
           <div>
-            <img src="/joyzze-logo.png" alt="Joyzze" className="h-10 mb-4" />
+            <img src="/dog-5.png" alt="Joyzze" className="h-10 mb-4" />
             <p>Joy of Grooming Made Easy™</p>
             <p className="mt-2">(877) 456-9993</p>
             <p><a href="mailto:info@joyzze.com">info@joyzze.com</a></p>
