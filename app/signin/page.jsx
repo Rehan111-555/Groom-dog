@@ -60,7 +60,7 @@ export default function AuthPage() {
     <main className="relative min-h-screen flex flex-col">
       {/* Background image at 80% opacity behind everything else */}
       <img
-        src="/dog-7.png"
+        src="/dog-11.png"
         alt="Joyzze grooming background"
         className="absolute inset-0 w-full h-full object-cover opacity-80 -z-10"
       />
