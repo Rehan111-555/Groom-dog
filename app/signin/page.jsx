@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 // Brand color for header/footer + button
 const BRAND = {
@@ -14,6 +15,9 @@ const FALLBACK = '/dog-5.png';
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const router = useRouter();
 
   async function handleGoogle() {
     setLoading(true);
@@ -23,6 +27,24 @@ export default function SignInPage() {
       await signIn('google', { callbackUrl: to });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleCredentials(e) {
+    e.preventDefault();
+    setLoading(true);
+    const result = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+
+    setLoading(false);
+
+    if (result?.error) {
+      alert('Sign-in failed. Please check your credentials.');
+    } else {
+      router.push(result.url || '/');
     }
   }
 
@@ -57,9 +79,49 @@ export default function SignInPage() {
                 </div>
               </div>
 
+              {/* Email and Password Form */}
+              <form onSubmit={handleCredentials} className="mb-4">
+                <div className="mb-4">
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full h-11 rounded-xl px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full h-11 rounded-xl px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600"
+                    required
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition disabled:opacity-70"
+                  style={{ backgroundColor: BRAND.charcoal }}
+                  disabled={loading}
+                >
+                  {loading ? 'Connecting…' : 'Continue with Email'}
+                </button>
+              </form>
+
+              {/* Separator */}
+              <div className="my-4 flex items-center before:flex-1 before:border-t before:border-gray-300 before:content-[''] after:flex-1 after:border-t after:border-gray-300 after:content-['']">
+                <p className="mx-4 text-center text-sm text-gray-500">OR</p>
+              </div>
+
+              {/* Google Sign-in Button */}
               <button
                 className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition disabled:opacity-70"
-                style={{ backgroundColor: BRAND.charcoal }}
+                style={{ backgroundColor: '#DB4437' }}
                 onClick={handleGoogle}
                 disabled={loading}
               >
