@@ -1,55 +1,45 @@
-// middleware.js
-import { NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+// middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-/**
- * Safe auth gate:
- * - Lets /signin, /api/auth, Next assets, and public assets pass through
- * - For everything else, if there is NO session token, redirect to /signin
- * - Never throws (catches errors and allows request to continue)
- */
-export async function middleware(req) {
-  const { pathname, search } = req.nextUrl;
+export function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
 
-  // allowlist public routes & static assets
-  const isPublic =
-    pathname === "/signin" ||
-    pathname.startsWith("/api/auth") ||
-    pathname.startsWith("/_next/") ||
-    pathname.startsWith("/assets") ||
-    pathname === "/favicon.ico" ||
-    pathname === "/robots.txt" ||
-    pathname === "/sitemap.xml";
-
-  if (isPublic) {
+  // 1) Always allow Next internals, auth endpoints and the signin page
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/api/auth') ||
+    pathname === '/signin' ||
+    pathname.startsWith('/favicon') ||
+    pathname === '/robots.txt' ||
+    pathname === '/sitemap.xml'
+  ) {
     return NextResponse.next();
   }
 
-  try {
-    // Check NextAuth JWT (uses Edge-safe getToken)
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-    });
-
-    if (!token) {
-      const url = new URL("/signin", req.url);
-      // Preserve where the user came from
-      url.searchParams.set("from", pathname + search);
-      return NextResponse.redirect(url);
-    }
-  } catch (_err) {
-    // Never crash the request pipeline
+  // 2) Allow ANY request for a file in /public (has an extension)
+  //    e.g. /dog-1.jpg, /logo.svg, /assets/whatever.css
+  if (/\.[a-zA-Z0-9]+$/.test(pathname)) {
     return NextResponse.next();
+  }
+
+  // 3) Gate the rest of the app
+  const token =
+    req.cookies.get('__Secure-next-auth.session-token')?.value ??
+    req.cookies.get('next-auth.session-token')?.value;
+
+  if (!token) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/signin';
+    url.search = `from=${encodeURIComponent(pathname)}`;
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
 
-// Apply to all routes EXCEPT the ones above.
-// This matcher syntax is supported in Next.js middleware.
+// Run for everything (we do the filtering above)
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|assets|api/auth|signin).*)",
-  ],
+  matcher: ['/:path*'],
 };
