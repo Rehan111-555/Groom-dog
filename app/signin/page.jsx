@@ -3,21 +3,16 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { FaGoogle, FaSpinner, FaEye, FaEyeSlash } from 'react-icons/fa';
 
-// Define a consistent color palette for the design
-const BRAND_COLORS = {
-  primary: '#2f2f31',
-  googleRed: '#DB4437',
-  inputBg: '#f8f9fa',
-  placeholder: '#a0a0a0',
+// Brand color for header/footer + button
+const BRAND = {
+  charcoal: '#2f2f31',
 };
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   async function handleGoogle() {
@@ -50,109 +45,109 @@ export default function SignInPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-gray-100 font-sans">
-
-      {/* Header */}
-      <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND_COLORS.primary }}>
+    <main className="min-h-screen flex flex-col bg-[radial-gradient(1200px_700px_at_10%_-10%,#ffffff_0%,#f6f7fb_45%,#eef2f9_100%)]">
+      {/* Top bar */}
+      <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/dog-5.png" width={24} height={24} alt="Joyzze" className="rounded-full" />
+            {/* Keeping logo for brand consistency */}
+            <img src="/dog-5.png" width={24} height={24} alt="Joyzze" className="rounded" />
             <span>Joyzze — Dog Groomer</span>
           </div>
-          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100 transition-opacity">joyzze.com</a>
+          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">joyzze.com</a>
         </div>
       </header>
 
-      {/* Main Content - Centered */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm">
-
-          {/* Sign-in Card */}
-          <section className="bg-white rounded-2xl shadow-xl p-8 transform transition-transform duration-300 hover:scale-[1.01]">
-            <div className="text-center mb-6">
-              <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Welcome Back</h1>
-              <p className="text-sm text-gray-500 mt-2">Sign in to continue to your account</p>
+      {/* Main content area - Centered */}
+      <div className="flex-1 flex items-center justify-center p-4"> {/* Added flex, items-center, justify-center, p-4 */}
+        <div className="max-w-md w-full"> {/* Adjusted max-w to make it narrower */}
+          {/* Left: Sign-in card (now centered) */}
+          <section className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <div className="flex items-center gap-3 mb-4">
+              <img
+                src="/dog-5.png"
+                alt="Joyzze logo"
+                className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-slate-800">Joyzze — Dog Groomer</h1>
+                <p className="text-xs text-slate-500">Sign in / Sign up to continue</p>
+              </div>
             </div>
 
             {/* Email and Password Form */}
-            <form onSubmit={handleCredentials} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email address</label>
+            <form onSubmit={handleCredentials} className="mb-4">
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
                   id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-11 rounded-md px-4 text-sm bg-gray-100 border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 mt-1"
-                  placeholder="name@example.com"
+                  className="w-full h-11 rounded-xl px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600"
                   required
                 />
               </div>
-
-              <div className="relative">
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <div className="mb-6">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">Password</label>
                 <input
                   id="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-11 rounded-md px-4 text-sm bg-gray-100 border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-300 mt-1"
-                  placeholder="••••••••"
+                  className="w-full h-11 rounded-xl px-4 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-blue-600"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 top-6 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
               </div>
-
               <button
                 type="submit"
-                className="w-full h-11 rounded-md text-white font-semibold shadow-md hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6"
-                style={{ backgroundColor: BRAND_COLORS.primary }}
+                className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition disabled:opacity-70"
+                style={{ backgroundColor: BRAND.charcoal }}
                 disabled={loading}
               >
-                {loading ? <FaSpinner className="animate-spin" /> : 'Sign in with Email'}
+                {loading ? 'Connecting…' : 'Continue with Email'}
               </button>
             </form>
 
             {/* Separator */}
-            <div className="my-6 flex items-center before:flex-1 before:border-t before:border-gray-300 before:content-[''] after:flex-1 after:border-t after:border-gray-300 after:content-['']">
+            <div className="my-4 flex items-center before:flex-1 before:border-t before:border-gray-300 before:content-[''] after:flex-1 after:border-t after:border-gray-300 after:content-['']">
               <p className="mx-4 text-center text-sm text-gray-500">OR</p>
             </div>
 
             {/* Google Sign-in Button */}
             <button
-              className="w-full h-11 rounded-md text-gray-700 bg-white border border-gray-300 font-semibold shadow-sm hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition disabled:opacity-70"
+              style={{ backgroundColor: '#DB4437' }} // Google red
               onClick={handleGoogle}
               disabled={loading}
             >
-              <FaGoogle className="text-xl" style={{ color: BRAND_COLORS.googleRed }} />
-              <span className="text-sm">Sign in with Google</span>
+              {loading ? 'Connecting…' : 'Continue with Google'}
             </button>
+
+            {/* Removed the 'First-time users...' text as it's less relevant without pictures */}
+            {/* If you wish to keep it, uncomment the <p> tag below */}
+            {/* <p className="mt-4 text-xs text-slate-500">
+              First-time users are created automatically after Google confirms your account.
+            </p> */}
+
+            {/* Removed the 2x2 sample images div */}
+
           </section>
 
-          {/* Optional Footer/Legal Text */}
-          <div className="mt-6 text-center text-xs text-gray-500">
-            <p>
-              By signing in, you agree to our{' '}
-              <a href="#" className="text-blue-500 hover:underline">Terms of Service</a>
-            </p>
-          </div>
+          {/* Removed the entire Right: hero image section */}
+
         </div>
       </div>
 
-      {/* Global Footer */}
+      {/* Footer pinned to bottom */}
       <footer
-        className="w-full text-xs text-white p-4 text-center"
-        style={{ backgroundColor: BRAND_COLORS.primary }}
+        className="w-full text-xs text-white mt-auto"
+        style={{ backgroundColor: BRAND.charcoal }}
       >
-        <span>Joyzze · Joy of Grooming Made Easy™</span>
-        <span className="block mt-1">© {new Date().getFullYear()} Joyzze. All rights reserved.</span>
+        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+          <span>Joyzze · Joy of Grooming Made Easy™</span>
+          <span>© {new Date().getFullYear()} Joyzze. All rights reserved.</span>
+        </div>
       </footer>
     </main>
   );
