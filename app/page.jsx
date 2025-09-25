@@ -303,7 +303,7 @@ function Hero(){
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-          <img src="/dog-4.jpg" alt="Hero sample" className="w-full h-auto object-cover" />
+          <img src="/dog-10.png" alt="Hero sample" className="w-full h-auto object-cover" />
         </div>
       </div>
     </header>
@@ -360,7 +360,7 @@ function Samples(){
       </p>
       <div className="grid md:grid-cols-3 gap-6">
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200">
-          <img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" />
+          <img src="/dog-11.png" alt="Sample 1" className="w-full h-auto object-cover" />
         </div>
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200">
           <img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" />
