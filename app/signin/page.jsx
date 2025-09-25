@@ -60,7 +60,7 @@ export default function AuthPage() {
     <main className="relative min-h-screen flex flex-col">
       {/* Background image at 80% opacity behind everything else */}
       <img
-        src="/dog-11.png"
+        src="/43.png"
         alt="Joyzze grooming background"
         className="absolute inset-0 w-full h-full object-cover opacity-80 -z-10"
       />
@@ -69,7 +69,7 @@ export default function AuthPage() {
       <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/43.png" width={24} height={24} alt="Joyzze logo" className="rounded" />
+            <img src="/dog-5.png" width={24} height={24} alt="Joyzze logo" className="rounded" />
             <span>Joyzze — Dog Groomer</span>
           </div>
           <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">
