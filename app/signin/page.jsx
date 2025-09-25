@@ -9,7 +9,7 @@ const BRAND = {
 };
 
 // Sample pictures (make sure these are in /public)
-const SAMPLES = ['/dog-1.jpg', '/dog-2.jpg', '/dog-3.jpg', '/dog-4.jpg'];
+const SAMPLES = ['/dog-6.png', '/dog-8.png', '/dog-9.png', '/dog-10.png'];
 const FALLBACK = '/dog-5.png';
 
 export default function SignInPage() {
