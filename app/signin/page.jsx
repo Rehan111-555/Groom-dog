@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-// Define brand colours for reuse
+// Define brand colours
 const BRAND = {
-  charcoal: '#2f2f31', // header/footer and primary button colour
+  charcoal: '#2f2f31',
 };
 
 export default function AuthPage() {
@@ -17,7 +17,6 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  // Handles Google sign‑in/sign‑up via NextAuth
   async function handleGoogle() {
     setLoading(true);
     try {
@@ -29,14 +28,11 @@ export default function AuthPage() {
     }
   }
 
-  // Handles email/password sign‑in or sign‑up
   async function handleCredentials(e) {
     e.preventDefault();
     setLoading(true);
     try {
       if (mode === 'signup') {
-        // Submit a registration request before signing in. Replace this
-        // endpoint/body shape with your own user‑creation logic as needed.
         await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -61,22 +57,13 @@ export default function AuthPage() {
   }
 
   return (
-    <main
-      className="relative min-h-screen flex flex-col
-                 bg-[radial-gradient(1200px_700px_at_10%_-10%,#ffffff_0%,#f6f7fb_45%,#eef2f9_100%)]"
-    >
-      {/* Background image layer at 80 % opacity */}
-      <div className="absolute inset-0 -z-10">
-        {/* 
-          Using a separate <img> ensures that opacity only affects the image,
-          not the rest of the page. 
-        */}
-        <img
-          src="/dog-10.png"
-          alt="Background"
-          className="w-full h-full object-cover opacity-80"
-        />
-      </div>
+    <main className="relative min-h-screen flex flex-col">
+      {/* Background image at 80% opacity behind everything else */}
+      <img
+        src="/dog-10.png"
+        alt="Joyzze grooming background"
+        className="absolute inset-0 w-full h-full object-cover opacity-80 -z-10"
+      />
 
       {/* Header */}
       <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
@@ -85,7 +72,9 @@ export default function AuthPage() {
             <img src="/dog-5.png" width={24} height={24} alt="Joyzze logo" className="rounded" />
             <span>Joyzze — Dog Groomer</span>
           </div>
-          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">joyzze.com</a>
+          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">
+            joyzze.com
+          </a>
         </div>
       </header>
 
@@ -109,7 +98,6 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* Email/Password/Name form */}
             <form onSubmit={handleCredentials} className="mb-4">
               {mode === 'signup' && (
                 <div className="mb-4">
@@ -185,7 +173,7 @@ export default function AuthPage() {
                 : 'Sign Up with Google'}
             </button>
 
-            {/* Mode toggle link */}
+            {/* Toggle link */}
             <p className="mt-4 text-xs text-slate-500 text-center">
               {mode === 'login' ? (
                 <>
@@ -216,10 +204,7 @@ export default function AuthPage() {
       </div>
 
       {/* Footer */}
-      <footer
-        className="w-full text-xs text-white mt-auto"
-        style={{ backgroundColor: BRAND.charcoal }}
-      >
+      <footer className="w-full text-xs text-white mt-auto" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <span>Joyzze · Joy of Grooming Made Easy™</span>
           <span>© {new Date().getFullYear()} Joyzze. All rights reserved.</span>
