@@ -4,19 +4,20 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-// Brand color for header/footer + button
+// Define brand colours for reuse
 const BRAND = {
-  charcoal: '#2f2f31',
+  charcoal: '#2f2f31', // header/footer and primary button colour
 };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login'); // generic types removed
+  const [mode, setMode] = useState('login'); // 'login' or 'signup'
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
+  // Handles Google sign‑in/sign‑up via NextAuth
   async function handleGoogle() {
     setLoading(true);
     try {
@@ -28,24 +29,27 @@ export default function AuthPage() {
     }
   }
 
-  // Note: no type annotation on `e`; remove `: React.FormEvent<HTMLFormElement>`
+  // Handles email/password sign‑in or sign‑up
   async function handleCredentials(e) {
     e.preventDefault();
     setLoading(true);
     try {
       if (mode === 'signup') {
-        // Register the user first. Adjust this endpoint as needed.
+        // Submit a registration request before signing in. Replace this
+        // endpoint/body shape with your own user‑creation logic as needed.
         await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password }),
         });
       }
+
       const result = await signIn('credentials', {
         redirect: false,
         email,
         password,
       });
+
       if (result?.error) {
         alert('Authentication failed. Please check your credentials.');
       } else {
@@ -57,26 +61,31 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-[radial-gradient(1200px_700px_at_10%_-10%,#ffffff_0%,#f6f7fb_45%,#eef2f9_100%)]">
+    <main
+      className="relative min-h-screen flex flex-col
+                 bg-[radial-gradient(1200px_700px_at_10%_-10%,#ffffff_0%,#f6f7fb_45%,#eef2f9_100%)]"
+    >
+      {/* Background image layer at 80 % opacity */}
+      <div className="absolute inset-0 -z-10">
+        {/* 
+          Using a separate <img> ensures that opacity only affects the image,
+          not the rest of the page. 
+        */}
+        <img
+          src="/dog-10.png"
+          alt="Background"
+          className="w-full h-full object-cover opacity-80"
+        />
+      </div>
+
       {/* Header */}
-      <header
-        className="w-full text-xs text-white"
-        style={{ backgroundColor: BRAND.charcoal }}
-      >
+      <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img
-              src="/dog-5.png"
-              width={24}
-              height={24}
-              alt="Joyzze"
-              className="rounded"
-            />
+            <img src="/dog-5.png" width={24} height={24} alt="Joyzze logo" className="rounded" />
             <span>Joyzze — Dog Groomer</span>
           </div>
-          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">
-            joyzze.com
-          </a>
+          <a href="https://joyzze.com" className="opacity-80 hover:opacity-100">joyzze.com</a>
         </div>
       </header>
 
@@ -95,20 +104,16 @@ export default function AuthPage() {
                   Joyzze — Dog Groomer
                 </h1>
                 <p className="text-xs text-slate-500">
-                  {mode === 'login'
-                    ? 'Sign in to continue'
-                    : 'Sign up to get started'}
+                  {mode === 'login' ? 'Sign in to continue' : 'Sign up to get started'}
                 </p>
               </div>
             </div>
 
+            {/* Email/Password/Name form */}
             <form onSubmit={handleCredentials} className="mb-4">
               {mode === 'signup' && (
                 <div className="mb-4">
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-700 mb-1"
-                  >
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     Name
                   </label>
                   <input
@@ -122,10 +127,7 @@ export default function AuthPage() {
                 </div>
               )}
               <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email
                 </label>
                 <input
@@ -138,10 +140,7 @@ export default function AuthPage() {
                 />
               </div>
               <div className="mb-6">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
                 </label>
                 <input
@@ -186,7 +185,7 @@ export default function AuthPage() {
                 : 'Sign Up with Google'}
             </button>
 
-            {/* Toggle link */}
+            {/* Mode toggle link */}
             <p className="mt-4 text-xs text-slate-500 text-center">
               {mode === 'login' ? (
                 <>
