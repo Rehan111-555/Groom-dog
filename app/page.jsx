@@ -320,7 +320,7 @@ function HowItWorks() {
       </p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">1</div>
+          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4">
@@ -328,7 +328,7 @@ function HowItWorks() {
           </div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">2</div>
+          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600">
             We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.
@@ -338,7 +338,7 @@ function HowItWorks() {
           </div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-indigo-600 text-white grid place-items-center text-xs mb-3">3</div>
+          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600">Use the slider to compare before/after. Download the result in one click.</p>
           <div className="mt-auto pt-4">
@@ -376,7 +376,7 @@ function Samples(){
 /* ---------------- Footer ---------------- */
 function Footer(){
   return (
-    <footer className="bg-[#0d1324] text-slate-200">
+    <footer className="bg-[#323030] text-slate-200">
       <div className="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
         <div className="flex items-start gap-3">
           <img src="/dog-5.png" alt="logo" className="w-8 h-8 rounded-2xl object-cover bg-white ring-1 ring-white/10" />
