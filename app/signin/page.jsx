@@ -141,7 +141,7 @@ export default function SignInPage() {
                   'linear-gradient(180deg, rgba(61,61,63,.06) 0%, rgba(61,61,63,0) 65%)',
               }}
             />
-            <img src="/dog-4.jpg" alt="Grooming hero" className="w-full h-full object-cover" />
+            <img src="/dog-7.png" alt="Grooming hero" className="w-full h-full object-cover" />
           </div>
         </div>
       </main>
