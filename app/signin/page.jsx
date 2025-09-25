@@ -8,9 +8,8 @@ export const dynamic = 'force-dynamic';
 
 /** Brand palette */
 const BRAND = {
-  teal: '#24c9bb',       // primary button
-  tealDark: '#16a899',   // hover
-  charcoal: '#3d3d3f',   // header/footer + all outlines you asked to match
+  charcoal: '#3d3d3f',
+  charcoalHover: '#2f2f31',
 };
 
 export default function SignInPage() {
@@ -37,7 +36,6 @@ export default function SignInPage() {
               src="/dog-5.png"
               alt="Joyzze mark"
               className="w-7 h-7 rounded-xl bg-white object-cover"
-              /* ring color switched to charcoal */
               style={{ boxShadow: '0 0 0 1px rgba(61,61,63,.4)' }}
             />
             <div className="text-sm md:text-base">
@@ -63,7 +61,6 @@ export default function SignInPage() {
           {/* Left card */}
           <div
             className="rounded-3xl bg-white shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
-            /* card border switched to charcoal */
             style={{ border: '1px solid rgba(61,61,63,.18)' }}
           >
             <div className="p-6 md:p-8">
@@ -72,7 +69,6 @@ export default function SignInPage() {
                   src="/dog-5.png"
                   alt="Joyzze"
                   className="w-9 h-9 rounded-2xl bg-white object-cover"
-                  /* little logo ring switched to charcoal */
                   style={{ boxShadow: '0 0 0 1px rgba(61,61,63,.35)' }}
                 />
                 <div>
@@ -85,28 +81,28 @@ export default function SignInPage() {
                 </div>
               </div>
 
-              {/* Primary button stays teal */}
+              {/* Primary button now uses CHARCOAL */}
               <button
                 onClick={handleGoogle}
                 disabled={loading}
                 className="w-full rounded-xl px-4 py-3 text-white font-medium transition disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{
-                  backgroundColor: BRAND.teal,
-                  boxShadow: '0 10px 22px rgba(36,201,187,.28)',
+                  backgroundColor: BRAND.charcoal,
+                  boxShadow: '0 10px 22px rgba(61,61,63,.25)',
                 }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundColor = BRAND.tealDark)
+                  (e.currentTarget.style.backgroundColor = BRAND.charcoalHover)
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundColor = BRAND.teal)
+                  (e.currentTarget.style.backgroundColor = BRAND.charcoal)
                 }
                 onFocus={(e) =>
                   (e.currentTarget.style.boxShadow =
-                    '0 0 0 3px rgba(36,201,187,.9), 0 10px 22px rgba(36,201,187,.28)')
+                    '0 0 0 3px rgba(61,61,63,.5), 0 10px 22px rgba(61,61,63,.25)')
                 }
                 onBlur={(e) =>
                   (e.currentTarget.style.boxShadow =
-                    '0 10px 22px rgba(36,201,187,.28)')
+                    '0 10px 22px rgba(61,61,63,.25)')
                 }
               >
                 {loading ? 'Connecting…' : 'Continue with Google'}
@@ -116,14 +112,14 @@ export default function SignInPage() {
                 First-time users are created automatically after Google confirms your account.
               </p>
 
-              {/* Badges now use CHARCOAL for title + border */}
+              {/* Badges */}
               <div className="mt-6 grid grid-cols-3 gap-3">
                 <Badge title="PROFESSIONAL" subtitle="Approved" />
                 <Badge title="1-YEAR" subtitle="Defect Guarantee" />
                 <Badge title="FLAT-RATE" subtitle="Shipping" />
               </div>
 
-              {/* Image tiles (borders switched to charcoal) */}
+              {/* Image tiles */}
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <Tile src="/dog-1.jpg" alt="Sample dog" />
                 <Tile src="/dog-2.jpg" alt="Sample dog" />
@@ -133,7 +129,7 @@ export default function SignInPage() {
             </div>
           </div>
 
-          {/* Right hero (border switched to charcoal) */}
+          {/* Right hero */}
           <div
             className="rounded-3xl overflow-hidden bg-white relative shadow-[0_12px_30px_rgba(0,0,0,0.08)]"
             style={{ border: '1px solid rgba(61,61,63,.18)' }}
@@ -165,19 +161,15 @@ export default function SignInPage() {
   );
 }
 
-/* ---------- Components now using CHARCOAL instead of teal ---------- */
-
 function Badge({ title, subtitle }) {
   return (
     <div
       className="rounded-xl bg-white p-3 text-center"
-      /* border color set to charcoal */
       style={{ border: '1px solid rgba(61,61,63,.28)' }}
     >
       <div
         className="text-[11px] uppercase tracking-wide font-semibold"
-        /* title text color set to charcoal */
-        style={{ color: BRAND.charcoal }}
+        style={{ color: '#3d3d3f' }}
       >
         {title}
       </div>
@@ -190,7 +182,6 @@ function Tile({ src, alt }) {
   return (
     <div
       className="rounded-2xl overflow-hidden bg-white h-28 transition-shadow"
-      /* border color set to charcoal */
       style={{ border: '1px solid rgba(61,61,63,.18)' }}
     >
       <img
