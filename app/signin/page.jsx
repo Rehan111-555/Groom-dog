@@ -88,7 +88,7 @@ export default function SignInPage() {
             {/* Right: hero image */}
             <section className="bg-white rounded-2xl shadow-lg overflow-hidden min-h-[340px] hidden md:block">
               <img
-                src="/dog-1.jpg"
+                src="/dog-7.png"
                 alt="Grooming hero"
                 className="w-full h-full object-cover"
                 onError={(e) => { e.currentTarget.src = FALLBACK; }}
