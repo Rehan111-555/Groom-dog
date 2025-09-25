@@ -3,10 +3,14 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 
-// Brand colors (single source of truth)
+// Brand colors
 const BRAND = {
   charcoal: '#2f2f31', // header, footer, and button
 };
+
+// Sample pictures (put these files in /public, rename as you like)
+const SAMPLES = ['/dog-1.jpg', '/dog-2.jpg', '/dog-3.jpg', '/dog-4.jpg'];
+const FALLBACK = '/dog-5.png'; // fallback if any sample image fails
 
 export default function SignInPage() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +20,7 @@ export default function SignInPage() {
     try {
       const params = new URLSearchParams(window.location.search);
       const to = params.get('from') || '/';
-      await signIn('google', { callbackUrl: to }); // first-time users are created automatically
+      await signIn('google', { callbackUrl: to });
     } finally {
       setLoading(false);
     }
@@ -28,7 +32,6 @@ export default function SignInPage() {
       <header className="w-full text-xs text-white" style={{ backgroundColor: BRAND.charcoal }}>
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            {/* Small logo from /public */}
             <img src="/dog-5.png" width={24} height={24} alt="Joyzze" className="rounded" />
             <span>Joyzze — Dog Groomer</span>
           </div>
@@ -38,7 +41,7 @@ export default function SignInPage() {
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="grid md:grid-cols-2 gap-8">
-          {/* Left: Sign-in card */}
+          {/* Left: Sign-in card with sample pictures */}
           <section className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
             <div className="flex items-center gap-3 mb-4">
               <img
@@ -52,7 +55,7 @@ export default function SignInPage() {
               </div>
             </div>
 
-            {/* Google button (same color as header/footer) */}
+            {/* Google button (charcoal to match header/footer) */}
             <button
               className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition disabled:opacity-70"
               style={{ backgroundColor: BRAND.charcoal }}
@@ -62,21 +65,33 @@ export default function SignInPage() {
               {loading ? 'Connecting…' : 'Continue with Google'}
             </button>
 
-            {/* Helper text (remove if you don’t want it) */}
+            {/* Helper text */}
             <p className="mt-4 text-xs text-slate-500">
               First-time users are created automatically after Google confirms your account.
             </p>
 
-            {/* ✅ Feature cards removed as requested */}
+            {/* Sample pictures grid (2×2) */}
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              {SAMPLES.map((src, i) => (
+                <div key={i} className="rounded-xl overflow-hidden ring-1 ring-black/5 bg-slate-50">
+                  <img
+                    src={src}
+                    alt={`Sample dog ${i + 1}`}
+                    className="w-full h-36 md:h-40 object-cover"
+                    onError={(e) => { e.currentTarget.src = FALLBACK; }}
+                  />
+                </div>
+              ))}
+            </div>
           </section>
 
-          {/* Right: hero image (from /public). Delete this section if you don’t want the image panel. */}
+          {/* Right: hero image (optional) */}
           <section className="bg-white rounded-2xl shadow-lg overflow-hidden min-h-[340px] hidden md:block">
             <img
               src="/dog-1.jpg"
               alt="Grooming hero"
               className="w-full h-full object-cover"
-              onError={(e) => { e.currentTarget.src = '/dog-5.png'; }}
+              onError={(e) => { e.currentTarget.src = FALLBACK; }}
             />
           </section>
         </div>
