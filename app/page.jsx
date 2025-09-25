@@ -9,28 +9,28 @@ const BRAND = {
   charcoalBorder: '#374151',
 };
 
-/* ---------------- Small SVG icons ---------------- */
+/* ---------------- Small SVG icons (no TS) ---------------- */
 const Icon = {
-  Upload: (props: any) => (
+  Upload: (props) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Wand: (props: any) => (
+  Wand: (props) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Reset: (props: any) => (
+  Reset: (props) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Download: (props: any) => (
+  Download: (props) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
@@ -39,16 +39,13 @@ const Icon = {
 };
 
 /* ---------------- Small UI helpers ---------------- */
-const Button = ({ className = "", disabled, onClick, children, type = "button" }:{
-  className?: string; disabled?: boolean; onClick?: any; children: any; type?: 'button'|'submit';
-}) => (
+const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
-const Card = ({ className="", children }:{className?:string; children:any}) =>
-  <div className={`card ${className}`}>{children}</div>;
+const Card = ({ className = "", children }) => <div className={`card ${className}`}>{children}</div>;
 
 /* ---------------- Compare slider ---------------- */
-function CompareSlider({ beforeSrc, afterSrc }:{beforeSrc:string; afterSrc:string}) {
+function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
     <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
@@ -68,8 +65,8 @@ function CompareSlider({ beforeSrc, afterSrc }:{beforeSrc:string; afterSrc:strin
   );
 }
 
-/* ---------------- Helpers ---------------- */
-function pickResultUrl(data:any){
+/* ---------------- Helpers (no TS) ---------------- */
+function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
       return data.image.indexOf("data:")===0 ? data.image : `data:image/png;base64,${data.image}`;
@@ -78,7 +75,7 @@ function pickResultUrl(data:any){
   }
   return null;
 }
-function validateImageFile(f:any,maxMB?:number){
+function validateImageFile(f, maxMB){
   const MAX = typeof maxMB==="number" ? maxMB : 12;
   if (!f || typeof f!=="object") return "Invalid file.";
   const type = String(f.type||"");
@@ -87,19 +84,19 @@ function validateImageFile(f:any,maxMB?:number){
   if (size > MAX*1024*1024) return `Image too large. Please keep it under ${MAX}MB.`;
   return null;
 }
-async function safeReadText(res:Response){ try{return await res.text();}catch{ return ""; } }
-function readImageSize(url:string){
-  return new Promise<{w:number;h:number}>((resolve,reject)=>{
+async function safeReadText(res){ try { return await res.text(); } catch { return ""; } }
+function readImageSize(url){
+  return new Promise((resolve,reject)=>{
     const img=new Image();
     img.onload=()=>resolve({w: img.naturalWidth, h: img.naturalHeight});
     img.onerror=reject;
     img.src=url;
   });
 }
-async function padToSize(dataUrl:string, targetW:number, targetH:number) {
+async function padToSize(dataUrl, targetW, targetH) {
   const img = new Image(); img.src = dataUrl; await new Promise(r => (img.onload = r));
   const canvas = document.createElement("canvas"); canvas.width = targetW; canvas.height = targetH;
-  const ctx = canvas.getContext("2d")!; ctx.clearRect(0,0,targetW,targetH);
+  const ctx = canvas.getContext("2d"); ctx.clearRect(0,0,targetW,targetH);
   const scale = Math.min(targetW / img.naturalWidth, targetH / img.naturalHeight);
   const nw = Math.round(img.naturalWidth * scale); const nh = Math.round(img.naturalHeight * scale);
   const dx = Math.floor((targetW - nw) / 2); const dy = Math.floor((targetH - nh) / 2);
@@ -110,15 +107,15 @@ async function padToSize(dataUrl:string, targetW:number, targetH:number) {
    Upload + Result
    ========================================================= */
 function UploadAndResult(){
-  const [file,setFile]=useState<File|null>(null);
-  const [previewUrl,setPreviewUrl]=useState<string|null>(null);
-  const [resultUrl,setResultUrl]=useState<string|null>(null);
+  const [file,setFile]=useState(null);
+  const [previewUrl,setPreviewUrl]=useState(null);
+  const [resultUrl,setResultUrl]=useState(null);
   const [loading,setLoading]=useState(false);
-  const [error,setError]=useState<string|null>(null);
+  const [error,setError]=useState(null);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const controllerRef=useRef<AbortController|null>(null);
+  const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
   const ACTION_H = 56;
@@ -140,7 +137,7 @@ function UploadAndResult(){
     };
   }, [previewUrl, resultUrl]);
 
-  const handleFile = async (f:File) => {
+  const handleFile = async (f) => {
     setError(null);
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
@@ -148,9 +145,7 @@ function UploadAndResult(){
     setFile(f); setResultUrl(null); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
-  const selectFile=(e:React.ChangeEvent<HTMLInputElement>)=>{
-    const f=e?.target?.files?.[0]; if(f)handleFile(f);
-  };
+  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
 
@@ -168,7 +163,7 @@ function UploadAndResult(){
       setProgress(60);
       if(!res.ok){ const msg=await safeReadText(res); throw new Error(msg||`Backend error (${res.status})`); }
       const data=await res.json();
-      const url=pickResultUrl(data as any);
+      const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
       try {
         const { w, h } = await readImageSize(url);
@@ -180,7 +175,7 @@ function UploadAndResult(){
         }
       } catch { setResultUrl(url); }
       setProgress(100);
-    }catch(e:any){ setError(e?.message||"Something went wrong."); }
+    }catch(e){ setError(e?.message||"Something went wrong."); }
     finally{ setLoading(false); }
   };
 
@@ -250,7 +245,7 @@ function UploadAndResult(){
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
-              <CompareSlider beforeSrc={previewUrl!} afterSrc={resultUrl} />
+              <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
           <div style={{ height: 56 }} />
