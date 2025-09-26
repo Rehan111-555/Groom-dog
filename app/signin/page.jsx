@@ -67,7 +67,7 @@ export default function AuthPage() {
       {/* Header */}
       <header>
         {/* Top contact bar */}
-        <div className="bg-gray-200 px-6 py-2 flex justify-between text-sm">
+        <div className="bg-gray-900 px-6 py-2 flex justify-between text-xs">
           <span>(877) 456-9993</span>
           <span>info@joyzze.com</span>
         </div>
@@ -252,7 +252,7 @@ export default function AuthPage() {
                 placeholder="Email address..."
                 className="px-3 py-2 text-black rounded-l-md w-full"
               />
-              <button className="bg-teal-500 px-4 py-2 rounded-r-md">→</button>
+              <button className="bg-[#323030] px-4 py-2 rounded-r-md">→</button>
             </form>
           </div>
 
