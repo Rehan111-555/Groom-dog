@@ -195,6 +195,7 @@ function UploadAndResult(){
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+        {/* Left: Upload */}
         <Card className="p-4">
           <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
           {!previewUrl && error && (
@@ -230,6 +231,8 @@ function UploadAndResult(){
             </div>
           )}
         </Card>
+
+        {/* Right: Result */}
         <Card className="p-4">
           <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
@@ -251,25 +254,41 @@ function UploadAndResult(){
 /* ---------------- Signin Header ---------------- */
 function SigninHeader() {
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="container mx-auto flex justify-between items-center py-3 px-6">
-        <div className="flex items-center space-x-3">
-          <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 rounded object-cover" />
-          <span className="font-bold text-lg">Joyzze</span>
-        </div>
-        <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
-          <a href="#" className="hover:text-black">All Products</a>
-          <a href="#" className="hover:text-black">Clippers</a>
-          <a href="#" className="hover:text-black">Blades</a>
-          <a href="#" className="hover:text-black">Combs & Accessories</a>
-          <a href="#" className="hover:text-black">Information</a>
-          <a href="#" className="hover:text-black">Recycling & Sharpening</a>
-          <a href="#" className="hover:text-black">Distributor</a>
-        </nav>
-        <div className="flex items-center space-x-6">
-          <span className="text-sm font-medium text-gray-600">(877) 456-9993</span>
-          <span className="text-sm font-medium text-gray-600 hidden md:block">info@joyzze.com</span>
-          <input type="text" placeholder="Search..." className="border rounded px-3 py-1 text-sm" />
+    <header className="w-full">
+      {/* Top Contact Bar */}
+      <div className="bg-[#1a1a2e] text-white text-xs px-6 py-2 flex justify-between items-center">
+        <span>(877) 456-9993</span>
+        <span>info@joyzze.com</span>
+      </div>
+
+      {/* Main Nav Bar */}
+      <div className="bg-[#323030] text-white">
+        <div className="container mx-auto flex items-center justify-between px-6 py-3">
+          {/* Logo */}
+          <div className="flex items-center space-x-2">
+            <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 object-contain" />
+            <span className="font-bold text-lg text-purple-300">Joyzze</span>
+          </div>
+
+          {/* Nav Links */}
+          <nav className="hidden md:flex space-x-6 text-sm font-medium">
+            <a href="#" className="hover:text-purple-300">All Products</a>
+            <a href="#" className="hover:text-purple-300">Clippers</a>
+            <a href="#" className="hover:text-purple-300">Blades</a>
+            <a href="#" className="hover:text-purple-300">Combs & Accessories</a>
+            <a href="#" className="hover:text-purple-300">Information</a>
+            <a href="#" className="hover:text-purple-300">Recycling & Sharpening</a>
+            <a href="#" className="hover:text-purple-300">Distributor</a>
+          </nav>
+
+          {/* Search */}
+          <div>
+            <input
+              type="text"
+              placeholder="Search..."
+              className="px-3 py-1 rounded text-sm text-black"
+            />
+          </div>
         </div>
       </div>
     </header>
