@@ -102,7 +102,7 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result: equal-height panels, title on right card
+   Upload + Result
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
@@ -115,9 +115,8 @@ function UploadAndResult(){
   const [imgH, setImgH] = useState(0);
   const controllerRef=useRef(null);
 
-  // unified inner panel height
   const [panelH, setPanelH] = useState(640);
-  const ACTION_H = 56; // reserved height for left action bar, mirrored on right
+  const ACTION_H = 56;
 
   useEffect(() => {
     const setH = () => {
@@ -182,50 +181,29 @@ function UploadAndResult(){
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
-      {/* Title row with your favicon & download */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <img
-            src="/dog-5.png"
-            alt="logo"
-            className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"
-          />
+          <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold leading-tight">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600">
-              Upload a dog photo → AI grooms the dog → compare before &amp; after
-            </p>
+            <p className="text-xs md:text-sm text-slate-600">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary" href={resultUrl} download>
-            <Icon.Download /> Download
-          </a>
+          <a className="btn btn-primary" href={resultUrl} download><Icon.Download /> Download</a>
         ) : <div className="h-9" />}
       </div>
 
-      {/* Two equal-height panels */}
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-        {/* Left: Upload */}
         <Card className="p-4">
-          {/* Invisible header to match the right card's header height */}
           <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
-
           {!previewUrl && error && (
-            <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">
-              {String(error)}
-            </div>
+            <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
           )}
-
           {!previewUrl ? (
-            <label
-              className="grid place-items-center rounded-2xl border border-dashed border-slate-300 text-center cursor-pointer hover:bg-white"
-              style={{ height: panelH }}
-            >
+            <label className="grid place-items-center rounded-2xl border border-dashed border-slate-300 text-center cursor-pointer hover:bg-white" style={{ height: panelH }}>
               <div className="grid place-items-center gap-3">
-                <div className="mx-auto w-14 h-14 rounded-2xl bg-white grid place-items-center shadow">
-                  <Icon.Upload />
-                </div>
+                <div className="mx-auto w-14 h-14 rounded-2xl bg-white grid place-items-center shadow"><Icon.Upload /></div>
                 <div className="font-medium">Drag &amp; drop or click to upload</div>
                 <div className="text-xs text-slate-600">PNG, JPG up to 12MB</div>
               </div>
@@ -233,11 +211,9 @@ function UploadAndResult(){
             </label>
           ) : (
             <div className="flex flex-col">
-              {/* fixed-height image area */}
               <div className="rounded-2xl overflow-hidden bg-slate-50" style={{ height: panelH }}>
                 <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
               </div>
-              {/* fixed-height action bar */}
               <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
                 {!loading ? (
                   <>
@@ -254,10 +230,7 @@ function UploadAndResult(){
             </div>
           )}
         </Card>
-
-        {/* Right: Result */}
         <Card className="p-4">
-          {/* card heading INSIDE right window */}
           <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
@@ -268,7 +241,6 @@ function UploadAndResult(){
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          {/* spacer that matches the left action bar so bottoms align */}
           <div style={{ height: ACTION_H }} />
         </Card>
       </div>
@@ -276,30 +248,48 @@ function UploadAndResult(){
   );
 }
 
-/* ---------------- HERO ---------------- */
+/* ---------------- Signin Header ---------------- */
+function SigninHeader() {
+  return (
+    <header className="bg-white border-b border-gray-200">
+      <div className="container mx-auto flex justify-between items-center py-3 px-6">
+        <div className="flex items-center space-x-3">
+          <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 rounded object-cover" />
+          <span className="font-bold text-lg">Joyzze</span>
+        </div>
+        <nav className="hidden md:flex space-x-6 text-sm font-medium text-gray-700">
+          <a href="#" className="hover:text-black">All Products</a>
+          <a href="#" className="hover:text-black">Clippers</a>
+          <a href="#" className="hover:text-black">Blades</a>
+          <a href="#" className="hover:text-black">Combs & Accessories</a>
+          <a href="#" className="hover:text-black">Information</a>
+          <a href="#" className="hover:text-black">Recycling & Sharpening</a>
+          <a href="#" className="hover:text-black">Distributor</a>
+        </nav>
+        <div className="flex items-center space-x-6">
+          <span className="text-sm font-medium text-gray-600">(877) 456-9993</span>
+          <span className="text-sm font-medium text-gray-600 hidden md:block">info@joyzze.com</span>
+          <input type="text" placeholder="Search..." className="border rounded px-3 py-1 text-sm" />
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ---------------- Hero ---------------- */
 function Hero(){
   return (
     <header className="relative overflow-hidden bg-[#323030] text-white">
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">
-            Joyzze
-          </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            Make your dog look freshly groomed—<span className="text-indigo-300">with AI</span>
-          </h1>
+          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Make your dog look freshly groomed—<span className="text-indigo-300">with AI</span></h1>
           <p className="mt-4 text-slate-300 max-w-xl">
-            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>.
-            Compare before &amp; after with a slider.
+            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
           </p>
           <div className="mt-6 flex items-center gap-3">
             <a href="#app" className="btn btn-primary !bg-[#323030]">Try it free</a>
-            <a
-              href="#how"
-              className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b] focus:bg-[#121a2b] active:bg-[#121a2b] focus:outline-none"
-            >
-              See how it works
-            </a>
+            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b]">See how it works</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -315,35 +305,25 @@ function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 mb-10">
-        Upload your photo → AI grooms the dog → compare before &amp; after.
-      </p>
+      <p className="text-center text-slate-600 mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
-          <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a>
-          </div>
+          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600">
-            We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.
-          </p>
-          <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a>
-          </div>
+          <p className="text-sm text-slate-600">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
+          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a></div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600">Use the slider to compare before/after. Download the result in one click.</p>
-          <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a>
-          </div>
+          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a></div>
         </Card>
       </div>
     </section>
@@ -355,56 +335,58 @@ function Samples(){
   return (
     <section id="examples" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 mb-10">
-        Background, breed, pose, lighting and colors stay identical—only grooming changes.
-      </p>
+      <p className="text-center text-slate-600 mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200">
-          <img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" />
-        </div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200">
-          <img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" />
-        </div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200">
-          <img src="/dog-3.jpg" alt="Sample 3" className="w-full h-auto object-cover" />
-        </div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-3.jpg" alt="Sample 3" className="w-full h-auto object-cover" /></div>
       </div>
     </section>
   );
 }
 
-/* ---------------- Footer ---------------- */
-function Footer(){
+/* ---------------- Signin Footer ---------------- */
+function SigninFooter() {
   return (
     <footer className="bg-[#323030] text-slate-200">
-      <div className="container mx-auto px-6 py-10 grid md:grid-cols-3 gap-8">
-        <div className="flex items-start gap-3">
-          <img src="/dog-5.png" alt="logo" className="w-8 h-8 rounded-2xl object-cover bg-white ring-1 ring-white/10" />
-          <div>
-            <div className="font-semibold">Joyzze</div>
-            <p className="text-sm text-slate-400">AI grooming preview that keeps everything identical—only a neater dog.</p>
-          </div>
-        </div>
+      <div className="container mx-auto px-6 py-10 grid md:grid-cols-4 gap-8">
         <div>
-          <div className="font-semibold mb-2">Links</div>
+          <h4 className="font-semibold mb-2">LINKS</h4>
           <ul className="space-y-1 text-sm text-slate-400">
-            <li><a href="#how" className="hover:text-white">How it works</a></li>
-            <li><a href="#examples" className="hover:text-white">Examples</a></li>
-            <li><a href="#faq" className="hover:text-white">FAQ</a></li>
+            <li><a href="#" className="hover:text-white">All Products</a></li>
+            <li><a href="#" className="hover:text-white">Clippers</a></li>
+            <li><a href="#" className="hover:text-white">Blades</a></li>
+            <li><a href="#" className="hover:text-white">Combs & Accessories</a></li>
+            <li><a href="#" className="hover:text-white">Information</a></li>
+            <li><a href="#" className="hover:text-white">Recycling & Sharpening</a></li>
+            <li><a href="#" className="hover:text-white">Distributor</a></li>
           </ul>
         </div>
         <div>
-          <div className="font-semibold mb-2">Legal</div>
+          <h4 className="font-semibold mb-2">SERIES</h4>
           <ul className="space-y-1 text-sm text-slate-400">
-            <li><a className="hover:text-white">Terms</a></li>
-            <li><a className="hover:text-white">Privacy</a></li>
+            <li><a href="#" className="hover:text-white">A-Series</a></li>
+            <li><a href="#" className="hover:text-white">C-Series</a></li>
+            <li><a href="#" className="hover:text-white">D-Series</a></li>
+            <li><a href="#" className="hover:text-white">M-Series</a></li>
           </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold mb-2">SUBSCRIBE TO OUR NEWSLETTER</h4>
+          <form className="flex">
+            <input type="email" placeholder="Email address..." className="px-3 py-2 w-full rounded-l text-black text-sm"/>
+            <button type="submit" className="bg-indigo-600 px-4 py-2 rounded-r text-white text-sm">→</button>
+          </form>
+        </div>
+        <div>
+          <h4 className="font-semibold mb-2">CONTACT</h4>
+          <p className="text-sm text-slate-400">Joy of Grooming Made Easy™</p>
+          <p className="text-sm text-slate-400">(877) 456-9993</p>
+          <p className="text-sm text-slate-400">info@joyzze.com</p>
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="container mx-auto px-6 py-4 text-xs text-slate-400">
-          © {new Date().getFullYear()} Joyzze. All rights reserved.
-        </div>
+        <div className="container mx-auto px-6 py-4 text-xs text-slate-400">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
       </div>
     </footer>
   );
@@ -414,11 +396,12 @@ function Footer(){
 export default function Page(){
   return (
     <main>
+      <SigninHeader />
       <Hero />
       <HowItWorks />
       <UploadAndResult />
       <Samples />
-      <Footer />
+      <SigninFooter />
     </main>
   );
 }
