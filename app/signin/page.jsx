@@ -67,7 +67,7 @@ export default function AuthPage() {
       {/* Header */}
       <header>
         {/* Top contact bar */}
-        <div className="bg-gray-900 px-6 py-2 flex justify-between text-xs">
+        <div className="bg-gray-900 px-6 py-2 flex justify-between text-white text-xs">
           <span>(877) 456-9993</span>
           <span>info@joyzze.com</span>
         </div>
