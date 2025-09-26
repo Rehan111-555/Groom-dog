@@ -1,63 +1,56 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Search, PawPrint, Scissors, Image as ImageIcon } from 'lucide-react';
 
 /* ---------------- Small SVG icons ---------------- */
 const Icon = {
-  Upload: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Wand: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
+  Upload: (props) => <PawPrint className="w-6 h-6 text-purple-500" {...props} />,
+  Wand: (props) => <Scissors className="w-6 h-6 text-purple-500" {...props} />,
   Reset: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8"/>
     </svg>
   ),
-  Download: (props) => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
+  Download: (props) => <ImageIcon className="w-5 h-5 text-purple-500" {...props} />,
 };
 
 /* ---------------- Small UI helpers ---------------- */
 const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
-  <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
+  <button
+    type={type}
+    disabled={disabled}
+    onClick={onClick}
+    className={`px-6 py-3 rounded-full font-medium transition shadow ${className}`}
+  >
+    {children}
+  </button>
 );
-const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
+
+const Card = ({ className="", children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.6 }}
+    className={`rounded-3xl bg-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition ${className}`}
+  >
+    {children}
+  </motion.div>
+);
 
 /* ---------------- Compare slider ---------------- */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
-    <div
-      className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none"
-      style={{ touchAction: 'none' }}
-    >
-      <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
-      <img
-        src={beforeSrc}
-        alt="Before"
-        className="absolute inset-0 h-full w-full object-contain"
-        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        draggable={false}
-      />
-      {/* handle line */}
-      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
-      {/* range control */}
+    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none">
+      <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" />
+      <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />
+      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(139,92,246,0.9)' }} />
       <div className="absolute bottom-2 left-3 right-3">
-        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
+        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full accent-purple-500" />
       </div>
     </div>
   );
@@ -73,6 +66,7 @@ function pickResultUrl(data){
   }
   return null;
 }
+
 function validateImageFile(f,maxMB){
   const MAX = typeof maxMB==="number" ? maxMB : 12;
   if (!f || typeof f!=="object") return "Invalid file.";
@@ -82,6 +76,7 @@ function validateImageFile(f,maxMB){
   if (size > MAX*1024*1024) return `Image too large. Please keep it under ${MAX}MB.`;
   return null;
 }
+
 async function safeReadText(res){ try{return await res.text();}catch(e){return "";} }
 function readImageSize(url){
   return new Promise((resolve,reject)=>{
@@ -101,9 +96,7 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* =========================================================
-   Upload + Result
-   ========================================================= */
+/* ---------------- Upload & Result ---------------- */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
   const [previewUrl,setPreviewUrl]=useState(null);
@@ -116,12 +109,10 @@ function UploadAndResult(){
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
-  const ACTION_H = 56;
 
   useEffect(() => {
     const setH = () => {
-      const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
-      setPanelH(h);
+      setPanelH(Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72))));
     };
     setH();
     window.addEventListener('resize', setH);
@@ -143,6 +134,7 @@ function UploadAndResult(){
     setFile(f); setResultUrl(null); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
+
   const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
@@ -180,51 +172,49 @@ function UploadAndResult(){
   const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
 
   return (
-    <section id="app" className="container mx-auto px-6 py-16">
-      <div className="flex items-center justify-between mb-6">
+    <section id="app" className="container mx-auto px-6 py-20">
+      <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
-          <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
+          <img src="/dog-5.png" alt="logo" className="w-12 h-12 rounded-full object-cover ring-2 ring-purple-400/50" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold leading-tight">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
+            <h1 className="text-3xl font-bold">Joyzze Dog Groomer</h1>
+            <p className="text-sm text-slate-500">Upload → AI grooms → Compare</p>
           </div>
         </div>
-        {resultUrl ? (
-          <a className="btn btn-primary" href={resultUrl} download><Icon.Download /> Download</a>
-        ) : <div className="h-9" />}
-      </div>
+        {resultUrl && (
+          <a className="px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white flex items-center gap-2" href={resultUrl} download>
+            <Icon.Download /> Download
+          </a>
+        )}
+      </motion.div>
 
-      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-        {/* Left: Upload */}
-        <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
-          {!previewUrl && error && (
-            <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
-          )}
+      <div className="grid lg:grid-cols-2 gap-10">
+        {/* Upload Panel */}
+        <Card className="p-6">
           {!previewUrl ? (
-            <label className="grid place-items-center rounded-2xl border border-dashed border-slate-300 text-center cursor-pointer hover:bg-white" style={{ height: panelH }}>
-              <div className="grid place-items-center gap-3">
-                <div className="mx-auto w-14 h-14 rounded-2xl bg-white grid place-items-center shadow"><Icon.Upload /></div>
-                <div className="font-medium">Drag &amp; drop or click to upload</div>
-                <div className="text-xs text-slate-600">PNG, JPG up to 12MB</div>
+            <label className="grid place-items-center rounded-2xl border-2 border-dashed border-purple-400/50 bg-gradient-to-br from-slate-50 to-slate-100 cursor-pointer hover:border-purple-500" style={{ height: panelH }}>
+              <div className="flex flex-col items-center gap-3">
+                <Icon.Upload />
+                <div className="font-medium">Drag & drop or click to upload</div>
+                <div className="text-xs text-slate-500">PNG, JPG up to 12MB</div>
               </div>
               <input type="file" accept="image/*" className="hidden" onChange={selectFile} />
             </label>
           ) : (
-            <div className="flex flex-col">
+            <div className="flex flex-col h-full">
               <div className="rounded-2xl overflow-hidden bg-slate-50" style={{ height: panelH }}>
                 <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
               </div>
-              <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
+              <div className="mt-4 flex gap-3">
                 {!loading ? (
                   <>
-                    <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
-                    <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
+                    <Button className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white" onClick={groom}><Icon.Wand /> Groom</Button>
+                    <Button className="bg-slate-200 hover:bg-slate-300" onClick={resetAll}><Icon.Reset /> Reset</Button>
                   </>
                 ) : (
                   <>
-                    <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
-                    <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
+                    <Button className="bg-purple-400 text-white" disabled>Working… {progress}%</Button>
+                    <Button className="bg-slate-200 hover:bg-slate-300" onClick={cancel}><Icon.Reset /> Cancel</Button>
                   </>
                 )}
               </div>
@@ -232,62 +222,47 @@ function UploadAndResult(){
           )}
         </Card>
 
-        {/* Right: Result */}
-        <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
-          <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
+        {/* Result Panel */}
+        <Card className="p-6">
+          <div className="mb-2 text-sm font-semibold">Groomed Dog Result</div>
+          <div className="rounded-2xl overflow-hidden bg-slate-100 flex items-center justify-center" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 text-sm text-slate-600">
-                Your groomed image will appear here. After processing, use the slider to compare before/after.
-              </div>
+              <p className="text-slate-500 text-sm text-center">Your groomed image will appear here.</p>
             ) : (
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
   );
 }
 
-/* ---------------- Signin Header ---------------- */
+/* ---------------- Header ---------------- */
 function SigninHeader() {
   return (
-    <header className="w-full">
-      {/* Top Contact Bar */}
-      <div className="bg-[#1a1a2e] text-white text-xs px-6 py-2 flex justify-between items-center">
+    <header className="sticky top-0 z-50 shadow-md">
+      <div className="bg-gradient-to-r from-purple-800 to-indigo-900 text-white text-xs px-6 py-2 flex justify-between">
         <span>(877) 456-9993</span>
         <span>info@joyzze.com</span>
       </div>
-
-      {/* Main Nav Bar */}
-      <div className="bg-[#323030] text-white">
-        <div className="container mx-auto flex items-center justify-between px-6 py-3">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 object-contain" />
-            <span className="font-bold text-lg text-purple-300">Joyzze</span>
+      <div className="bg-[#1e1e2f] text-white">
+        <div className="container mx-auto flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2">
+            <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-full ring-2 ring-purple-400/40" />
+            <span className="font-extrabold text-xl bg-gradient-to-r from-purple-300 to-indigo-400 bg-clip-text text-transparent">Joyzze</span>
           </div>
-
-          {/* Nav Links */}
-          <nav className="hidden md:flex space-x-6 text-sm font-medium">
-            <a href="#" className="hover:text-purple-300">All Products</a>
-            <a href="#" className="hover:text-purple-300">Clippers</a>
-            <a href="#" className="hover:text-purple-300">Blades</a>
-            <a href="#" className="hover:text-purple-300">Combs & Accessories</a>
-            <a href="#" className="hover:text-purple-300">Information</a>
-            <a href="#" className="hover:text-purple-300">Recycling & Sharpening</a>
-            <a href="#" className="hover:text-purple-300">Distributor</a>
+          <nav className="hidden md:flex space-x-8 text-sm font-medium">
+            {['All Products','Clippers','Blades','Combs & Accessories','Information','Recycling & Sharpening','Distributor'].map((item, i)=>(
+              <a key={i} href="#" className="relative group hover:text-purple-300">
+                {item}
+                <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-purple-400 transition-all group-hover:w-full"></span>
+              </a>
+            ))}
           </nav>
-
-          {/* Search */}
-          <div>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="px-3 py-1 rounded text-sm text-black"
-            />
+          <div className="relative">
+            <input type="text" placeholder="Search..." className="px-4 py-2 rounded-full text-sm text-black shadow-inner focus:ring-2 focus:ring-purple-400 outline-none"/>
+            <Search className="absolute right-3 top-2.5 w-4 h-4 text-gray-500"/>
           </div>
         </div>
       </div>
@@ -298,52 +273,52 @@ function SigninHeader() {
 /* ---------------- Hero ---------------- */
 function Hero(){
   return (
-    <header className="relative overflow-hidden bg-[#323030] text-white">
-      <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
-        <div>
+    <section className="relative overflow-hidden bg-gradient-to-r from-[#1e1e2f] via-[#2a2438] to-[#1e1e2f] text-white">
+      <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center">
+        <motion.div initial={{opacity:0,y:40}} whileInView={{opacity:1,y:0}} transition={{duration:0.7}}>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Make your dog look freshly groomed—<span className="text-indigo-300">with AI</span></h1>
-          <p className="mt-4 text-slate-300 max-w-xl">
-            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-tight">
+            Make your dog look<br/>
+            <span className="bg-gradient-to-r from-purple-300 via-indigo-400 to-purple-500 bg-clip-text text-transparent">
+              freshly groomed—with AI
+            </span>
+          </h1>
+          <p className="mt-6 text-slate-300 max-w-xl text-lg">
+            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. 
+            Compare before & after with a slider.
           </p>
-          <div className="mt-6 flex items-center gap-3">
-            <a href="#app" className="btn btn-primary !bg-[#323030]">Try it free</a>
-            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b]">See how it works</a>
+          <div className="mt-8 flex gap-4">
+            <a href="#app" className="px-6 py-3 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-medium shadow-lg hover:scale-105 transition">Try it free</a>
+            <a href="#how" className="px-6 py-3 rounded-full border border-purple-400/50 text-white font-medium shadow hover:bg-white/10 transition">See how it works</a>
           </div>
-        </div>
-        <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-          <img src="/dog-10.png" alt="Hero sample" className="w-full h-auto object-cover" />
-        </div>
+        </motion.div>
+        <motion.div initial={{opacity:0,scale:0.9}} whileInView={{opacity:1,scale:1}} transition={{duration:0.8}} className="rounded-3xl overflow-hidden shadow-2xl ring-2 ring-purple-400/20 hover:scale-105 transition">
+          <img src="/dog-10.png" alt="Hero sample" className="w-full h-auto object-cover"/>
+        </motion.div>
       </div>
-    </header>
+    </section>
   );
 }
 
-/* ---------------- How it works ---------------- */
+/* ---------------- Steps ---------------- */
 function HowItWorks() {
   return (
-    <section id="how" className="container mx-auto px-6 py-16">
-      <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
-      <div className="grid md:grid-cols-3 gap-6 items-stretch">
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
-          <h3 className="font-semibold mb-1">Upload a dog photo</h3>
-          <p className="text-sm text-slate-600">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
-        </Card>
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
-          <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a></div>
-        </Card>
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
-          <h3 className="font-semibold mb-1">Compare &amp; download</h3>
-          <p className="text-sm text-slate-600">Use the slider to compare before/after. Download the result in one click.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a></div>
-        </Card>
+    <section id="how" className="bg-gradient-to-b from-slate-50 to-slate-100 py-20">
+      <h2 className="text-center text-3xl font-bold mb-4">Three Simple Steps</h2>
+      <p className="text-center text-slate-600 mb-12">Upload → AI grooms → Compare</p>
+      <div className="container mx-auto grid md:grid-cols-3 gap-8 px-6">
+        {[
+          {title:"Upload a dog photo",desc:"PNG or JPG up to 12MB. Works best with a clear subject.",btn:"Upload now"},
+          {title:"Let AI groom",desc:"We tidy fur around face and paws for a neat look.",btn:"Start grooming"},
+          {title:"Compare & download",desc:"Use the slider to compare before/after and save.",btn:"Try the slider"},
+        ].map((s,i)=>(
+          <Card key={i} className="p-6 flex flex-col">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white grid place-items-center text-lg mb-4">{i+1}</div>
+            <h3 className="font-semibold mb-2">{s.title}</h3>
+            <p className="text-sm text-slate-600 flex-grow">{s.desc}</p>
+            <div className="mt-4"><a href="#app" className="px-5 py-2 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm shadow">{s.btn}</a></div>
+          </Card>
+        ))}
       </div>
     </section>
   );
@@ -352,60 +327,60 @@ function HowItWorks() {
 /* ---------------- Samples ---------------- */
 function Samples(){
   return (
-    <section id="examples" className="container mx-auto px-6 py-16">
-      <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-3.jpg" alt="Sample 3" className="w-full h-auto object-cover" /></div>
+    <section id="examples" className="container mx-auto px-6 py-20">
+      <h2 className="text-center text-3xl font-bold mb-4">Sample Results</h2>
+      <p className="text-center text-slate-600 mb-12">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
+      <div className="grid md:grid-cols-3 gap-8">
+        {['/dog-1.jpg','/dog-2.jpg','/dog-3.jpg'].map((src,i)=>(
+          <motion.div whileHover={{scale:1.05}} key={i} className="rounded-3xl overflow-hidden shadow-lg ring-1 ring-slate-200">
+            <img src={src} alt={`Sample ${i+1}`} className="w-full h-auto object-cover"/>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
 }
 
-/* ---------------- Signin Footer ---------------- */
+/* ---------------- Footer ---------------- */
 function SigninFooter() {
   return (
-    <footer className="bg-[#323030] text-slate-200">
-      <div className="container mx-auto px-6 py-10 grid md:grid-cols-4 gap-8">
+    <footer className="bg-[#1e1e2f] text-slate-200">
+      <div className="container mx-auto px-6 py-12 grid md:grid-cols-4 gap-10">
         <div>
-          <h4 className="font-semibold mb-2">LINKS</h4>
+          <h4 className="font-semibold mb-3">Links</h4>
           <ul className="space-y-1 text-sm text-slate-400">
-            <li><a href="#" className="hover:text-white">All Products</a></li>
-            <li><a href="#" className="hover:text-white">Clippers</a></li>
-            <li><a href="#" className="hover:text-white">Blades</a></li>
-            <li><a href="#" className="hover:text-white">Combs & Accessories</a></li>
-            <li><a href="#" className="hover:text-white">Information</a></li>
-            <li><a href="#" className="hover:text-white">Recycling & Sharpening</a></li>
-            <li><a href="#" className="hover:text-white">Distributor</a></li>
+            {['All Products','Clippers','Blades','Combs & Accessories','Information','Recycling & Sharpening','Distributor'].map((l,i)=>(<li key={i}><a href="#" className="hover:text-white">{l}</a></li>))}
           </ul>
         </div>
         <div>
-          <h4 className="font-semibold mb-2">SERIES</h4>
+          <h4 className="font-semibold mb-3">Series</h4>
           <ul className="space-y-1 text-sm text-slate-400">
-            <li><a href="#" className="hover:text-white">A-Series</a></li>
-            <li><a href="#" className="hover:text-white">C-Series</a></li>
-            <li><a href="#" className="hover:text-white">D-Series</a></li>
-            <li><a href="#" className="hover:text-white">M-Series</a></li>
+            {['A-Series','C-Series','D-Series','M-Series'].map((l,i)=>(<li key={i}><a href="#" className="hover:text-white">{l}</a></li>))}
           </ul>
         </div>
         <div>
-          <h4 className="font-semibold mb-2">SUBSCRIBE TO OUR NEWSLETTER</h4>
+          <h4 className="font-semibold mb-3">Newsletter</h4>
           <form className="flex">
             <input type="email" placeholder="Email address..." className="px-3 py-2 w-full rounded-l text-black text-sm"/>
-            <button type="submit" className="bg-indigo-600 px-4 py-2 rounded-r text-white text-sm">→</button>
+            <button type="submit" className="bg-gradient-to-r from-purple-500 to-indigo-500 px-4 py-2 rounded-r text-white text-sm">→</button>
           </form>
         </div>
         <div>
-          <h4 className="font-semibold mb-2">CONTACT</h4>
+          <h4 className="font-semibold mb-3">Contact</h4>
           <p className="text-sm text-slate-400">Joy of Grooming Made Easy™</p>
           <p className="text-sm text-slate-400">(877) 456-9993</p>
           <p className="text-sm text-slate-400">info@joyzze.com</p>
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="container mx-auto px-6 py-4 text-xs text-slate-400">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
+        <div className="container mx-auto px-6 py-4 text-xs text-slate-400 flex justify-between items-center">
+          <span>© {new Date().getFullYear()} Joyzze. All rights reserved.</span>
+          <div className="flex space-x-4">
+            <a href="#"><img src="/icon-fb.svg" className="w-4 h-4"/></a>
+            <a href="#"><img src="/icon-ig.svg" className="w-4 h-4"/></a>
+            <a href="#"><img src="/icon-tt.svg" className="w-4 h-4"/></a>
+          </div>
+        </div>
       </div>
     </footer>
   );
