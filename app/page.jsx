@@ -267,18 +267,18 @@ function SigninHeader() {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 object-contain" />
-            <span className="font-bold text-lg text-purple-300">Joyzze</span>
+            <span className="font-bold text-lg text-[#00e1c9]">Joyzze</span>
           </div>
 
           {/* Nav Links */}
           <nav className="hidden md:flex space-x-6 text-sm font-medium">
-            <a href="#" className="hover:text-purple-300">All Products</a>
-            <a href="#" className="hover:text-purple-300">Clippers</a>
-            <a href="#" className="hover:text-purple-300">Blades</a>
-            <a href="#" className="hover:text-purple-300">Combs & Accessories</a>
-            <a href="#" className="hover:text-purple-300">Information</a>
-            <a href="#" className="hover:text-purple-300">Recycling & Sharpening</a>
-            <a href="#" className="hover:text-purple-300">Distributor</a>
+            <a href="#" className="hover:text-[#00e1c9]">All Products</a>
+            <a href="#" className="hover:text-[#00e1c9]">Clippers</a>
+            <a href="#" className="hover:text-[#00e1c9]">Blades</a>
+            <a href="#" className="hover:text-[#00e1c9]">Combs & Accessories</a>
+            <a href="#" className="hover:text-[#00e1c9]">Information</a>
+            <a href="#" className="hover:text-[#00e1c9]">Recycling & Sharpening</a>
+            <a href="#" className="hover:text-[#00e1c9]">Distributor</a>
           </nav>
 
           {/* Search */}
@@ -302,7 +302,7 @@ function Hero(){
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Make your dog look freshly groomed—<span className="text-indigo-300">with AI</span></h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span></h1>
           <p className="mt-4 text-slate-300 max-w-xl">
             Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
           </p>
