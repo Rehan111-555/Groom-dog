@@ -185,7 +185,7 @@ function UploadAndResult(){
         <div className="flex items-center gap-3">
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold leading-tight">Joyzze-Dog Groomer</h1>
+            <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
             <p className="text-xs md:text-sm text-slate-600">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
           </div>
         </div>
