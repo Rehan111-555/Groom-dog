@@ -252,48 +252,7 @@ function UploadAndResult(){
 }
 
 /* ---------------- Signin Header ---------------- */
-function SigninHeader() {
-  return (
-    <header className="w-full">
-      {/* Top Contact Bar */}
-      <div className="bg-[#1a1a2e] text-white text-xs px-6 py-2 flex justify-between items-center">
-        <span>(877) 456-9993</span>
-        <span>info@joyzze.com</span>
-      </div>
 
-      {/* Main Nav Bar */}
-      <div className="bg-[#323030] text-white">
-        <div className="container mx-auto flex items-center justify-between px-6 py-3">
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <img src="/dog-5.png" alt="Joyzze logo" className="w-8 h-8 object-contain" />
-            <span className="font-bold text-lg text-[#00e1c9]">Joyzze</span>
-          </div>
-
-          {/* Nav Links */}
-          <nav className="hidden md:flex space-x-6 text-sm font-medium">
-            <a href="#" className="hover:text-[#00e1c9]">All Products</a>
-            <a href="#" className="hover:text-[#00e1c9]">Clippers</a>
-            <a href="#" className="hover:text-[#00e1c9]">Blades</a>
-            <a href="#" className="hover:text-[#00e1c9]">Combs & Accessories</a>
-            <a href="#" className="hover:text-[#00e1c9]">Information</a>
-            <a href="#" className="hover:text-[#00e1c9]">Recycling & Sharpening</a>
-            <a href="#" className="hover:text-[#00e1c9]">Distributor</a>
-          </nav>
-
-          {/* Search */}
-          <div>
-            <input
-              type="text"
-              placeholder="Search..."
-              className="px-3 py-1 rounded text-sm text-black"
-            />
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-}
 
 /* ---------------- Hero ---------------- */
 function Hero(){
