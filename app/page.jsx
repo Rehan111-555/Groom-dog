@@ -330,12 +330,10 @@ function Samples(){
 export default function Page(){
   return (
     <main>
-      <SigninHeader />
       <Hero />
       <HowItWorks />
       <UploadAndResult />
-      <Samples />
-      <SigninFooter />
+      <Samples />     
     </main>
   );
 }
