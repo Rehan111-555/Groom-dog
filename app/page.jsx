@@ -365,51 +365,7 @@ function Samples(){
 }
 
 /* ---------------- Signin Footer ---------------- */
-function SigninFooter() {
-  return (
-    <footer className="bg-[#323030] text-slate-200">
-      <div className="container mx-auto px-6 py-10 grid md:grid-cols-4 gap-8">
-        <div>
-          <h4 className="font-semibold mb-2">LINKS</h4>
-          <ul className="space-y-1 text-sm text-slate-400">
-            <li><a href="#" className="hover:text-white">All Products</a></li>
-            <li><a href="#" className="hover:text-white">Clippers</a></li>
-            <li><a href="#" className="hover:text-white">Blades</a></li>
-            <li><a href="#" className="hover:text-white">Combs & Accessories</a></li>
-            <li><a href="#" className="hover:text-white">Information</a></li>
-            <li><a href="#" className="hover:text-white">Recycling & Sharpening</a></li>
-            <li><a href="#" className="hover:text-white">Distributor</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-semibold mb-2">SERIES</h4>
-          <ul className="space-y-1 text-sm text-slate-400">
-            <li><a href="#" className="hover:text-white">A-Series</a></li>
-            <li><a href="#" className="hover:text-white">C-Series</a></li>
-            <li><a href="#" className="hover:text-white">D-Series</a></li>
-            <li><a href="#" className="hover:text-white">M-Series</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 className="font-semibold mb-2">SUBSCRIBE TO OUR NEWSLETTER</h4>
-          <form className="flex">
-            <input type="email" placeholder="Email address..." className="px-3 py-2 w-full rounded-l text-black text-sm"/>
-            <button type="submit" className="bg-indigo-600 px-4 py-2 rounded-r text-white text-sm">→</button>
-          </form>
-        </div>
-        <div>
-          <h4 className="font-semibold mb-2">CONTACT</h4>
-          <p className="text-sm text-slate-400">Joy of Grooming Made Easy™</p>
-          <p className="text-sm text-slate-400">(877) 456-9993</p>
-          <p className="text-sm text-slate-400">info@joyzze.com</p>
-        </div>
-      </div>
-      <div className="border-t border-white/10">
-        <div className="container mx-auto px-6 py-4 text-xs text-slate-400">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
-      </div>
-    </footer>
-  );
-}
+
 
 /* ---------------- Page ---------------- */
 export default function Page(){
