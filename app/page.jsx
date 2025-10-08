@@ -30,7 +30,7 @@ const Icon = {
     </svg>
   ),
 
-  /* header/footer glyphs to match the site */
+  /* header/footer glyphs */
   Phone: (props)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -300,7 +300,7 @@ function UploadAndResult(){
 
 /* =========================================================
    HEADER — centered logo, right-aligned search+icons,
-   one centered mega panel (no flicker)
+   shared centered mega panel
    ========================================================= */
 
 function MegaSection({ title, children }) {
@@ -314,8 +314,6 @@ function MegaSection({ title, children }) {
 
 function SigninHeader() {
   const [open, setOpen] = useState(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
-  const navWrapRef = useRef(null);
-
   const close = () => setOpen(null);
 
   // Close on ESC
@@ -388,12 +386,8 @@ function SigninHeader() {
       </div>
 
       {/* 3) dark navbar + ONE centered mega panel */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10">
-        <div
-          ref={navWrapRef}
-          className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
-          onMouseLeave={close}
-        >
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
+        <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
@@ -409,10 +403,7 @@ function SigninHeader() {
 
           {/* Shared, centered mega panel */}
           {open && (
-            <div
-              className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]"
-              onMouseEnter={()=>setOpen(open)}
-            >
+            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-full max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
@@ -466,20 +457,14 @@ function SigninHeader() {
 
                   {open === 'blades' && (
                     <>
-                      <MegaSection title="A-SERIES | A5 STYLE">
-                        <li><a href="#">A5 Blades</a></li>
-                      </MegaSection>
+                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="#">A5 Blades</a></li></MegaSection>
                       <MegaSection title="A-SERIES - WIDE | A5 STYLE">
                         <li><a href="#">Wide Blades</a></li>
                         <li><a href="#">Bundle Plus</a></li>
                         <li><a href="#">Bundle</a></li>
                       </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                        <li><a href="#">C‑MAX Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS">
-                        <li><a href="#">Mini Trimmer Blades</a></li>
-                      </MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS"><li><a href="#">C-MAX Blades</a></li></MegaSection>
+                      <MegaSection title="M-SERIES | MINI TRIMMERS"><li><a href="#">Mini Trimmer Blades</a></li></MegaSection>
                     </>
                   )}
 
@@ -497,8 +482,8 @@ function SigninHeader() {
                         <li><a href="#">8 Piece Metal Comb Set</a></li>
                       </MegaSection>
                       <MegaSection title="CASES">
-                        <li><a href="#">12‑Slot</a></li>
-                        <li><a href="#">22‑Slot</a></li>
+                        <li><a href="#">12-Slot</a></li>
+                        <li><a href="#">22-Slot</a></li>
                       </MegaSection>
                     </>
                   )}
@@ -535,7 +520,7 @@ function SigninHeader() {
 }
 
 /* =========================================================
-   HERO / HOW / SAMPLES (unchanged)
+   HERO / HOW / SAMPLES
    ========================================================= */
 function Hero(){
   return (
@@ -674,10 +659,10 @@ function SigninFooter() {
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
           <div className="flex items-center gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
-            <a href="#" className="hover:underline">A‑SERIES</a>
-            <a href="#" className="hover:underline">C‑SERIES</a>
-            <a href="#" className="hover:underline">D‑SERIES</a>
-            <a href="#" className="hover:underline">M‑SERIES</a>
+            <a href="#" className="hover:underline">A-SERIES</a>
+            <a href="#" className="hover:underline">C-SERIES</a>
+            <a href="#" className="hover:underline">D-SERIES</a>
+            <a href="#" className="hover:underline">M-SERIES</a>
             <a href="#" className="hover:underline">View All</a>
           </div>
         </div>
@@ -690,7 +675,6 @@ function SigninFooter() {
         </div>
       </div>
 
-      {/* cookie prefs bar imitation */}
       <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
     </footer>
   );
@@ -709,14 +693,11 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles to match reference spacing/hover/colors */}
+      {/* Global styles for Joyzze look */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
         :root { --joyzze-teal: #1CD2C1; }
-
-        /* Use Josefin Sans for navbar & mega. */
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
@@ -724,10 +705,10 @@ export default function Page(){
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
         /* NAV BAR PADDING / HOVER */
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; }
         .jz-item:hover { color:#fff; }
-        .jz-active { color:#fff; }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
