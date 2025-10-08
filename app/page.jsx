@@ -29,8 +29,6 @@ const Icon = {
       <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-
-  /* header/footer glyphs */
   Phone: (props)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -294,26 +292,41 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER — exact Joyzze-like scale/padding/hover
+   HEADER — Joyzze-style with wide translucent mega menu
    ========================================================= */
 
-/** Reusable nav item + hover mega menu */
+function NavSection({ title, children }) {
+  return (
+    <div>
+      <p className="jz-sec-title">{title}</p>
+      <ul className="jz-list">{children}</ul>
+    </div>
+  );
+}
+
+/** Nav item with hover mega menu aligned to container width */
 function NavItem({ label, children }) {
   return (
     <div className="relative group">
-      <button className="jz-item flex items-center gap-[6px] text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">
+      <button className="jz-item">
         <span>{label}</span>
         <svg className="caret" width="14" height="14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
 
         {/* hover indicator: teal line + tiny pointer */}
-        <span className="pointer-events-none absolute left-0 right-0 -bottom-[1px] h-[2px] bg-[var(--joyzze-teal)] opacity-0 group-hover:opacity-100 transition"></span>
-        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-[var(--joyzze-teal)] opacity-0 group-hover:opacity-100 transition"></span>
+        <span className="jz-underline" />
+        <span className="jz-pointer" />
       </button>
 
+      {/* Mega menu: full container width, centered, translucent, teal border */}
       {children && (
-        <div className="jz-mega absolute left-0 top-full w-[1160px] bg-white text-[#2b2b2b] rounded-sm shadow-2xl ring-1 ring-black/5 border-t-[2px] border-[var(--joyzze-teal)] opacity-0 translate-y-[6px] pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition">
-          <div className="grid grid-cols-3 gap-12 p-8 text-[15px] leading-[1.6]">
-            {children}
+        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[10px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition">
+          <div className="jz-mega">
+            {/* background imagery layer (optional) */}
+            <div className="jz-mega-bg" />
+            {/* content */}
+            <div className="relative grid grid-cols-3 gap-14 p-8">
+              {children}
+            </div>
           </div>
         </div>
       )}
@@ -353,7 +366,7 @@ function SigninHeader() {
               <input
                 type="text"
                 placeholder="Search Raptor, c-series, Piranha..."
-                className="jz-input w-[440px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
+                className="jz-input w-[460px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
               />
               <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/80" />
               <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/90" />
@@ -365,113 +378,115 @@ function SigninHeader() {
         </div>
       </div>
 
-      {/* 3) dark navigation bar with exact paddings + hover */}
+      {/* 3) dark navigation bar */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10">
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 flex items-center">
-          {/* the small mint glyph on the left */}
+          {/* small mint glyph on the left */}
           <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
           {/* main items */}
           <div className="jz-nav flex items-stretch gap-[2px]">
             <NavItem label="All Products">
-              <div className="grid grid-cols-3 gap-12">
-                <div>
-                  <p className="font-semibold text-[#2f2f2f] mb-3">CLIPPERS</p>
-                  <ul className="space-y-2 text-[#3f3f3f]">
-                    <li>Raptor &amp; Falcon | A-Series</li>
-                    <li>Hornet | C-Series</li>
-                    <li>Stinger | C-Series</li>
-                    <li>Piranha | D-Series</li>
-                    <li>Hornet Mini | M-Series</li>
-                  </ul>
-                </div>
-                <div>
-                  <p className="font-semibold text-[#2f2f2f] mb-3">BLADES</p>
-                  <ul className="space-y-2 text-[#3f3f3f]">
-                    <li>A-Series | Raptor &amp; Falcon</li>
-                    <li>A-Series | Raptor &amp; Falcon | Wide</li>
-                    <li>C-Series | Hornet &amp; Stinger</li>
-                    <li>D-Series | Piranha</li>
-                    <li>M-Series | Hornet Mini</li>
-                  </ul>
-                </div>
-                <div>
-                  <p className="font-semibold text-[#2f2f2f] mb-3">COMBS &amp; ACCESSORIES</p>
-                  <ul className="space-y-2 text-[#3f3f3f]">
-                    <li>Cases</li>
-                    <li>Combs</li>
-                    <li>Blade &amp; Scissor Oil</li>
-                    <li>Multi-Functional Tool Bag</li>
-                  </ul>
-                </div>
-              </div>
+              <NavSection title="CLIPPERS">
+                <li><a href="#">Raptor &amp; Falcon | A-Series</a></li>
+                <li><a href="#">Hornet | C-Series</a></li>
+                <li><a href="#">Stinger | C-Series</a></li>
+                <li><a href="#">Piranha | D-Series</a></li>
+                <li><a href="#">Hornet Mini | M-Series</a></li>
+              </NavSection>
+              <NavSection title="BLADES">
+                <li><a href="#">A-Series | Raptor &amp; Falcon</a></li>
+                <li><a href="#">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                <li><a href="#">C-Series | Hornet &amp; Stinger</a></li>
+                <li><a href="#">D-Series | Piranha</a></li>
+                <li><a href="#">M-Series | Hornet Mini</a></li>
+              </NavSection>
+              <NavSection title="COMBS & ACCESSORIES">
+                <li><a href="#">Cases</a></li>
+                <li><a href="#">Combs</a></li>
+                <li><a href="#">Blade &amp; Scissor Oil</a></li>
+                <li><a href="#">Multi-Functional Tool Bag</a></li>
+              </NavSection>
             </NavItem>
 
             <NavItem label="Clippers">
-              <div className="grid grid-cols-4 gap-12">
-                <div>
-                  <p className="font-semibold mb-3">5-IN-1 CLIPPERS | C-SERIES</p>
-                  <ul className="space-y-2"><li>Hornet</li><li>Stinger</li></ul>
-                </div>
-                <div>
-                  <p className="font-semibold mb-3">A5 STYLE CLIPPERS | A-SERIES</p>
-                  <ul className="space-y-2"><li>Falcon</li><li>Raptor</li></ul>
-                </div>
-                <div>
-                  <p className="font-semibold mb-3">D-SERIES CLIPPERS</p>
-                  <ul className="space-y-2"><li>Piranha</li></ul>
-                  <p className="font-semibold mt-5 mb-3">PARTS</p>
-                  <ul className="space-y-2"><li>A5 Falcon</li><li>A5 Raptor</li></ul>
-                </div>
-                <div>
-                  <p className="font-semibold mb-3">MINI TRIMMERS | M-SERIES</p>
-                  <ul className="space-y-2"><li>Hornet Mini</li></ul>
-                </div>
-              </div>
+              <NavSection title="5-IN-1 CLIPPERS | C-SERIES">
+                <li><a href="#">Hornet</a></li>
+                <li><a href="#">Stinger</a></li>
+              </NavSection>
+              <NavSection title="A5 STYLE CLIPPERS | A-SERIES">
+                <li><a href="#">Falcon</a></li>
+                <li><a href="#">Raptor</a></li>
+              </NavSection>
+              <NavSection title="D-SERIES CLIPPERS">
+                <li><a href="#">Piranha</a></li>
+                <li className="mt-4" />
+                <li className="jz-sec-title mt-2 !mb-2">PARTS</li>
+                <li><a href="#">A5 Falcon</a></li>
+                <li><a href="#">A5 Raptor</a></li>
+              </NavSection>
+              <NavSection title="MINI TRIMMERS | M-SERIES">
+                <li><a href="#">Hornet Mini</a></li>
+              </NavSection>
             </NavItem>
 
             <NavItem label="Blades">
-              <div className="grid grid-cols-4 gap-12">
-                <div><p className="font-semibold mb-3">A-SERIES | A5 STYLE</p><ul className="space-y-2"><li>A5 Blades</li></ul></div>
-                <div><p className="font-semibold mb-3">A-SERIES - WIDE | A5 STYLE</p><ul className="space-y-2"><li>Wide Blades</li><li>Bundle Plus</li><li>Bundle</li></ul></div>
-                <div><p className="font-semibold mb-3">C-SERIES | 5-IN-1 CLIPPERS</p><ul className="space-y-2"><li>C‑MAX Blades</li></ul></div>
-                <div><p className="font-semibold mb-3">M-SERIES | MINI TRIMMERS</p><ul className="space-y-2"><li>Mini Trimmer Blades</li></ul></div>
-              </div>
+              <NavSection title="A-SERIES | A5 STYLE">
+                <li><a href="#">A5 Blades</a></li>
+              </NavSection>
+              <NavSection title="A-SERIES - WIDE | A5 STYLE">
+                <li><a href="#">Wide Blades</a></li>
+                <li><a href="#">Bundle Plus</a></li>
+                <li><a href="#">Bundle</a></li>
+              </NavSection>
+              <NavSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                <li><a href="#">C‑MAX Blades</a></li>
+              </NavSection>
+              <NavSection title="M-SERIES | MINI TRIMMERS">
+                <li><a href="#">Mini Trimmer Blades</a></li>
+              </NavSection>
             </NavItem>
 
             <NavItem label="Combs & Accessories">
-              <div className="grid grid-cols-4 gap-12">
-                <div><p className="font-semibold mb-3">A-SERIES | WIDE COMBS</p><ul className="space-y-2"><li>Wide Metal Combs</li><li>Bundle</li><li>Bundle Plus</li></ul></div>
-                <div><p className="font-semibold mb-3">A & D SERIES | RAPTOR/FALCON/PIRANHA</p><ul className="space-y-2"><li>8 Piece Metal Comb Set</li></ul></div>
-                <div><p className="font-semibold mb-3">C-SERIES | STINGER & HORNET</p><ul className="space-y-2"><li>8 Piece Metal Comb Set</li></ul></div>
-                <div><p className="font-semibold mb-3">CASES</p><ul className="space-y-2"><li>12‑Slot</li><li>22‑Slot</li></ul></div>
-              </div>
+              <NavSection title="A-SERIES | WIDE COMBS">
+                <li><a href="#">Wide Metal Combs</a></li>
+                <li><a href="#">Bundle</a></li>
+                <li><a href="#">Bundle Plus</a></li>
+              </NavSection>
+              <NavSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                <li><a href="#">8 Piece Metal Comb Set</a></li>
+              </NavSection>
+              <NavSection title="C-SERIES | STINGER & HORNET">
+                <li><a href="#">8 Piece Metal Comb Set</a></li>
+              </NavSection>
+              <NavSection title="CASES">
+                <li><a href="#">12‑Slot</a></li>
+                <li><a href="#">22‑Slot</a></li>
+              </NavSection>
             </NavItem>
 
             <NavItem label="Information">
-              <div className="grid grid-cols-3 gap-12">
-                <div className="space-y-2">
-                  <div>About JOYZZE™</div>
-                  <div>FAQs</div>
-                  <div>Privacy Policy</div>
-                </div>
-                <div className="space-y-2">
-                  <div>Contact</div>
-                  <div>Shipping &amp; Returns</div>
-                  <div>Accessibility</div>
-                </div>
-                <div className="space-y-2">
-                  <div>JOYZZE™ Clipper Repair Form</div>
-                  <div>Warranty</div>
-                  <div>JOYZZE Product Brochure</div>
-                  <div>Educational</div>
-                  <div>Terms &amp; Conditions</div>
-                </div>
-              </div>
+              <NavSection title="ABOUT JOYZZE™">
+                <li><a href="#">About JOYZZE™</a></li>
+                <li><a href="#">FAQs</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+              </NavSection>
+              <NavSection title="SUPPORT">
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Shipping &amp; Returns</a></li>
+                <li><a href="#">Accessibility</a></li>
+              </NavSection>
+              <NavSection title="DOCS">
+                <li><a href="#">JOYZZE™ Clipper Repair Form</a></li>
+                <li><a href="#">Warranty</a></li>
+                <li><a href="#">JOYZZE Product Brochure</a></li>
+                <li><a href="#">Educational</a></li>
+                <li><a href="#">Terms &amp; Conditions</a></li>
+              </NavSection>
             </NavItem>
 
-            <a href="#" className="jz-item text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">Recycling &amp; Sharpening</a>
-            <a href="#" className="jz-item text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">Distributor</a>
+            <a href="#" className="jz-item">Recycling &amp; Sharpening</a>
+            <a href="#" className="jz-item">Distributor</a>
           </div>
         </div>
       </nav>
@@ -654,13 +669,12 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles: exact font scale + nav paddings/hover per screenshots */}
+      {/* Global styles to match fonts/spacing + mega menu visuals */}
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap');
-        :root {
-          --joyzze-teal: #1CD2C1;
-        }
-        body { font-family: 'Montserrat', 'Avenir Next', 'Proxima Nova', Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+        :root { --joyzze-teal: #1CD2C1; }
+        /* Use Josefin Sans for navbar/menu only to match SS */
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
         /* buttons/cards from your existing design */
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
@@ -668,19 +682,53 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
-        /* --- Joyzze nav exact-ish tuning --- */
+        /* --- Nav bar exactish tuning --- */
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item { padding: 14px 18px; position: relative; }
+        .jz-item { padding: 14px 20px; position: relative; line-height: 1; color:#d7d7d7; }
+        .jz-item:hover { color:#fff; }
         .caret { margin-left: 6px; opacity: .75; transition: transform .18s ease, opacity .18s ease; }
         .group:hover .caret { transform: translateY(1px) rotate(180deg); opacity: 1; }
+        .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .group:hover .jz-underline, .group:hover .jz-pointer { opacity:1; }
 
-        .jz-mega { box-shadow: 0 30px 60px -20px rgba(0,0,0,.35), 0 10px 22px rgba(0,0,0,.12); }
+        /* --- Mega menu panel --- */
+        .jz-mega {
+          width: min(1280px, calc(100vw - 64px));  /* full container width */
+          border: 1px solid rgba(28,210,193,.85);
+          border-top-width: 3px;
+          background: rgba(255,255,255,.96);
+          backdrop-filter: blur(1px);
+          box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
+          border-radius: 2px;
+        }
+        .jz-mega-bg {
+          position:absolute; inset:0;
+          content:"";
+          background-image: url('/nav-mega-bg.jpg'), radial-gradient(1200px 500px at 70% 20%, rgba(0,0,0,.08), transparent 60%);
+          background-size: cover, auto;
+          background-position: center, center;
+          opacity:.12; pointer-events:none;
+          border-radius: 2px;
+        }
+
+        /* Section titles + list rhythm */
+        .jz-sec-title {
+          margin-bottom: 12px;
+          color:#2f2f2f;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: .06em;
+          font-size: 14px;
+        }
+        .jz-list { list-style:none; padding:0; margin:0; }
+        .jz-list li { padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
+        .jz-list li:last-child { border-bottom: 0; }
+        .jz-list a { color:#3f3f3f; font-size: 15px; }
+        .jz-list a:hover { color:#111; }
 
         /* search input focus like the screenshot */
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-
-        /* make menu columns look airy like SS */
-        .jz-mega p { font-weight:600; letter-spacing:.01em; }
       `}</style>
     </main>
   );
