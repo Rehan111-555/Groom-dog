@@ -29,8 +29,10 @@ const Icon = {
       <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
+
+  /* header/footer glyphs to match the site */
   Phone: (props)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
@@ -45,20 +47,25 @@ const Icon = {
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Swap: (props)=>(
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M7 7h13M4 7l3-3-3 3Zm0 10h13M20 17l-3 3 3-3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+  Shuffle: (props)=>(
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   User: (props)=>(
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
+  CaretDown: (props)=>(
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...props}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+  ),
   Bag: (props)=>(
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M6 7h12l-1 12H7L6 7Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
+      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
@@ -292,10 +299,11 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER — Joyzze-style with wide translucent mega menu
+   HEADER — centered logo, right-aligned search+icons,
+   one centered mega panel (no flicker)
    ========================================================= */
 
-function NavSection({ title, children }) {
+function MegaSection({ title, children }) {
   return (
     <div>
       <p className="jz-sec-title">{title}</p>
@@ -304,40 +312,38 @@ function NavSection({ title, children }) {
   );
 }
 
-/** Nav item with hover mega menu aligned to container width */
-function NavItem({ label, children }) {
-  return (
-    <div className="relative group">
-      <button className="jz-item">
-        <span>{label}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+function SigninHeader() {
+  const [open, setOpen] = useState(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
+  const navWrapRef = useRef(null);
 
-        {/* hover indicator: teal line + tiny pointer */}
+  const close = () => setOpen(null);
+
+  // Close on ESC
+  useEffect(() => {
+    const onKey = (e)=>{ if(e.key==='Escape') close(); };
+    window.addEventListener('keydown', onKey);
+    return ()=>window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const NavButton = ({ id, children }) => {
+    const active = open === id;
+    return (
+      <button
+        className={`jz-item ${active ? 'text-white jz-active' : ''}`}
+        onMouseEnter={() => setOpen(id)}
+        onFocus={() => setOpen(id)}
+      >
+        <span>{children}</span>
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
         <span className="jz-underline" />
         <span className="jz-pointer" />
       </button>
+    );
+  };
 
-      {/* Mega menu: full container width, centered, translucent, teal border */}
-      {children && (
-        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[10px] opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition">
-          <div className="jz-mega">
-            {/* background imagery layer (optional) */}
-            <div className="jz-mega-bg" />
-            {/* content */}
-            <div className="relative grid grid-cols-3 gap-14 p-8">
-              {children}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function SigninHeader() {
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* 1) very top strip with phone */}
+      {/* 1) top phone strip */}
       <div className="bg-[#bdbdbd] text-[#1a1a1a]">
         <div className="max-w-[1280px] mx-auto px-4 h-[42px] flex items-center gap-2">
           <Icon.Phone className="opacity-80" />
@@ -345,10 +351,10 @@ function SigninHeader() {
         </div>
       </div>
 
-      {/* 2) middle band: centered pill logo + right search + icons */}
+      {/* 2) logo centered + search right + icons */}
       <div className="bg-[#bdbdbd]">
         <div className="relative max-w-[1280px] mx-auto px-4 lg:px-6 h-[66px] flex items-center justify-end">
-          {/* centered logo pill */}
+          {/* centered pill logo */}
           <a className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 block rounded-lg overflow-hidden shadow-[0_8px_18px_rgba(0,0,0,.35)]" href="#">
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-3 rounded-lg">
               <img
@@ -360,134 +366,168 @@ function SigninHeader() {
             </div>
           </a>
 
-          {/* right: search input + small icons */}
+          {/* right lane: search + icons */}
           <div className="ml-auto flex items-center gap-3 md:gap-4">
             <div className="relative hidden md:block">
               <input
                 type="text"
                 placeholder="Search Raptor, c-series, Piranha..."
-                className="jz-input w-[460px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
+                className="jz-input w-[520px] lg:w-[560px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
               />
               <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/80" />
               <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/90" />
             </div>
-            <button className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Compare"><Icon.Swap /></button>
-            <button className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Account"><Icon.User /></button>
+            <button className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Shuffle"><Icon.Shuffle /></button>
+            <div className="hidden sm:flex items-center">
+              <button className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Account"><Icon.User /></button>
+              <Icon.CaretDown className="ml-[-2px] opacity-80" />
+            </div>
             <button className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Cart"><Icon.Bag /></button>
           </div>
         </div>
       </div>
 
-      {/* 3) dark navigation bar */}
+      {/* 3) dark navbar + ONE centered mega panel */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10">
-        <div className="max-w-[1280px] mx-auto px-2 lg:px-4 flex items-center">
-          {/* small mint glyph on the left */}
-          <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
-
-          {/* main items */}
-          <div className="jz-nav flex items-stretch gap-[2px]">
-            <NavItem label="All Products">
-              <NavSection title="CLIPPERS">
-                <li><a href="#">Raptor &amp; Falcon | A-Series</a></li>
-                <li><a href="#">Hornet | C-Series</a></li>
-                <li><a href="#">Stinger | C-Series</a></li>
-                <li><a href="#">Piranha | D-Series</a></li>
-                <li><a href="#">Hornet Mini | M-Series</a></li>
-              </NavSection>
-              <NavSection title="BLADES">
-                <li><a href="#">A-Series | Raptor &amp; Falcon</a></li>
-                <li><a href="#">A-Series | Raptor &amp; Falcon | Wide</a></li>
-                <li><a href="#">C-Series | Hornet &amp; Stinger</a></li>
-                <li><a href="#">D-Series | Piranha</a></li>
-                <li><a href="#">M-Series | Hornet Mini</a></li>
-              </NavSection>
-              <NavSection title="COMBS & ACCESSORIES">
-                <li><a href="#">Cases</a></li>
-                <li><a href="#">Combs</a></li>
-                <li><a href="#">Blade &amp; Scissor Oil</a></li>
-                <li><a href="#">Multi-Functional Tool Bag</a></li>
-              </NavSection>
-            </NavItem>
-
-            <NavItem label="Clippers">
-              <NavSection title="5-IN-1 CLIPPERS | C-SERIES">
-                <li><a href="#">Hornet</a></li>
-                <li><a href="#">Stinger</a></li>
-              </NavSection>
-              <NavSection title="A5 STYLE CLIPPERS | A-SERIES">
-                <li><a href="#">Falcon</a></li>
-                <li><a href="#">Raptor</a></li>
-              </NavSection>
-              <NavSection title="D-SERIES CLIPPERS">
-                <li><a href="#">Piranha</a></li>
-                <li className="mt-4" />
-                <li className="jz-sec-title mt-2 !mb-2">PARTS</li>
-                <li><a href="#">A5 Falcon</a></li>
-                <li><a href="#">A5 Raptor</a></li>
-              </NavSection>
-              <NavSection title="MINI TRIMMERS | M-SERIES">
-                <li><a href="#">Hornet Mini</a></li>
-              </NavSection>
-            </NavItem>
-
-            <NavItem label="Blades">
-              <NavSection title="A-SERIES | A5 STYLE">
-                <li><a href="#">A5 Blades</a></li>
-              </NavSection>
-              <NavSection title="A-SERIES - WIDE | A5 STYLE">
-                <li><a href="#">Wide Blades</a></li>
-                <li><a href="#">Bundle Plus</a></li>
-                <li><a href="#">Bundle</a></li>
-              </NavSection>
-              <NavSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                <li><a href="#">C‑MAX Blades</a></li>
-              </NavSection>
-              <NavSection title="M-SERIES | MINI TRIMMERS">
-                <li><a href="#">Mini Trimmer Blades</a></li>
-              </NavSection>
-            </NavItem>
-
-            <NavItem label="Combs & Accessories">
-              <NavSection title="A-SERIES | WIDE COMBS">
-                <li><a href="#">Wide Metal Combs</a></li>
-                <li><a href="#">Bundle</a></li>
-                <li><a href="#">Bundle Plus</a></li>
-              </NavSection>
-              <NavSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                <li><a href="#">8 Piece Metal Comb Set</a></li>
-              </NavSection>
-              <NavSection title="C-SERIES | STINGER & HORNET">
-                <li><a href="#">8 Piece Metal Comb Set</a></li>
-              </NavSection>
-              <NavSection title="CASES">
-                <li><a href="#">12‑Slot</a></li>
-                <li><a href="#">22‑Slot</a></li>
-              </NavSection>
-            </NavItem>
-
-            <NavItem label="Information">
-              <NavSection title="ABOUT JOYZZE™">
-                <li><a href="#">About JOYZZE™</a></li>
-                <li><a href="#">FAQs</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-              </NavSection>
-              <NavSection title="SUPPORT">
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Shipping &amp; Returns</a></li>
-                <li><a href="#">Accessibility</a></li>
-              </NavSection>
-              <NavSection title="DOCS">
-                <li><a href="#">JOYZZE™ Clipper Repair Form</a></li>
-                <li><a href="#">Warranty</a></li>
-                <li><a href="#">JOYZZE Product Brochure</a></li>
-                <li><a href="#">Educational</a></li>
-                <li><a href="#">Terms &amp; Conditions</a></li>
-              </NavSection>
-            </NavItem>
-
-            <a href="#" className="jz-item">Recycling &amp; Sharpening</a>
-            <a href="#" className="jz-item">Distributor</a>
+        <div
+          ref={navWrapRef}
+          className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
+          onMouseLeave={close}
+        >
+          <div className="flex items-center">
+            <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
+            <div className="jz-nav flex items-stretch gap-[2px]">
+              <NavButton id="all">All Products</NavButton>
+              <NavButton id="clippers">Clippers</NavButton>
+              <NavButton id="blades">Blades</NavButton>
+              <NavButton id="combs">Combs &amp; Accessories</NavButton>
+              <NavButton id="info">Information</NavButton>
+              <a href="#" className="jz-item">Recycling &amp; Sharpening</a>
+              <a href="#" className="jz-item">Distributor</a>
+            </div>
           </div>
+
+          {/* Shared, centered mega panel */}
+          {open && (
+            <div
+              className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]"
+              onMouseEnter={()=>setOpen(open)}
+            >
+              <div className="jz-mega w-full max-w-[1280px]">
+                <div className="jz-mega-bg" />
+                <div className="relative grid grid-cols-3 gap-14 p-8">
+                  {open === 'all' && (
+                    <>
+                      <MegaSection title="CLIPPERS">
+                        <li><a href="#">Raptor &amp; Falcon | A-Series</a></li>
+                        <li><a href="#">Hornet | C-Series</a></li>
+                        <li><a href="#">Stinger | C-Series</a></li>
+                        <li><a href="#">Piranha | D-Series</a></li>
+                        <li><a href="#">Hornet Mini | M-Series</a></li>
+                      </MegaSection>
+                      <MegaSection title="BLADES">
+                        <li><a href="#">A-Series | Raptor &amp; Falcon</a></li>
+                        <li><a href="#">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                        <li><a href="#">C-Series | Hornet &amp; Stinger</a></li>
+                        <li><a href="#">D-Series | Piranha</a></li>
+                        <li><a href="#">M-Series | Hornet Mini</a></li>
+                      </MegaSection>
+                      <MegaSection title="COMBS & ACCESSORIES">
+                        <li><a href="#">Cases</a></li>
+                        <li><a href="#">Combs</a></li>
+                        <li><a href="#">Blade &amp; Scissor Oil</a></li>
+                        <li><a href="#">Multi-Functional Tool Bag</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'clippers' && (
+                    <>
+                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
+                        <li><a href="#">Hornet</a></li>
+                        <li><a href="#">Stinger</a></li>
+                      </MegaSection>
+                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                        <li><a href="#">Falcon</a></li>
+                        <li><a href="#">Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="D-SERIES CLIPPERS">
+                        <li><a href="#">Piranha</a></li>
+                        <li className="mt-2" />
+                        <li className="jz-sec-title !mb-2">PARTS</li>
+                        <li><a href="#">A5 Falcon</a></li>
+                        <li><a href="#">A5 Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="MINI TRIMMERS | M-SERIES">
+                        <li><a href="#">Hornet Mini</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'blades' && (
+                    <>
+                      <MegaSection title="A-SERIES | A5 STYLE">
+                        <li><a href="#">A5 Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                        <li><a href="#">Wide Blades</a></li>
+                        <li><a href="#">Bundle Plus</a></li>
+                        <li><a href="#">Bundle</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                        <li><a href="#">C‑MAX Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="M-SERIES | MINI TRIMMERS">
+                        <li><a href="#">Mini Trimmer Blades</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'combs' && (
+                    <>
+                      <MegaSection title="A-SERIES | WIDE COMBS">
+                        <li><a href="#">Wide Metal Combs</a></li>
+                        <li><a href="#">Bundle</a></li>
+                        <li><a href="#">Bundle Plus</a></li>
+                      </MegaSection>
+                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                        <li><a href="#">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | STINGER & HORNET">
+                        <li><a href="#">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="CASES">
+                        <li><a href="#">12‑Slot</a></li>
+                        <li><a href="#">22‑Slot</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'info' && (
+                    <>
+                      <MegaSection title="ABOUT JOYZZE™">
+                        <li><a href="#">About JOYZZE™</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                      </MegaSection>
+                      <MegaSection title="SUPPORT">
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Shipping &amp; Returns</a></li>
+                        <li><a href="#">Accessibility</a></li>
+                      </MegaSection>
+                      <MegaSection title="DOCS">
+                        <li><a href="#">JOYZZE™ Clipper Repair Form</a></li>
+                        <li><a href="#">Warranty</a></li>
+                        <li><a href="#">JOYZZE Product Brochure</a></li>
+                        <li><a href="#">Educational</a></li>
+                        <li><a href="#">Terms &amp; Conditions</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
     </header>
@@ -669,32 +709,35 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles to match fonts/spacing + mega menu visuals */}
+      {/* Global styles to match reference spacing/hover/colors */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+
         :root { --joyzze-teal: #1CD2C1; }
-        /* Use Josefin Sans for navbar/menu only to match SS */
+
+        /* Use Josefin Sans for navbar & mega. */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
-        /* buttons/cards from your existing design */
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
-        /* --- Nav bar exactish tuning --- */
-        .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item { padding: 14px 20px; position: relative; line-height: 1; color:#d7d7d7; }
+        /* NAV BAR PADDING / HOVER */
+        .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; }
         .jz-item:hover { color:#fff; }
-        .caret { margin-left: 6px; opacity: .75; transition: transform .18s ease, opacity .18s ease; }
-        .group:hover .caret { transform: translateY(1px) rotate(180deg); opacity: 1; }
+        .jz-active { color:#fff; }
+        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
+        .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
+
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .group:hover .jz-underline, .group:hover .jz-pointer { opacity:1; }
+        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
+        .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* --- Mega menu panel --- */
+        /* MEGA PANEL */
         .jz-mega {
-          width: min(1280px, calc(100vw - 64px));  /* full container width */
           border: 1px solid rgba(28,210,193,.85);
           border-top-width: 3px;
           background: rgba(255,255,255,.96);
@@ -704,30 +747,23 @@ export default function Page(){
         }
         .jz-mega-bg {
           position:absolute; inset:0;
-          content:"";
           background-image: url('/nav-mega-bg.jpg'), radial-gradient(1200px 500px at 70% 20%, rgba(0,0,0,.08), transparent 60%);
           background-size: cover, auto;
           background-position: center, center;
-          opacity:.12; pointer-events:none;
-          border-radius: 2px;
+          opacity:.12; pointer-events:none; border-radius:2px;
         }
 
-        /* Section titles + list rhythm */
         .jz-sec-title {
-          margin-bottom: 12px;
-          color:#2f2f2f;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: .06em;
-          font-size: 14px;
+          margin-bottom:12px; color:#2f2f2f; font-weight:600;
+          text-transform:uppercase; letter-spacing:.06em; font-size:14px;
         }
         .jz-list { list-style:none; padding:0; margin:0; }
-        .jz-list li { padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,.06); }
-        .jz-list li:last-child { border-bottom: 0; }
-        .jz-list a { color:#3f3f3f; font-size: 15px; }
-        .jz-list a:hover { color:#111; }
+        .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
+        .jz-list li:last-child { border-bottom:0; }
+        .jz-list a { color:#3f3f3f; font-size:15px; }
+        .jz-list a:hover { color:#111; text-decoration:none; }
 
-        /* search input focus like the screenshot */
+        /* search focus */
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
       `}</style>
     </main>
