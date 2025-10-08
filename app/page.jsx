@@ -30,7 +30,7 @@ const Icon = {
     </svg>
   ),
 
-  /* --- header/footer glyphs --- */
+  /* header/footer glyphs */
   Phone: (props)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -40,6 +40,11 @@ const Icon = {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  Plus: (props)=>(
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   Swap: (props)=>(
@@ -289,20 +294,25 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER (Joyzze-style)
+   HEADER — exact Joyzze-like scale/padding/hover
    ========================================================= */
 
-/** One reusable nav item with a hover mega menu */
+/** Reusable nav item + hover mega menu */
 function NavItem({ label, children }) {
   return (
     <div className="relative group">
-      <button className="flex items-center gap-1 py-4 px-4 text-sm tracking-wide hover:text-white">
+      <button className="jz-item flex items-center gap-[6px] text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">
         <span>{label}</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" className="opacity-70"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+
+        {/* hover indicator: teal line + tiny pointer */}
+        <span className="pointer-events-none absolute left-0 right-0 -bottom-[1px] h-[2px] bg-[var(--joyzze-teal)] opacity-0 group-hover:opacity-100 transition"></span>
+        <span className="pointer-events-none absolute left-1/2 -translate-x-1/2 -bottom-[6px] w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-[var(--joyzze-teal)] opacity-0 group-hover:opacity-100 transition"></span>
       </button>
+
       {children && (
-        <div className="absolute left-0 top-full w-[920px] xl:w-[1160px] bg-white text-[#2b2b2b] shadow-2xl ring-1 ring-black/5 rounded-sm border-t-2 border-[#1CD2C1] opacity-0 translate-y-1 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition">
-          <div className="grid grid-cols-3 gap-8 p-8 text-sm">
+        <div className="jz-mega absolute left-0 top-full w-[1160px] bg-white text-[#2b2b2b] rounded-sm shadow-2xl ring-1 ring-black/5 border-t-[2px] border-[var(--joyzze-teal)] opacity-0 translate-y-[6px] pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition">
+          <div className="grid grid-cols-3 gap-12 p-8 text-[15px] leading-[1.6]">
             {children}
           </div>
         </div>
@@ -314,37 +324,40 @@ function NavItem({ label, children }) {
 function SigninHeader() {
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* 1) Very top thin phone strip */}
+      {/* 1) very top strip with phone */}
       <div className="bg-[#bdbdbd] text-[#1a1a1a]">
-        <div className="max-w-[1280px] mx-auto px-4 h-10 flex items-center gap-2">
+        <div className="max-w-[1280px] mx-auto px-4 h-[42px] flex items-center gap-2">
           <Icon.Phone className="opacity-80" />
-          <span className="text-sm">(877) 456-9993</span>
+          <span className="text-[14px] font-medium">(877) 456-9993</span>
         </div>
       </div>
 
-      {/* 2) Middle band with centered logo + search + action icons */}
+      {/* 2) middle band: centered pill logo + right search + icons */}
       <div className="bg-[#bdbdbd]">
-        <div className="relative max-w-[1280px] mx-auto px-4 lg:px-6 h-16 lg:h-[72px] flex items-center justify-end">
-          {/* Centered logo pill (positioned absolutely to mimic Joyzze) */}
-          <a className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 block rounded-lg overflow-hidden shadow-lg" href="#">
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 lg:px-7 py-2.5 lg:py-3 rounded-lg">
-              {/* Use your real logo image here */}
-              <img src="/joyzze-logo.svg" alt="Joyzze" className="h-8 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.2em]">JOYZZE</span>'}}/>
+        <div className="relative max-w-[1280px] mx-auto px-4 lg:px-6 h-[66px] flex items-center justify-end">
+          {/* centered logo pill */}
+          <a className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 block rounded-lg overflow-hidden shadow-[0_8px_18px_rgba(0,0,0,.35)]" href="#">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-3 rounded-lg">
+              <img
+                src="/joyzze-logo.svg"
+                alt="Joyzze"
+                className="h-9 w-auto"
+                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em]">JOYZZE</span>'}}
+              />
             </div>
           </a>
 
-          {/* Right side: search + small action icons */}
-          <div className="ml-auto flex items-center gap-4">
+          {/* right: search input + small icons */}
+          <div className="ml-auto flex items-center gap-3 md:gap-4">
             <div className="relative hidden md:block">
               <input
                 type="text"
                 placeholder="Search Raptor, c-series, Piranha..."
-                className="w-[360px] lg:w-[460px] h-10 rounded-md bg-white pl-11 pr-11 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
+                className="jz-input w-[440px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
               />
               <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/80" />
-              <svg className="absolute right-3 top-1/2 -translate-y-1/2" width="18" height="18" viewBox="0 0 24 24"><path d="M12 8v8m-4-4h8" stroke="#0f0f0f" strokeWidth="1.8" strokeLinecap="round"/></svg>
+              <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/90" />
             </div>
-
             <button className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Compare"><Icon.Swap /></button>
             <button className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Account"><Icon.User /></button>
             <button className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" aria-label="Cart"><Icon.Bag /></button>
@@ -352,16 +365,16 @@ function SigninHeader() {
         </div>
       </div>
 
-      {/* 3) Dark navigation bar with mega menus */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7]">
+      {/* 3) dark navigation bar with exact paddings + hover */}
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10">
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 flex items-center">
-          {/* left tiny glyph like the site’s stylized J (simple bar to hint at it) */}
-          <div className="px-4 text-[#1CD2C1] text-xl select-none">ʝ</div>
+          {/* the small mint glyph on the left */}
+          <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
           {/* main items */}
-          <div className="flex items-stretch gap-2">
+          <div className="jz-nav flex items-stretch gap-[2px]">
             <NavItem label="All Products">
-              <div className="grid grid-cols-3 gap-8 col-span-3">
+              <div className="grid grid-cols-3 gap-12">
                 <div>
                   <p className="font-semibold text-[#2f2f2f] mb-3">CLIPPERS</p>
                   <ul className="space-y-2 text-[#3f3f3f]">
@@ -395,7 +408,7 @@ function SigninHeader() {
             </NavItem>
 
             <NavItem label="Clippers">
-              <div className="col-span-3 grid grid-cols-4 gap-8">
+              <div className="grid grid-cols-4 gap-12">
                 <div>
                   <p className="font-semibold mb-3">5-IN-1 CLIPPERS | C-SERIES</p>
                   <ul className="space-y-2"><li>Hornet</li><li>Stinger</li></ul>
@@ -418,7 +431,7 @@ function SigninHeader() {
             </NavItem>
 
             <NavItem label="Blades">
-              <div className="col-span-3 grid grid-cols-4 gap-8">
+              <div className="grid grid-cols-4 gap-12">
                 <div><p className="font-semibold mb-3">A-SERIES | A5 STYLE</p><ul className="space-y-2"><li>A5 Blades</li></ul></div>
                 <div><p className="font-semibold mb-3">A-SERIES - WIDE | A5 STYLE</p><ul className="space-y-2"><li>Wide Blades</li><li>Bundle Plus</li><li>Bundle</li></ul></div>
                 <div><p className="font-semibold mb-3">C-SERIES | 5-IN-1 CLIPPERS</p><ul className="space-y-2"><li>C‑MAX Blades</li></ul></div>
@@ -427,7 +440,7 @@ function SigninHeader() {
             </NavItem>
 
             <NavItem label="Combs & Accessories">
-              <div className="col-span-3 grid grid-cols-4 gap-8">
+              <div className="grid grid-cols-4 gap-12">
                 <div><p className="font-semibold mb-3">A-SERIES | WIDE COMBS</p><ul className="space-y-2"><li>Wide Metal Combs</li><li>Bundle</li><li>Bundle Plus</li></ul></div>
                 <div><p className="font-semibold mb-3">A & D SERIES | RAPTOR/FALCON/PIRANHA</p><ul className="space-y-2"><li>8 Piece Metal Comb Set</li></ul></div>
                 <div><p className="font-semibold mb-3">C-SERIES | STINGER & HORNET</p><ul className="space-y-2"><li>8 Piece Metal Comb Set</li></ul></div>
@@ -436,7 +449,7 @@ function SigninHeader() {
             </NavItem>
 
             <NavItem label="Information">
-              <div className="col-span-3 grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-3 gap-12">
                 <div className="space-y-2">
                   <div>About JOYZZE™</div>
                   <div>FAQs</div>
@@ -457,8 +470,8 @@ function SigninHeader() {
               </div>
             </NavItem>
 
-            <a href="#" className="py-4 px-4 text-sm tracking-wide hover:text-white">Recycling &amp; Sharpening</a>
-            <a href="#" className="py-4 px-4 text-sm tracking-wide hover:text-white">Distributor</a>
+            <a href="#" className="jz-item text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">Recycling &amp; Sharpening</a>
+            <a href="#" className="jz-item text-[15px] font-medium leading-[1] text-[#d7d7d7] hover:text-white">Distributor</a>
           </div>
         </div>
       </nav>
@@ -542,10 +555,10 @@ function FooterPromoRibbon(){
   return (
     <div className="bg-[#0e0e0e] text-[#d9d9d9]">
       <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
-        <div className="flex items-center gap-3"><Icon.Truck className="text-[#1CD2C1]" /><span>Free Shipping on orders over $350</span></div>
-        <div className="flex items-center gap-3"><Icon.Return className="text-[#1CD2C1]" /><span>Hassle Free Returns</span></div>
-        <div className="flex items-center gap-3"><Icon.Card className="text-[#1CD2C1]" /><span>All Major Cards Accepted</span></div>
-        <div className="flex items-center gap-3"><Icon.Lock className="text-[#1CD2C1]" /><span>100% Safe &amp; Secure Checkout</span></div>
+        <div className="flex items-center gap-3"><Icon.Truck className="text-[var(--joyzze-teal)]" /><span>Free Shipping on orders over $350</span></div>
+        <div className="flex items-center gap-3"><Icon.Return className="text-[var(--joyzze-teal)]" /><span>Hassle Free Returns</span></div>
+        <div className="flex items-center gap-3"><Icon.Card className="text-[var(--joyzze-teal)]" /><span>All Major Cards Accepted</span></div>
+        <div className="flex items-center gap-3"><Icon.Lock className="text-[var(--joyzze-teal)]" /><span>100% Safe &amp; Secure Checkout</span></div>
       </div>
     </div>
   );
@@ -559,7 +572,7 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
         {/* Left: Links */}
         <div>
-          <h4 className="text-[#1CD2C1] tracking-wide text-lg mb-4">LINKS</h4>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
             <li><a href="#" className="hover:underline">All Products</a></li>
             <li><a href="#" className="hover:underline">Clippers</a></li>
@@ -575,7 +588,7 @@ function SigninFooter() {
         {/* Middle: Logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
-            <img src="/joyzze-logo.svg" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.2em]">JOYZZE</span>'}}/>
+            <img src="/joyzze-logo.svg" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
 
@@ -592,10 +605,10 @@ function SigninFooter() {
 
         {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
-          <h4 className="text-[#1CD2C1] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
-            <button type="submit" className="px-4 rounded-r-md bg-[#1CD2C1] text-black text-sm font-semibold">✉</button>
+            <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
         </div>
       </div>
@@ -605,7 +618,7 @@ function SigninFooter() {
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
           <div className="flex items-center gap-6 text-[15px]">
-            <span className="text-[#1CD2C1] font-semibold">SERIES</span>
+            <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="#" className="hover:underline">A‑SERIES</a>
             <a href="#" className="hover:underline">C‑SERIES</a>
             <a href="#" className="hover:underline">D‑SERIES</a>
@@ -641,16 +654,33 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Local styles to nudge typography/colors like the screenshots */}
+      {/* Global styles: exact font scale + nav paddings/hover per screenshots */}
       <style jsx global>{`
-        /* tighten default line-heights to match the reference */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&display=swap');
+        :root {
+          --joyzze-teal: #1CD2C1;
+        }
+        body { font-family: 'Montserrat', 'Avenir Next', 'Proxima Nova', Inter, system-ui, -apple-system, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; }
+
+        /* buttons/cards from your existing design */
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
-        .btn-primary { background:#1CD2C1; color:#0b0b0b; }
+        .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
-        nav a, nav button { color:#d7d7d7; }
-        /* mega menu shadows a bit stronger like Joyzze */
-        .group:hover > div { box-shadow:0 28px 60px -20px rgba(0,0,0,.35), 0 8px 18px rgba(0,0,0,.10); }
+
+        /* --- Joyzze nav exact-ish tuning --- */
+        .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
+        .jz-item { padding: 14px 18px; position: relative; }
+        .caret { margin-left: 6px; opacity: .75; transition: transform .18s ease, opacity .18s ease; }
+        .group:hover .caret { transform: translateY(1px) rotate(180deg); opacity: 1; }
+
+        .jz-mega { box-shadow: 0 30px 60px -20px rgba(0,0,0,.35), 0 10px 22px rgba(0,0,0,.12); }
+
+        /* search input focus like the screenshot */
+        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+
+        /* make menu columns look airy like SS */
+        .jz-mega p { font-weight:600; letter-spacing:.01em; }
       `}</style>
     </main>
   );
