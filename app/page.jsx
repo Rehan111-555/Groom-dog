@@ -32,52 +32,54 @@ const Icon = {
 
   /* header/footer glyphs */
   Phone: (props)=>(
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   Search: (props)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
+      <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
   Plus: (props)=>(
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
   Shuffle: (props)=>(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props} style={{transform:'rotate(-8deg)'}}>
+      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   User: (props)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   CaretDown: (props)=>(
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...props}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
+    </svg>
   ),
   Bag: (props)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   Truck: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round"/>
+      <path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
     </svg>
   ),
   Return: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
+      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
     </svg>
   ),
   Card: (p)=>(
@@ -88,8 +90,8 @@ const Icon = {
   ),
   Lock: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6"/>
+      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/>
+      <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
     </svg>
   ),
 };
@@ -299,8 +301,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER — centered logo, right-aligned search+icons,
-   shared centered mega panel (with your exact links)
+   HEADER — one-row grid (phone | logo | search+icons)
    ========================================================= */
 
 function MegaSection({ title, children }) {
@@ -316,7 +317,6 @@ function SigninHeader() {
   const [open, setOpen] = useState(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
   const close = () => setOpen(null);
 
-  // Close on ESC + on scroll
   useEffect(() => {
     const onKey = (e)=>{ if(e.key==='Escape') close(); };
     const onScroll = () => close();
@@ -340,7 +340,9 @@ function SigninHeader() {
         aria-expanded={active ? 'true' : 'false'}
       >
         <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+        </svg>
         <span className="jz-underline" />
         <span className="jz-pointer" />
       </a>
@@ -349,68 +351,75 @@ function SigninHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* 1) top phone strip */}
-      <div className="bg-[#bdbdbd] text-[#1a1a1a]">
-        <div className="max-w-[1280px] mx-auto px-4 h-[42px] flex items-center gap-2">
-          <Icon.Phone className="opacity-80" />
-          <span className="text-[14px] font-semibold tracking-[.02em]">(877) 456-9993</span>
-        </div>
-      </div>
-
-      {/* 2) logo centered + search right + icons */}
+      {/* single row: phone | logo | search+icons */}
       <div className="bg-[#bdbdbd]">
-        <div className="relative max-w-[1280px] mx-auto px-4 lg:px-6 h-[66px] flex items-center justify-end">
-          {/* centered pill logo */}
-          <a className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]" href="https://joyzze.com/">
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-3 rounded-[10px]">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+          {/* Left: phone */}
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
+            <Icon.Phone className="opacity-85" />
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+          </a>
+
+          {/* Center: pill logo */}
+          <a
+            href="https://joyzze.com/"
+            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
+            aria-label="Joyzze"
+          >
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-9 w-auto"
-                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em]">JOYZZE</span>'}}
+                className="h-[52px] w-auto align-middle"
+                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
               />
             </div>
           </a>
 
-          {/* right lane: search + icons (links same as original) */}
-          <div className="ml-auto flex items-center gap-3 md:gap-4">
+          {/* Right: search + icons */}
+          <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search Raptor, c-series, Piranha..."
-                  className="jz-input w-[520px] lg:w-[560px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[590px] max-w-[590px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search Raptor, c-series, Piranha..."
                   autoComplete="off"
                 />
               </form>
-              <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/80" />
-              <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/90" />
+              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <button
+                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5"
+                aria-label="Search"
+              >
+                <Icon.Search />
+              </button>
             </div>
 
-            {/* Compare */}
             <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
               <Icon.Shuffle />
             </a>
 
-            {/* Account */}
             <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account"><Icon.User /></a>
-              <Icon.CaretDown className="ml-[-2px] opacity-80" />
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
+                <Icon.User />
+              </a>
+              <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
 
-            {/* Cart */}
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
+            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
+              <Icon.Bag />
+            </a>
           </div>
         </div>
       </div>
 
-      {/* 3) dark navbar + ONE centered mega panel */}
+      {/* dark navbar + centered mega panel */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
-            {/* little teal mark (decorative) */}
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
               <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
@@ -423,13 +432,11 @@ function SigninHeader() {
             </div>
           </div>
 
-          {/* Shared, centered mega panel */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {/* ====== ALL PRODUCTS ====== */}
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
@@ -455,7 +462,6 @@ function SigninHeader() {
                     </>
                   )}
 
-                  {/* ====== CLIPPERS ====== */}
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -479,27 +485,19 @@ function SigninHeader() {
                     </>
                   )}
 
-                  {/* ====== BLADES ====== */}
                   {open === 'blades' && (
                     <>
-                      <MegaSection title="A-SERIES | A5 STYLE">
-                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
-                      </MegaSection>
+                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li></MegaSection>
                       <MegaSection title="A-SERIES - WIDE | A5 STYLE">
                         <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
                         <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
                         <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
                       </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS">
-                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
-                      </MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS"><li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li></MegaSection>
+                      <MegaSection title="M-SERIES | MINI TRIMMERS"><li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li></MegaSection>
                     </>
                   )}
 
-                  {/* ====== COMBS & ACCESSORIES ====== */}
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
@@ -520,7 +518,6 @@ function SigninHeader() {
                     </>
                   )}
 
-                  {/* ====== INFORMATION ====== */}
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT JOYZZE™">
@@ -654,7 +651,7 @@ function SigninFooter() {
             <li><a href="https://joyzze.com/information/" className="hover:underline">Information</a></li>
             <li><a href="https://joyzze.com/recycling-sharpening/" className="hover:underline">Recycling &amp; Sharpening</a></li>
             <li><a href="https://joyzze.com/distributor/" className="hover:underline">Distributor</a></li>
-            <li><a href="https://joyzze.com/all-products/" className="hover:underline">View All</a></li>
+            <li><a href="https://joyzze.com/sitemap.php" className="hover:underline">View All</a></li>
           </ul>
         </div>
 
@@ -679,7 +676,7 @@ function SigninFooter() {
         {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w-[360px]" action="#" onSubmit={(e)=>e.preventDefault()}>
+          <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -692,10 +689,10 @@ function SigninFooter() {
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
           <div className="flex items-center gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
-            <a href="https://joyzze.com/a-series-raptor/" className="hover:underline">A-SERIES</a>
-            <a href="https://joyzze.com/c-series-hornet-stinger-blades/" className="hover:underline">C-SERIES</a>
-            <a href="https://joyzze.com/blades/d-series/" className="hover:underline">D-SERIES</a>
-            <a href="https://joyzze.com/m-series-mini-trimmers/" className="hover:underline">M-SERIES</a>
+            <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
+            <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
+            <a href="https://joyzze.com/d-series/" className="hover:underline">D-SERIES</a>
+            <a href="https://joyzze.com/m-series/" className="hover:underline">M-SERIES</a>
             <a href="https://joyzze.com/all-products/" className="hover:underline">View All</a>
           </div>
         </div>
@@ -738,10 +735,9 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
-        /* NAV BAR PADDING / HOVER */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; }
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
         .jz-item:hover { color:#fff; }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
@@ -751,7 +747,7 @@ export default function Page(){
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* MEGA PANEL (centered, teal top border, faint bg like site) */
+        /* MEGA PANEL */
         .jz-mega {
           position: relative;
           border: 1px solid rgba(28,210,193,.85);
@@ -779,19 +775,12 @@ export default function Page(){
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
-        /* search focus */
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
 
         /* responsive search width like Joyzze */
-        @media (max-width: 1280px){
-          .jz-input { width: 480px !important; }
-        }
-        @media (max-width: 1024px){
-          .jz-input { width: 360px !important; }
-        }
-        @media (max-width: 900px){
-          .jz-input { display:none; }
-        }
+        @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
+        @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
+        @media (max-width: 980px){ .jz-input { display:none; } }
       `}</style>
     </main>
   );
