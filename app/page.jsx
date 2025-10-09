@@ -299,8 +299,8 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER — centered logo, right-aligned search+icons,
-   shared centered mega panel (with your exact links)
+   HEADER — three‑column grid up top (L: phone, C: logo, R: search+icons)
+   + centered mega panel. All links match the Joyzze site.
    ========================================================= */
 
 function MegaSection({ title, children }) {
@@ -349,19 +349,29 @@ function SigninHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* 1) top phone strip */}
+      {/* 1) top contact strip */}
       <div className="bg-[#bdbdbd] text-[#1a1a1a]">
         <div className="max-w-[1280px] mx-auto px-4 h-[42px] flex items-center gap-2">
-          <Icon.Phone className="opacity-80" />
+          <Icon.Phone className="opacity-90" />
           <span className="text-[14px] font-semibold tracking-[.02em]">(877) 456-9993</span>
         </div>
       </div>
 
-      {/* 2) logo centered + search right + icons */}
+      {/* 2) logo centered + right search & icons (NO absolute; true 3‑col grid) */}
       <div className="bg-[#bdbdbd]">
-        <div className="relative max-w-[1280px] mx-auto px-4 lg:px-6 h-[66px] flex items-center justify-end">
+        <div
+          className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[68px] grid items-center"
+          style={{ gridTemplateColumns: '1fr auto 1fr' }}
+        >
+          {/* left spacer (keeps logo visually centered vs right content) */}
+          <div />
+
           {/* centered pill logo */}
-          <a className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]" href="https://joyzze.com/">
+          <a
+            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
+            href="https://joyzze.com/"
+            aria-label="Joyzze Home"
+          >
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-3 rounded-[10px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
@@ -372,36 +382,47 @@ function SigninHeader() {
             </div>
           </a>
 
-          {/* right lane: search + icons (links same as original) */}
-          <div className="ml-auto flex items-center gap-3 md:gap-4">
-            <div className="relative hidden md:block">
-              <form action="/search.php" method="get">
-                <input
-                  type="text"
-                  name="search_query"
-                  placeholder="Search Raptor, c-series, Piranha..."
-                  className="jz-input w-[520px] lg:w-[560px] h-[40px] rounded-md bg-white pl-10 pr-9 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
-                  aria-label="Search Raptor, c-series, Piranha..."
-                  autoComplete="off"
-                />
-              </form>
+          {/* right: search + icons */}
+          <div className="justify-self-end flex items-center gap-4">
+            {/* search (input with left icon + plus inside + separate search button) */}
+            <form action="/search.php" method="get" className="relative hidden md:block">
+              <input
+                type="text"
+                name="search_query"
+                placeholder="Search Raptor, c-series, Piranha..."
+                aria-label="Search Raptor, c-series, Piranha..."
+                autoComplete="off"
+                className="jz-input w-[520px] lg:w-[560px] h-[42px] rounded-md bg-white pl-10 pr-10 text-[13px] placeholder:text-[#6b7280] outline-none ring-1 ring-black/10"
+              />
               <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/80" />
               <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/90" />
-            </div>
+            </form>
+            <button
+              formAction="/search.php"
+              type="submit"
+              aria-label="Submit search"
+              className="hidden md:grid place-items-center w-10 h-10 rounded-md bg-white ring-1 ring-black/10 hover:ring-black/20"
+            >
+              <Icon.Search />
+            </button>
 
             {/* Compare */}
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
+            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 text-[#0c0c0c]" href="/compare" aria-label="Compare">
               <Icon.Shuffle />
             </a>
 
             {/* Account */}
-            <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account"><Icon.User /></a>
-              <Icon.CaretDown className="ml-[-2px] opacity-80" />
+            <div className="flex items-center">
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 text-[#0c0c0c]" href="/account.php" aria-label="Account">
+                <Icon.User />
+              </a>
+              <Icon.CaretDown className="ml-[-2px] opacity-80 text-[#0c0c0c]" />
             </div>
 
             {/* Cart */}
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
+            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 text-[#0c0c0c]" href="/cart.php" aria-label="Cart">
+              <Icon.Bag />
+            </a>
           </div>
         </div>
       </div>
@@ -410,7 +431,6 @@ function SigninHeader() {
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
-            {/* little teal mark (decorative) */}
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
               <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
@@ -423,13 +443,11 @@ function SigninHeader() {
             </div>
           </div>
 
-          {/* Shared, centered mega panel */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {/* ====== ALL PRODUCTS ====== */}
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
@@ -454,8 +472,6 @@ function SigninHeader() {
                       </MegaSection>
                     </>
                   )}
-
-                  {/* ====== CLIPPERS ====== */}
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -478,8 +494,6 @@ function SigninHeader() {
                       </MegaSection>
                     </>
                   )}
-
-                  {/* ====== BLADES ====== */}
                   {open === 'blades' && (
                     <>
                       <MegaSection title="A-SERIES | A5 STYLE">
@@ -498,8 +512,6 @@ function SigninHeader() {
                       </MegaSection>
                     </>
                   )}
-
-                  {/* ====== COMBS & ACCESSORIES ====== */}
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
@@ -519,8 +531,6 @@ function SigninHeader() {
                       </MegaSection>
                     </>
                   )}
-
-                  {/* ====== INFORMATION ====== */}
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT JOYZZE™">
@@ -738,7 +748,7 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
         .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
-        /* NAV BAR PADDING / HOVER */
+        /* NAV BAR + MEGA */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; }
@@ -751,7 +761,6 @@ export default function Page(){
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* MEGA PANEL (centered, teal top border, faint bg like site) */
         .jz-mega {
           position: relative;
           border: 1px solid rgba(28,210,193,.85);
@@ -779,18 +788,14 @@ export default function Page(){
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
-        /* search focus */
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
 
         /* responsive search width like Joyzze */
-        @media (max-width: 1280px){
-          .jz-input { width: 480px !important; }
-        }
-        @media (max-width: 1024px){
-          .jz-input { width: 360px !important; }
-        }
+        @media (max-width: 1280px){ .jz-input { width: 480px !important; } }
+        @media (max-width: 1024px){ .jz-input { width: 360px !important; } }
         @media (max-width: 900px){
           .jz-input { display:none; }
+          header .w-10.h-10 + .ml-[-2px] { display: none; } /* hide small caret if user icon hidden */
         }
       `}</style>
     </main>
