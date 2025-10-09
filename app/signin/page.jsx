@@ -145,8 +145,8 @@ function AppHeader() {
                 <input
                   type="text"
                   name="search_query"
-                  placeholder="Search Raptor, c-series, Piranha..."
-                  className="jz-input h-[44px] w-[520px] max-w-[560px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  placeholder="Search..."
+                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
