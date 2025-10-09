@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   ICONS (header set + Email + Google G)
+   ICONS (header set + Email + Google G + ribbon icons)
    ================================ */
 const Icon = {
   Phone: (p)=>(
@@ -48,7 +48,6 @@ const Icon = {
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  /* Email envelope (for credentials button) */
   Mail: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
@@ -64,10 +63,36 @@ const Icon = {
       <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
     </svg>
   ),
+  /* Ribbon icons */
+  Truck: (p)=>(
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M3 7h10v7H3zM13 11h4l4 4v3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+      <circle cx="8" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
+      <circle cx="18" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  ),
+  Return: (p)=>(
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M4 9v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  ),
+  Card: (p)=>(
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  ),
+  Lock: (p)=>(
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  ),
 };
 
 /* ================================
-   HEADER (same as inner webapp; distinct mega links per tab)
+   HEADER (with distinct mega links + hover color)
    ================================ */
 function MegaSection({ title, children }) {
   return (
@@ -116,13 +141,11 @@ function AppHeader() {
       {/* single row: phone | logo | search+icons */}
       <div className="bg-[#bdbdbd]">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* Left: phone */}
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          {/* Center: pill logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -138,15 +161,14 @@ function AppHeader() {
             </div>
           </a>
 
-          {/* Right: search + icons */}
           <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
-                  placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  placeholder="Search Raptor, c-series, Piranha..."
+                  className="jz-input h-[44px] w-[520px] max-w-[560px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -312,16 +334,28 @@ function AppHeader() {
 }
 
 /* ================================
-   FOOTER (same as inner webapp)
+   FOOTER with exact black promo ribbon
    ================================ */
 function FooterPromoRibbon(){
   return (
-    <div className="bg-[#0e0e0e] text-[#d9d9d9]">
-      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
-        <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[var(--joyzze-teal)]" />Free Shipping on orders over $350</div>
-        <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[var(--joyzze-teal)]" />Hassle Free Returns</div>
-        <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[var(--joyzze-teal)]" />All Major Cards Accepted</div>
-        <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[var(--joyzze-teal)]" />100% Safe &amp; Secure Checkout</div>
+    <div className="promo-wrap">
+      <div className="promo-row">
+        <div className="promo-item">
+          <Icon.Truck className="promo-ico" />
+          <span>Free Shipping on orders over $350</span>
+        </div>
+        <div className="promo-item">
+          <Icon.Return className="promo-ico" />
+          <span>Hassle Free Returns</span>
+        </div>
+        <div className="promo-item">
+          <Icon.Card className="promo-ico" />
+          <span>All Major Cards Accepted</span>
+        </div>
+        <div className="promo-item !border-r-0">
+          <Icon.Lock className="promo-ico" />
+          <span>100% Safe &amp; Secure Checkout</span>
+        </div>
       </div>
     </div>
   );
@@ -333,7 +367,6 @@ function AppFooter() {
       <FooterPromoRibbon />
 
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
-        {/* Left: Links */}
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -348,20 +381,17 @@ function AppFooter() {
           </ul>
         </div>
 
-        {/* Middle: Logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
             <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
-
           <div className="mt-6 space-y-1 text-[15px] text-slate-100">
             <div>(877) 456-9993</div>
             <div><a href="mailto:info@joyzze.com" className="hover:underline">info@joyzze.com</a></div>
           </div>
         </div>
 
-        {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
@@ -548,7 +578,7 @@ export default function AuthPage() {
 
       <AppFooter />
 
-      {/* Shared global styles (exactly as inner app + Google button tweaks + teal hover tab) */}
+      {/* Shared global styles (hover color + mega + promo ribbon + Google btn) */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #1CD2C1; }
@@ -556,24 +586,9 @@ export default function AuthPage() {
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-
-        /* tab-like item so light bg looks like a pill */
-        .jz-item {
-          padding:14px 20px;
-          position:relative;
-          line-height:1;
-          color:#d7d7d7;
-          text-decoration:none;
-          border-radius:6px 6px 0 0;
-          transition:background .15s ease, color .15s ease;
-        }
-        /* teal text + light gray background on hover/open (as requested) */
-        .jz-item:hover,
-        .jz-item.jz-active{
-          color: var(--joyzze-teal);
-          background: #f1f3f3;
-        }
-
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
+        /* Hover highlight (teal text & subtle light panel like reference) */
+        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
@@ -614,7 +629,43 @@ export default function AuthPage() {
         @media (max-width: 1100px){ .jz-input { width: 360px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
-        /* Google button — brand-correct look (white btn + colored G) */
+        /* Promo ribbon — black bar, teal separators, teal bottom rule (exact look) */
+        .promo-wrap{
+          background:#0a0a0a;
+          border-bottom:2px solid var(--joyzze-teal);
+        }
+        .promo-row{
+          max-width:1280px;
+          margin:0 auto;
+          padding:10px 16px;
+          display:grid;
+          grid-template-columns: repeat(4, minmax(0,1fr));
+          gap:0;
+          color:#f5f5f5;
+          font-size:16px;
+          line-height:1.25;
+        }
+        .promo-item{
+          display:flex;
+          align-items:center;
+          gap:12px;
+          padding:8px 18px;
+          border-right:1px solid var(--joyzze-teal);
+        }
+        .promo-ico{
+          color:#e8e8e8;
+          opacity:.95;
+          flex:0 0 auto;
+        }
+        @media (max-width: 900px){
+          .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; }
+          .promo-item{ border-right:0; }
+        }
+        @media (max-width: 560px){
+          .promo-row{ grid-template-columns:1fr; }
+        }
+
+        /* Google button — brand-correct (white background, colored G) */
         .google-btn{
           background:#fff;
           color:#3c4043;
