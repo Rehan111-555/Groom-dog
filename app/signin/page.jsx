@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -48,14 +48,12 @@ const Icon = {
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  /* Email envelope (for credentials button) */
   Mail: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  /* Gmail “M” envelope (clean, single-color for contrast on red) */
   Gmail: (p)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" {...p}>
       <path fill="#fff" d="M2 7.5v9A2.5 2.5 0 0 0 4.5 19H8V9.8l4 3.2 4-3.2V19h3.5A2.5 2.5 0 0 0 22 16.5v-9l-10 7-10-7z"/>
@@ -117,13 +115,11 @@ function AppHeader() {
       {/* single row: phone | logo | search+icons */}
       <div className="bg-[#bdbdbd]">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* Left: phone */}
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          {/* Center: pill logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -139,16 +135,15 @@ function AppHeader() {
             </div>
           </a>
 
-          {/* Right: search + icons */}
           <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
-                  placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
-                  aria-label="Search..."
+                  placeholder="Search Raptor, c-series, Piranha..."
+                  className="jz-input h-[44px] w-[590px] max-w-[590px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  aria-label="Search Raptor, c-series, Piranha..."
                   autoComplete="off"
                 />
               </form>
@@ -194,29 +189,127 @@ function AppHeader() {
             </div>
           </div>
 
+          {/* DIFFERENT CONTENT PER TAB — same as inner app */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {/* keep panel minimal for auth page (optional) */}
-                  <MegaSection title="Quick Links">
-                    <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon</a></li>
-                    <li><a href="https://joyzze.com/hornet/">Hornet</a></li>
-                    <li><a href="https://joyzze.com/stinger/">Stinger</a></li>
-                    <li><a href="https://joyzze.com/piranha/">Piranha</a></li>
-                    <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
-                  </MegaSection>
-                  <MegaSection title="Support">
-                    <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
-                    <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
-                    <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
-                  </MegaSection>
-                  <MegaSection title="Docs">
-                    <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">Clipper Repair</a></li>
-                    <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
-                    <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
-                  </MegaSection>
+
+                  {/* ====== ALL PRODUCTS ====== */}
+                  {open === 'all' && (
+                    <>
+                      <MegaSection title="CLIPPERS">
+                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
+                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
+                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
+                      </MegaSection>
+                      <MegaSection title="BLADES">
+                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
+                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
+                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
+                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
+                      </MegaSection>
+                      <MegaSection title="COMBS & ACCESSORIES">
+                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
+                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
+                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
+                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {/* ====== CLIPPERS ====== */}
+                  {open === 'clippers' && (
+                    <>
+                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
+                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
+                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
+                      </MegaSection>
+                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
+                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="D-SERIES CLIPPERS">
+                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
+                        <li className="mt-2" />
+                        <li className="jz-sec-title !mb-2">PARTS</li>
+                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
+                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="MINI TRIMMERS | M-SERIES">
+                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {/* ====== BLADES ====== */}
+                  {open === 'blades' && (
+                    <>
+                      <MegaSection title="A-SERIES | A5 STYLE">
+                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="M-SERIES | MINI TRIMMERS">
+                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {/* ====== COMBS & ACCESSORIES ====== */}
+                  {open === 'combs' && (
+                    <>
+                      <MegaSection title="A-SERIES | WIDE COMBS">
+                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
+                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
+                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
+                      </MegaSection>
+                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | STINGER & HORNET">
+                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="CASES">
+                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
+                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {/* ====== INFORMATION ====== */}
+                  {open === 'info' && (
+                    <>
+                      <MegaSection title="ABOUT JOYZZE™">
+                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
+                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
+                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
+                      </MegaSection>
+                      <MegaSection title="SUPPORT">
+                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
+                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
+                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
+                      </MegaSection>
+                      <MegaSection title="DOCS">
+                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
+                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
+                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
+                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
+                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
                 </div>
               </div>
             </div>
@@ -468,7 +561,7 @@ export default function AuthPage() {
 
       <AppFooter />
 
-      {/* Shared global styles (exactly as inner app) */}
+      {/* Shared global styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #1CD2C1; }
