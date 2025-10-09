@@ -548,7 +548,7 @@ export default function AuthPage() {
 
       <AppFooter />
 
-      {/* Shared global styles (exactly as inner app + Google button tweaks) */}
+      {/* Shared global styles (exactly as inner app + Google button tweaks + teal hover tab) */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #1CD2C1; }
@@ -556,8 +556,24 @@ export default function AuthPage() {
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
-        .jz-item:hover { color:#fff; }
+
+        /* tab-like item so light bg looks like a pill */
+        .jz-item {
+          padding:14px 20px;
+          position:relative;
+          line-height:1;
+          color:#d7d7d7;
+          text-decoration:none;
+          border-radius:6px 6px 0 0;
+          transition:background .15s ease, color .15s ease;
+        }
+        /* teal text + light gray background on hover/open (as requested) */
+        .jz-item:hover,
+        .jz-item.jz-active{
+          color: var(--joyzze-teal);
+          background: #f1f3f3;
+        }
+
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
@@ -598,7 +614,7 @@ export default function AuthPage() {
         @media (max-width: 1100px){ .jz-input { width: 360px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
-        /* Google button — brand-correct look */
+        /* Google button — brand-correct look (white btn + colored G) */
         .google-btn{
           background:#fff;
           color:#3c4043;
