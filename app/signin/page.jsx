@@ -147,8 +147,8 @@ function AppHeader() {
                   type="text"
                   name="search_query"
                   placeholder="Search Raptor, c-series, Piranha..."
-                  className="jz-input h-[44px] w-[590px] max-w-[590px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
-                  aria-label="Search Raptor, c-series, Piranha..."
+                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  aria-label="Search..."
                   autoComplete="off"
                 />
               </form>
