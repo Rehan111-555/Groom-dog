@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   ICONS (email, gmail + header set)
+   ICONS (header set + Email + Google G)
    ================================ */
 const Icon = {
   Phone: (p)=>(
@@ -48,22 +48,26 @@ const Icon = {
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
+  /* Email envelope (for credentials button) */
   Mail: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Gmail: (p)=>(
-    <svg width="20" height="20" viewBox="0 0 24 24" {...p}>
-      <path fill="#fff" d="M2 7.5v9A2.5 2.5 0 0 0 4.5 19H8V9.8l4 3.2 4-3.2V19h3.5A2.5 2.5 0 0 0 22 16.5v-9l-10 7-10-7z"/>
-      <path fill="#fff" opacity=".12" d="m12 12.5 10-7-10-4.2L2 5.5l10 7z"/>
+  /* Official Google “G” */
+  GoogleG: (p)=>(
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" {...p}>
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.18-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.25h2.9c1.7-1.57 2.7-3.88 2.7-6.6z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.2l-2.9-2.25c-.8.54-1.82.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H1.9v2.33C3.38 15.98 6 18 9 18z"/>
+      <path fill="#FBBC05" d="M3.95 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V4.97H1.9A8.96 8.96 0 0 0 0 9c0 1.45.35 2.82 1.9 4.03l2.05-2.33z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
     </svg>
   ),
 };
 
 /* ================================
-   HEADER (same as inner webapp)
+   HEADER (same as inner webapp; distinct mega links per tab)
    ================================ */
 function MegaSection({ title, children }) {
   return (
@@ -83,10 +87,7 @@ function AppHeader() {
     const onScroll = () => close();
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      window.removeEventListener('scroll', onScroll);
-    };
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('scroll', onScroll); };
   }, []);
 
   const NavItem = ({ id, href, children }) => {
@@ -115,11 +116,13 @@ function AppHeader() {
       {/* single row: phone | logo | search+icons */}
       <div className="bg-[#bdbdbd]">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+          {/* Left: phone */}
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
+          {/* Center: pill logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -135,26 +138,21 @@ function AppHeader() {
             </div>
           </a>
 
+          {/* Right: search + icons */}
           <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
-                  placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
-                  aria-label="Search Raptor, c-series, Piranha..."
+                  placeholder="Search Raptor, c-series, Piranha..."
+                  className="jz-input h-[44px] w-[520px] max-w-[560px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  aria-label="Search"
                   autoComplete="off"
                 />
               </form>
-              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-              <button
-                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5"
-                aria-label="Search"
-                type="submit"
-              >
-                <Icon.Search />
-              </button>
+              <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
             <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
@@ -189,14 +187,12 @@ function AppHeader() {
             </div>
           </div>
 
-          {/* DIFFERENT CONTENT PER TAB — same as inner app */}
+          {/* Distinct mega content per tab (matches inner app) */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
-
-                  {/* ====== ALL PRODUCTS ====== */}
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
@@ -222,7 +218,6 @@ function AppHeader() {
                     </>
                   )}
 
-                  {/* ====== CLIPPERS ====== */}
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -246,7 +241,6 @@ function AppHeader() {
                     </>
                   )}
 
-                  {/* ====== BLADES ====== */}
                   {open === 'blades' && (
                     <>
                       <MegaSection title="A-SERIES | A5 STYLE">
@@ -266,7 +260,6 @@ function AppHeader() {
                     </>
                   )}
 
-                  {/* ====== COMBS & ACCESSORIES ====== */}
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
@@ -287,7 +280,6 @@ function AppHeader() {
                     </>
                   )}
 
-                  {/* ====== INFORMATION ====== */}
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT JOYZZE™">
@@ -309,7 +301,6 @@ function AppHeader() {
                       </MegaSection>
                     </>
                   )}
-
                 </div>
               </div>
             </div>
@@ -517,17 +508,13 @@ export default function AuthPage() {
             </div>
 
             <button
-              className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
-              style={{ backgroundColor: '#DB4437' }}
+              className="google-btn w-full h-11 rounded-xl font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
               onClick={handleGoogle}
               disabled={loading}
+              aria-label="Continue with Google"
             >
-              <Icon.Gmail />
-              {loading
-                ? 'Connecting…'
-                : mode === 'login'
-                ? 'Continue with Google'
-                : 'Sign Up with Google'}
+              <Icon.GoogleG />
+              <span>{loading ? 'Connecting…' : (mode === 'login' ? 'Continue with Google' : 'Sign Up with Google')}</span>
             </button>
 
             <p className="mt-4 text-xs text-slate-500 text-center">
@@ -561,7 +548,7 @@ export default function AuthPage() {
 
       <AppFooter />
 
-      {/* Shared global styles */}
+      {/* Shared global styles (exactly as inner app + Google button tweaks) */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #1CD2C1; }
@@ -607,9 +594,17 @@ export default function AuthPage() {
         .jz-list a:hover { color:#111; text-decoration:none; }
 
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-        @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
-        @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
+        @media (max-width: 1280px){ .jz-input { width: 480px !important; } }
+        @media (max-width: 1100px){ .jz-input { width: 360px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
+
+        /* Google button — brand-correct look */
+        .google-btn{
+          background:#fff;
+          color:#3c4043;
+          border:1px solid #dadce0;
+        }
+        .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
       `}</style>
     </main>
   );
