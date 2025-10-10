@@ -94,6 +94,19 @@ const Icon = {
       <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
     </svg>
   ),
+
+  /* Sun/Moon for theme toggle */
+  Sun: (p)=>(
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  ),
+  Moon: (p)=>(
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M20 12.5A8 8 0 1 1 11.5 4 6.5 6.5 0 0 0 20 12.5Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
 };
 
 /* ---------------- Small UI helpers ---------------- */
@@ -313,15 +326,45 @@ function MegaSection({ title, children }) {
   );
 }
 
+/* ---- small theme hook ---- */
+function useTheme() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => 'light');
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    if (stored === 'light' || stored === 'dark') {
+      setTheme(stored);
+      document.documentElement.classList.toggle('theme-dark', stored === 'dark');
+      document.documentElement.classList.toggle('theme-light', stored === 'light');
+    } else {
+      const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+      const t = prefersDark ? 'dark' : 'light';
+      setTheme(t);
+      document.documentElement.classList.toggle('theme-dark', t === 'dark');
+      document.documentElement.classList.toggle('theme-light', t === 'light');
+    }
+  }, []);
+  const toggle = () => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      document.documentElement.classList.remove(prev === 'dark' ? 'theme-dark' : 'theme-light');
+      document.documentElement.classList.add(next === 'dark' ? 'theme-dark' : 'theme-light');
+      localStorage.setItem('theme', next);
+      return next;
+    });
+  };
+  return { theme, toggle };
+}
+
 function SigninHeader() {
-  const [open, setOpen] = useState(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
+  const [open, setOpen] = useState<string|null>(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
+  const { theme, toggle } = useTheme();
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') close(); };
+    const onKey = (e: KeyboardEvent)=>{ if(e.key==='Escape') close(); };
     const onScroll = () => close();
     window.addEventListener('keydown', onKey);
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true } as any);
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('scroll', onScroll);
@@ -352,10 +395,10 @@ function SigninHeader() {
   return (
     <header className="w-full sticky top-0 z-50">
       {/* single row: phone | logo | search+icons */}
-      <div className="bg-[#bdbdbd]">
+      <div className="topbar">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: phone */}
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[var(--text-strong)]">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
@@ -366,58 +409,68 @@ function SigninHeader() {
             className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
+            <div className="logo-pill px-7 py-2.5 rounded-[10px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
                 className="h-[52px] w-auto align-middle"
-                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
+                onError={(e)=>{(e.currentTarget as any).outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
               />
             </div>
           </a>
 
-          {/* Right: search + icons */}
-          <div className="justify-self-end flex items-center gap-4">
+          {/* Right: search + icons + theme toggle */}
+          <div className="justify-self-end flex items-center gap-2 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
                   aria-label="Search Raptor, c-series, Piranha..."
                   autoComplete="off"
                 />
               </form>
-              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 pointer-events-none text-[var(--icon-muted)]" />
               <button
-                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5"
+                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full search-btn"
                 aria-label="Search"
               >
                 <Icon.Search />
               </button>
             </div>
 
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
-              <Icon.Shuffle />
+            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 hover:bg-[var(--btn-hover)]" href="/compare" aria-label="Compare">
+              <Icon.Shuffle className="text-[var(--icon-strong)]"/>
             </a>
 
             <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
-                <Icon.User />
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 hover:bg-[var(--btn-hover)]" href="/account.php" aria-label="Account">
+                <Icon.User className="text-[var(--icon-strong)]"/>
               </a>
-              <Icon.CaretDown className="ml-[2px] opacity-80" />
+              <Icon.CaretDown className="ml-[2px] opacity-80 text-[var(--icon-muted)]" />
             </div>
 
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
-              <Icon.Bag />
+            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 hover:bg-[var(--btn-hover)]" href="/cart.php" aria-label="Cart">
+              <Icon.Bag className="text-[var(--icon-strong)]"/>
             </a>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggle}
+              aria-label="Toggle color mode"
+              className="w-9 h-9 grid place-items-center rounded-md ring-1 ring-[var(--ring)] bg-[var(--surface-2)] hover:bg-[var(--btn-hover)] transition"
+              title={theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
+            >
+              {theme === 'dark' ? <Icon.Sun className="text-[var(--icon-strong)]"/> : <Icon.Moon className="text-[var(--icon-strong)]"/>}
+            </button>
           </div>
         </div>
       </div>
 
       {/* dark navbar + centered mega panel */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
+      <nav className="navbar text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -554,7 +607,7 @@ function SigninHeader() {
    ========================================================= */
 function Hero(){
   return (
-    <header className="relative overflow-hidden bg-[#323030] text-white">
+    <header className="hero relative overflow-hidden text-white">
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
@@ -579,24 +632,24 @@ function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+      <p className="text-center text-slate-600 var-muted mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
+          <div className="w-6 h-6 rounded-full step-circle grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
-          <p className="text-sm text-slate-600">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
+          <p className="text-sm text-slate-600 var-muted">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
+          <div className="w-6 h-6 rounded-full step-circle grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
+          <p className="text-sm text-slate-600 var-muted">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a></div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
+          <div className="w-6 h-6 rounded-full step-circle grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
-          <p className="text-sm text-slate-600">Use the slider to compare before/after. Download the result in one click.</p>
+          <p className="text-sm text-slate-600 var-muted">Use the slider to compare before/after. Download the result in one click.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a></div>
         </Card>
       </div>
@@ -608,7 +661,7 @@ function Samples(){
   return (
     <section id="examples" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
+      <p className="text-center text-slate-600 var-muted mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
       <div className="grid md:grid-cols-3 gap-6">
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
@@ -658,7 +711,7 @@ function SigninFooter() {
         {/* Middle: Logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
-            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
+            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{(e.currentTarget as any).outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
 
@@ -723,23 +776,106 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles for Joyzze look */}
+      {/* Global styles + THEME */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
-        :root { --joyzze-teal: #1CD2C1; }
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        :root {
+          --joyzze-teal: #1CD2C1;
+
+          /* Light defaults */
+          --bg: #f7f7f8;
+          --text: #0f0f0f;
+          --text-strong: #0f0f0f;
+          --muted: #6b6b6b;
+
+          --surface-1: #ffffff;
+          --surface-2: #ffffff;
+          --card: #ffffff;
+
+          --ring: rgba(0,0,0,.12);
+          --btn-hover: rgba(0,0,0,.05);
+
+          --topbar-bg: #bdbdbd;     /* your original */
+          --navbar-bg: #2f2f2f;     /* your original */
+          --logo-pill-from: #2a2a2a; /* gradient capsule */
+          --logo-pill-to: #0d0d0d;
+
+          --hero-bg: #323030;       /* original hero */
+          --step-circle-bg: #323030;
+          --input-bg: #ffffff;
+          --input-text: #0f0f0f;
+          --input-placeholder: #6b6b6b;
+          --icon-strong: #0f0f0f;
+          --icon-muted: rgba(15,15,15,.75);
+        }
+        html.theme-dark {
+          --bg: #0c0c0d;
+          --text: #e8e8ea;
+          --text-strong: #ffffff;
+          --muted: #b4b4b6;
+
+          --surface-1: #141416;
+          --surface-2: #101012;
+          --card: #16171a;
+
+          --ring: rgba(255,255,255,.12);
+          --btn-hover: rgba(255,255,255,.06);
+
+          --topbar-bg: #1f1f21;
+          --navbar-bg: #1a1a1c;
+          --logo-pill-from: #202224;
+          --logo-pill-to: #0e0f10;
+
+          --hero-bg: #0f0f11;
+          --step-circle-bg: #222326;
+          --input-bg: #121215;
+          --input-text: #f2f2f4;
+          --input-placeholder: #a8a8ac;
+          --icon-strong: #f5f5f5;
+          --icon-muted: rgba(245,245,245,.75);
+        }
+        html.theme-light {
+          /* keeps :root values */
+        }
+
+        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); }
 
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
-        .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
-        .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
+        .btn-ghost { background:transparent; border:1px solid var(--ring); color: var(--text); }
 
+        .card { background:var(--card); border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); border:1px solid var(--ring); }
+        html.theme-dark .card { box-shadow: 0 12px 24px rgba(0,0,0,.35); }
+
+        /* HEADER surfaces that flip with theme (without changing your structure) */
+        .topbar { background: var(--topbar-bg); }
+        .navbar { background: var(--navbar-bg); }
+        .logo-pill { background: linear-gradient(to bottom, var(--logo-pill-from), var(--logo-pill-to)); }
+        .search-btn { background: var(--surface-2); ring: 1px solid var(--ring); color: var(--icon-strong); }
+        .search-btn:hover { background: var(--btn-hover); }
+
+        /* Inputs */
+        .jz-input {
+          background: var(--input-bg);
+          color: var(--input-text);
+          border-color: var(--ring);
+          box-shadow: none;
+        }
+        .jz-input::placeholder { color: var(--input-placeholder); }
+        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+        html.theme-dark .jz-input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,.06); }
+
+        /* Step circles & muted text helpers */
+        .step-circle { background: var(--step-circle-bg); color: #fff; }
+        .var-muted { color: var(--muted) !important; }
+
+        /* Keep your Joyzze nav hover/active teal underline + pointer */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
         .jz-item:hover { color:#fff; }
-        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
+        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; color: currentColor; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
@@ -747,7 +883,7 @@ export default function Page(){
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* MEGA PANEL */
+        /* MEGA PANEL stays brandy but adapts a bit in dark */
         .jz-mega {
           position: relative;
           border: 1px solid rgba(28,210,193,.85);
@@ -759,6 +895,10 @@ export default function Page(){
           overflow: hidden;
           z-index: 60;
         }
+        html.theme-dark .jz-mega {
+          background: rgba(20,20,22,.98);
+          border-color: rgba(28,210,193,.65);
+        }
         .jz-mega-bg {
           position:absolute; inset:0;
           background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%);
@@ -769,13 +909,20 @@ export default function Page(){
           margin-bottom:12px; color:#2f2f2f; font-weight:700;
           text-transform:uppercase; letter-spacing:.06em; font-size:14px;
         }
+        html.theme-dark .jz-sec-title { color:#f0f0f0; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
-        .jz-list li:last-child { border-bottom:0; }
+        html.theme-dark .jz-list li { border-bottom:1px solid rgba(255,255,255,.06); }
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
+        html.theme-dark .jz-list a { color:#d6d6d6; }
+        html.theme-dark .jz-list a:hover { color:#ffffff; }
 
-        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+        /* HERO background switches via class */
+        .hero { background: var(--hero-bg); }
+
+        /* Icons color helpers */
+        .topbar svg, .navbar svg { color: var(--icon-muted); }
 
         /* responsive search width like Joyzze */
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
