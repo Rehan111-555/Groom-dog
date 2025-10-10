@@ -103,6 +103,16 @@ const Icon = {
       <path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
+  Check: (p)=>(
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  ChevronDown: (p)=>(
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  )
 };
 
 /* ---------------- Small UI helpers ---------------- */
@@ -145,7 +155,7 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result — Input/Result UI (no prompt)
+   Upload + Result — Input/Result UI (no prompt, studio-like)
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
@@ -157,12 +167,13 @@ function UploadAndResult(){
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
+  const [more, setMore] = useState(false);
   const controllerRef=useRef(null);
   const [panelH, setPanelH] = useState(640);
 
   useEffect(() => {
     const setH = () => {
-      const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
+      const h = Math.round(Math.max(520, Math.min(860, window.innerHeight * 0.78)));
       setPanelH(h);
     };
     setH();
@@ -233,20 +244,38 @@ function UploadAndResult(){
 
   const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
 
+  // Keyboard run: Ctrl/Cmd + Enter
+  useEffect(()=>{
+    const onKey = (e)=>{
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
+        groom();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return ()=>window.removeEventListener('keydown', onKey);
+  });
+
   return (
-    <section id="app" className="container mx-auto px-6 py-16">
-      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+    <section id="app" className="container mx-auto px-6 py-12">
+      <div className="grid lg:grid-cols-2 gap-6 items-start">
         {/* Left: INPUT PANEL */}
-        <Card className="p-0 overflow-hidden">
+        <Card className="p-0 overflow-hidden jz-studio-card">
+          {/* Header */}
           <div className="flex items-center justify-between px-5 py-3 border-b" style={{borderColor:'var(--app-border)'}}>
-            <div className="text-[13px] font-semibold opacity-80">Input</div>
-            <div className="text-[12px] opacity-60">Form</div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[13px] font-semibold">Input</h3>
+              <span className="inline-flex items-center h-5 px-2 rounded-md text-[11px] opacity-70 ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>Idle</span>
+            </div>
+            <button className="text-[12px] inline-flex items-center gap-1 opacity-80 hover:opacity-100">
+              Form <Icon.ChevronDown />
+            </button>
           </div>
 
+          {/* Body */}
           <div className="p-5 space-y-6">
             {/* Image URL */}
             <div>
-              <label className="block text-[13px] font-semibold mb-2">Image URL</label>
+              <label className="block text-[13px] font-semibold mb-1">Image URL</label>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -259,33 +288,53 @@ function UploadAndResult(){
                 />
                 <label className="inline-flex">
                   <input type="file" accept="image/*" onChange={selectFile} className="hidden"/>
-                  <span className="inline-flex items-center h-[40px] px-3 rounded-md border cursor-pointer" style={{borderColor:'var(--app-border)'}}>
+                  <span className="inline-flex items-center h-[40px] px-3 rounded-md border cursor-pointer text-sm" style={{borderColor:'var(--app-border)'}}>
                     Choose…
                   </span>
                 </label>
               </div>
-              <p className="mt-2 text-xs opacity-70">Hint: paste an image URL or choose a file. PNG/JPG up to ~12MB.</p>
+              <p className="mt-2 text-xs opacity-70">Drag & drop, paste from clipboard, or provide a URL. PNG/JPG up to ~12MB.</p>
 
-              {/* Tiny picked thumbnail */}
+              {/* Selected thumbnail row */}
               {previewUrl && (
                 <div className="mt-3">
-                  <div className="inline-block rounded-md overflow-hidden ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>
-                    <img src={previewUrl} alt="thumb" className="w-[120px] h-[120px] object-cover"/>
-                  </div>
+                  <button type="button" className="relative w-[120px] h-[120px] rounded-md overflow-hidden group ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>
+                    <img src={previewUrl} alt="thumb" className="absolute inset-0 w-full h-full object-cover"/>
+                    <span className="absolute top-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[var(--joyzze-teal)] text-black shadow">
+                      <Icon.Check />
+                    </span>
+                  </button>
                 </div>
               )}
             </div>
 
-            {/* Error */}
+            {/* Additional Settings */}
+            <div className="border rounded-md" style={{borderColor:'var(--app-border)'}}>
+              <button
+                type="button"
+                onClick={()=>setMore(!more)}
+                className="w-full flex items-center justify-between px-3 py-2 text-sm"
+              >
+                <span className="opacity-90">Additional Settings</span>
+                <span className="inline-flex items-center gap-1">More <Icon.ChevronDown style={{transform: more ? 'rotate(180deg)' : 'none', transition:'transform .15s ease'}}/></span>
+              </button>
+              {more && (
+                <div className="px-3 pt-2 pb-3 text-xs opacity-80 border-t" style={{borderColor:'var(--app-border)'}}>
+                  (Optional) Future controls can live here — e.g. dog-only toggle, sharpening strength, etc.
+                </div>
+              )}
+            </div>
+
+            {/* Errors */}
             {!previewUrl && error && (
-              <div className="rounded-lg px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
+              <div className="rounded-md px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
             )}
 
-            {/* Actions */}
+            {/* Footer Actions */}
             <div className="flex items-center justify-between pt-1">
               <Button className="btn-ghost" onClick={resetAll}><Icon.Reset/> Reset</Button>
               {!loading ? (
-                <Button className="btn-primary" onClick={groom}><Icon.Wand/> Run</Button>
+                <Button className="btn-primary" onClick={groom}><Icon.Wand/> Run <span className="opacity-70 ml-1 text-[12px]">Ctrl↵</span></Button>
               ) : (
                 <div className="flex items-center gap-2">
                   <Button className="btn-primary" disabled><Icon.Wand/> Working… {progress}%</Button>
@@ -297,22 +346,35 @@ function UploadAndResult(){
         </Card>
 
         {/* Right: RESULT PANEL */}
-        <Card className="p-0 overflow-hidden">
+        <Card className="p-0 overflow-hidden jz-studio-card">
+          {/* Header */}
           <div className="flex items-center justify-between px-5 py-3 border-b" style={{borderColor:'var(--app-border)'}}>
-            <div className="text-[13px] font-semibold opacity-80">Result</div>
-            <div className="text-[12px] px-2 py-0.5 rounded-full border" style={{borderColor:'var(--app-border)'}}>Preview</div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[13px] font-semibold">Result</h3>
+              <span className="inline-flex items-center h-5 px-2 rounded-md text-[11px] opacity-70 ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>{loading ? 'Running' : 'Idle'}</span>
+            </div>
+            <div className="text-[12px] px-2 py-0.5 rounded-full border opacity-80" style={{borderColor:'var(--app-border)'}}>Preview</div>
           </div>
 
+          {/* Canvas */}
           <div className="p-4">
-            <div className="rounded-xl overflow-hidden grid place-items-center border" style={{height: panelH, borderColor:'var(--app-border)'}}>
+            <div className="rounded-xl overflow-hidden grid place-items-center border bg-slate-50/60 dark:bg-transparent" style={{height: panelH, borderColor:'var(--app-border)'}}>
               {!resultUrl ? (
-                <div className="text-sm opacity-70 px-6 text-center">Your result will appear here after you click <b>Run</b>.</div>
+                <div className="text-sm opacity-70 px-6 text-center">
+                  Your result will appear here after you click <b>Run</b>.
+                </div>
               ) : (
                 <img src={resultUrl} alt="Result" className="w-full h-full object-contain"/>
               )}
+              {loading && (
+                <div className="absolute inset-0 grid place-items-center bg-black/5 dark:bg-white/5">
+                  <div className="animate-pulse text-sm opacity-80">Processing… {progress}%</div>
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex items-center justify-between text-xs opacity-70">
+              <span />
               {resultUrl && (
                 <a className="btn btn-primary" href={resultUrl} download><Icon.Download/> Download</a>
               )}
@@ -338,7 +400,7 @@ function MegaSection({ title, children }) {
 }
 
 function SigninHeader({ theme, onToggleTheme }) {
-  const [open, setOpen] = useState(null); // 'all'|'clippers'|'blades'|'combs'|'info'|null
+  const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
   useEffect(() => {
@@ -783,7 +845,7 @@ export default function Page(){
         }
         .theme-dark{
           --app-bg: #0f1115;
-          --app-surface: #181a1f;
+          --app-surface: #0f1115;  /* darker to mimic studio */
           --app-muted: rgba(229,231,235,.75);
           --app-border: rgba(255,255,255,.12);
         }
@@ -794,6 +856,10 @@ export default function Page(){
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
+
+        /* Studio-like panel surface */
+        .jz-studio-card{ background: var(--app-surface); }
+        .theme-dark .jz-studio-card{ background: #0f1115; }
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
@@ -817,15 +883,15 @@ export default function Page(){
 
         .jz-input{ background:var(--app-surface); color:inherit; border:1px solid var(--app-border); }
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
-        .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
+        .theme-dark .bg-slate-50\\/60 { background: #0f1115 !important; }
         .theme-dark .border-slate-300,
         .theme-dark .ring-slate-200,
         .theme-dark .ring-black\\/10 { border-color: var(--app-border) !important; box-shadow: 0 0 0 1px var(--app-border) inset !important; }
         .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
-        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
