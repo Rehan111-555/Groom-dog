@@ -103,16 +103,6 @@ const Icon = {
       <path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Check: (p)=>(
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  ChevronDown: (p)=>(
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-    </svg>
-  )
 };
 
 /* ---------------- Small UI helpers ---------------- */
@@ -121,7 +111,22 @@ const Button = ({ className = "", disabled, onClick, children, type = "button" }
 );
 const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
-/* ---------------- helpers ---------------- */
+/* ---------------- Compare slider ---------------- */
+function CompareSlider({ beforeSrc, afterSrc }) {
+  const [pos, setPos] = useState(55);
+  return (
+    <div className="relative h-full w-full rounded-lg overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
+      <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
+      <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
+      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
+      <div className="absolute bottom-2 left-3 right-3">
+        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Helpers ---------------- */
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
@@ -155,25 +160,26 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result — Input/Result UI (no prompt, studio-like)
+   Upload + Result — tool-style layout with Compare option
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
-  const [imageUrl,setImageUrl]=useState('');
-  const [previewUrl,setPreviewUrl]=useState(null);
-  const [resultUrl,setResultUrl]=useState(null);
+  const [imageUrl, setImageUrl] = useState('');
+  const [previewUrl,setPreviewUrl]=useState(null);  // before
+  const [resultUrl,setResultUrl]=useState(null);    // after
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState(null);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const [more, setMore] = useState(false);
+  const [previewMode, setPreviewMode] = useState('after'); // 'after' | 'compare'
   const controllerRef=useRef(null);
+
   const [panelH, setPanelH] = useState(640);
 
   useEffect(() => {
     const setH = () => {
-      const h = Math.round(Math.max(520, Math.min(860, window.innerHeight * 0.78)));
+      const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.78)));
       setPanelH(h);
     };
     setH();
@@ -183,42 +189,57 @@ function UploadAndResult(){
 
   useEffect(() => {
     return () => {
-      if (previewUrl && previewUrl.startsWith && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+      if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
       if (resultUrl && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
     };
   }, [previewUrl, resultUrl]);
+
+  const setBeforeFromUrl = async (url) => {
+    try {
+      const { w, h } = await readImageSize(url);
+      setImgW(w); setImgH(h);
+      setPreviewUrl(url);
+    } catch {
+      setError('Could not load image from the provided URL.');
+    }
+  };
+
+  const handleUrlChange = (e) => {
+    const val = e.target.value.trim();
+    setImageUrl(val);
+  };
+
+  const useImageUrl = async () => {
+    if (!imageUrl) return;
+    setError(null);
+    setFile(null);
+    await setBeforeFromUrl(imageUrl);
+  };
 
   const handleFile = async (f) => {
     setError(null);
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
     const url = URL.createObjectURL(f);
-    setFile(f);
-    setImageUrl('');
-    setResultUrl(null);
-    setPreviewUrl(url);
+    setFile(f); setResultUrl(null); setImageUrl(''); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
   const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
-  const useUrl = async () => {
-    if (!imageUrl) return;
-    setFile(null);
-    setResultUrl(null);
-    setPreviewUrl(imageUrl);
-    try { const { w, h } = await readImageSize(imageUrl); setImgW(w); setImgH(h); } catch { /* ignore */ }
+  const resetAll=()=>{ 
+    setFile(null); setImageUrl(''); setPreviewUrl(null); setResultUrl(null); 
+    setProgress(0); setError(null); setPreviewMode('after');
   };
 
-  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); setImageUrl(''); };
-
   const groom=async()=>{
-    if(!file && !imageUrl) { setError('Please upload a file or paste an image URL.'); return; }
+    if(!file && !previewUrl) { setError('Please choose a file or enter an image URL.'); return; }
     setLoading(true); setError(null); setProgress(12);
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
       if (file) form.append("image",file);
-      if (!file && imageUrl) form.append("image_url", imageUrl);
+      else form.append("image_url", imageUrl || previewUrl);
+
       form.append("dog_only","true");
       if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
 
@@ -244,150 +265,116 @@ function UploadAndResult(){
 
   const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
 
-  // Keyboard run: Ctrl/Cmd + Enter
-  useEffect(()=>{
-    const onKey = (e)=>{
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter'){
-        groom();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return ()=>window.removeEventListener('keydown', onKey);
-  });
-
   return (
     <section id="app" className="container mx-auto px-6 py-12">
-      <div className="grid lg:grid-cols-2 gap-6 items-start">
+      <div className="tool-shell grid lg:grid-cols-[420px_minmax(0,1fr)] gap-6">
         {/* Left: INPUT PANEL */}
-        <Card className="p-0 overflow-hidden jz-studio-card">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3 border-b" style={{borderColor:'var(--app-border)'}}>
-            <div className="flex items-center gap-2">
-              <h3 className="text-[13px] font-semibold">Input</h3>
-              <span className="inline-flex items-center h-5 px-2 rounded-md text-[11px] opacity-70 ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>Idle</span>
+        <div className="tool-panel p-4">
+          <div className="tool-title">Input</div>
+
+          {/* Image URL + Choose */}
+          <div className="mt-3">
+            <label className="tool-label">Image URL</label>
+            <div className="flex gap-2">
+              <input
+                value={imageUrl}
+                onChange={handleUrlChange}
+                onBlur={useImageUrl}
+                placeholder="https://…"
+                className="tool-input flex-1"
+              />
+              <label className="relative">
+                <input type="file" accept="image/*" className="sr-only" onChange={selectFile}/>
+                <div className="tool-btn h-[38px] px-3 cursor-pointer inline-flex items-center gap-2">
+                  <Icon.Upload/> Choose…
+                </div>
+              </label>
             </div>
-            <button className="text-[12px] inline-flex items-center gap-1 opacity-80 hover:opacity-100">
-              Form <Icon.ChevronDown />
-            </button>
+            <p className="tool-help">Drag &amp; drop, paste from clipboard, or provide a URL. PNG/JPG up to ~12MB.</p>
           </div>
 
-          {/* Body */}
-          <div className="p-5 space-y-6">
-            {/* Image URL */}
-            <div>
-              <label className="block text-[13px] font-semibold mb-1">Image URL</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="https://…"
-                  value={imageUrl}
-                  onChange={(e)=>setImageUrl(e.target.value)}
-                  onBlur={useUrl}
-                  onKeyDown={(e)=>{ if(e.key==='Enter') useUrl(); }}
-                  className="flex-1 h-[40px] rounded-md px-3 text-sm outline-none jz-input"
-                />
-                <label className="inline-flex">
-                  <input type="file" accept="image/*" onChange={selectFile} className="hidden"/>
-                  <span className="inline-flex items-center h-[40px] px-3 rounded-md border cursor-pointer text-sm" style={{borderColor:'var(--app-border)'}}>
-                    Choose…
-                  </span>
-                </label>
-              </div>
-              <p className="mt-2 text-xs opacity-70">Drag & drop, paste from clipboard, or provide a URL. PNG/JPG up to ~12MB.</p>
-
-              {/* Selected thumbnail row */}
-              {previewUrl && (
-                <div className="mt-3">
-                  <button type="button" className="relative w-[120px] h-[120px] rounded-md overflow-hidden group ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>
-                    <img src={previewUrl} alt="thumb" className="absolute inset-0 w-full h-full object-cover"/>
-                    <span className="absolute top-1 right-1 grid place-items-center w-5 h-5 rounded-full bg-[var(--joyzze-teal)] text-black shadow">
-                      <Icon.Check />
-                    </span>
-                  </button>
-                </div>
-              )}
+          {/* Tiny thumbnail of current BEFORE image */}
+          {previewUrl && (
+            <div className="mt-3">
+              <img src={previewUrl} alt="selected" className="h-28 w-28 object-cover rounded-md ring-1 ring-[var(--app-border)]"/>
             </div>
+          )}
 
-            {/* Additional Settings */}
-            <div className="border rounded-md" style={{borderColor:'var(--app-border)'}}>
-              <button
-                type="button"
-                onClick={()=>setMore(!more)}
-                className="w-full flex items-center justify-between px-3 py-2 text-sm"
-              >
-                <span className="opacity-90">Additional Settings</span>
-                <span className="inline-flex items-center gap-1">More <Icon.ChevronDown style={{transform: more ? 'rotate(180deg)' : 'none', transition:'transform .15s ease'}}/></span>
-              </button>
-              {more && (
-                <div className="px-3 pt-2 pb-3 text-xs opacity-80 border-t" style={{borderColor:'var(--app-border)'}}>
-                  (Optional) Future controls can live here — e.g. dog-only toggle, sharpening strength, etc.
-                </div>
-              )}
-            </div>
+          {/* Additional Settings stub */}
+          <details className="mt-5 tool-details">
+            <summary>Additional Settings</summary>
+            <div className="mt-3 text-sm opacity-80">Defaults are fine for most images.</div>
+          </details>
 
-            {/* Errors */}
-            {!previewUrl && error && (
-              <div className="rounded-md px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
+          {/* Errors */}
+          {!previewUrl && error && (
+            <div className="mt-4 rounded-md px-3 py-2 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
+          )}
+
+          {/* Actions */}
+          <div className="mt-6 flex items-center gap-3">
+            <Button className="tool-ghost" onClick={resetAll}><Icon.Reset/> Reset</Button>
+            {!loading ? (
+              <Button className="tool-primary" onClick={groom}><Icon.Wand/> Run</Button>
+            ) : (
+              <>
+                <Button className="tool-primary" disabled><Icon.Wand/> Working… {progress}%</Button>
+                <Button className="tool-ghost" onClick={cancel}><Icon.Reset/> Cancel</Button>
+              </>
             )}
-
-            {/* Footer Actions */}
-            <div className="flex items-center justify-between pt-1">
-              <Button className="btn-ghost" onClick={resetAll}><Icon.Reset/> Reset</Button>
-              {!loading ? (
-                <Button className="btn-primary" onClick={groom}><Icon.Wand/> Run <span className="opacity-70 ml-1 text-[12px]">Ctrl↵</span></Button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Button className="btn-primary" disabled><Icon.Wand/> Working… {progress}%</Button>
-                  <Button className="btn-ghost" onClick={cancel}><Icon.Reset/> Cancel</Button>
-                </div>
-              )}
-            </div>
           </div>
-        </Card>
+        </div>
 
         {/* Right: RESULT PANEL */}
-        <Card className="p-0 overflow-hidden jz-studio-card">
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-3 border-b" style={{borderColor:'var(--app-border)'}}>
-            <div className="flex items-center gap-2">
-              <h3 className="text-[13px] font-semibold">Result</h3>
-              <span className="inline-flex items-center h-5 px-2 rounded-md text-[11px] opacity-70 ring-1" style={{boxShadow:'0 0 0 1px var(--app-border) inset'}}>{loading ? 'Running' : 'Idle'}</span>
+        <div className="tool-panel p-4">
+          <div className="flex items-center justify-between">
+            <div className="tool-title">Result</div>
+
+            {/* Preview switch: After | Compare */}
+            <div className="tool-switch">
+              <button
+                className={`switch-seg ${previewMode==='after'?'is-active':''}`}
+                onClick={()=>setPreviewMode('after')}
+                disabled={!resultUrl}
+                title={!resultUrl ? 'Run first to see result' : 'Show only the result image'}
+              >After</button>
+              <button
+                className={`switch-seg ${previewMode==='compare'?'is-active':''}`}
+                onClick={()=>setPreviewMode('compare')}
+                disabled={!resultUrl || !previewUrl}
+                title={!resultUrl ? 'Run first to compare' : ''}
+              >Compare</button>
             </div>
-            <div className="text-[12px] px-2 py-0.5 rounded-full border opacity-80" style={{borderColor:'var(--app-border)'}}>Preview</div>
           </div>
 
-          {/* Canvas */}
-          <div className="p-4">
-            <div className="rounded-xl overflow-hidden grid place-items-center border bg-slate-50/60 dark:bg-transparent" style={{height: panelH, borderColor:'var(--app-border)'}}>
-              {!resultUrl ? (
-                <div className="text-sm opacity-70 px-6 text-center">
-                  Your result will appear here after you click <b>Run</b>.
-                </div>
-              ) : (
-                <img src={resultUrl} alt="Result" className="w-full h-full object-contain"/>
-              )}
-              {loading && (
-                <div className="absolute inset-0 grid place-items-center bg-black/5 dark:bg-white/5">
-                  <div className="animate-pulse text-sm opacity-80">Processing… {progress}%</div>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-4 flex items-center justify-between text-xs opacity-70">
-              <span />
-              {resultUrl && (
-                <a className="btn btn-primary" href={resultUrl} download><Icon.Download/> Download</a>
-              )}
-            </div>
+          <div className="mt-3 rounded-lg overflow-hidden ring-1 ring-[var(--app-border)]" style={{height: panelH}}>
+            {!resultUrl ? (
+              <div className="h-full grid place-items-center bg-[var(--stage-bg)] text-sm opacity-70">
+                {previewUrl ? 'Click Run to generate the groomed image.' : 'Choose an image to get started.'}
+              </div>
+            ) : (
+              previewMode === 'compare' && previewUrl
+                ? <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl}/>
+                : <img src={resultUrl} alt="Result" className="h-full w-full object-contain bg-[var(--stage-bg)]"/>
+            )}
           </div>
-        </Card>
+
+          {/* Download */}
+          {resultUrl && (
+            <div className="mt-3 flex justify-end">
+              <a className="tool-primary inline-flex items-center gap-2" href={resultUrl} download>
+                <Icon.Download/> Download
+              </a>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
 }
 
 /* =========================================================
-   HEADER — one-row grid + NAV w/ MEGAMENU LINKS
+   HEADER — one-row grid (phone | logo | search+icons)
    ========================================================= */
 
 function MegaSection({ title, children }) {
@@ -400,7 +387,7 @@ function MegaSection({ title, children }) {
 }
 
 function SigninHeader({ theme, onToggleTheme }) {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState(null); // 'all'|'clippers'|'blades'|'combs'|'info'|null
   const close = () => setOpen(null);
 
   useEffect(() => {
@@ -440,7 +427,7 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top single row */}
+      {/* single row: phone | logo | search+icons */}
       <div className={topBarClass}>
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-white">
@@ -448,11 +435,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          <a
-            href="https://joyzze.com/"
-            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
-            aria-label="Joyzze"
-          >
+          <a href="https://joyzze.com/" className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]" aria-label="Joyzze">
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
@@ -471,39 +454,26 @@ function SigninHeader({ theme, onToggleTheme }) {
                   name="search_query"
                   placeholder="Search..."
                   className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  aria-label="Search Raptor, c-series, Piranha..."
                   autoComplete="off"
                 />
               </form>
               <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-              <button
-                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5"
-                aria-label="Search"
-              >
+              <button className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5" aria-label="Search">
                 <Icon.Search />
               </button>
             </div>
 
-            <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare">
-              <Icon.Shuffle />
-            </a>
+            <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
 
             <div className="hidden sm:flex items-center">
-              <a className={`${iconBtn}`} href="/account.php" aria-label="Account">
-                <Icon.User />
-              </a>
+              <a className={`${iconBtn}`} href="/account.php" aria-label="Account"><Icon.User /></a>
               <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
 
-            <a className={`${iconBtn}`} href="/cart.php" aria-label="Cart">
-              <Icon.Bag />
-            </a>
+            <a className={`${iconBtn}`} href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-            <button
-              onClick={onToggleTheme}
-              className="icon-btn h-9 px-2 rounded-md border border-black/10 bg-white hover:bg-black/5 flex items-center gap-2"
-              aria-label="Toggle theme"
-              title={theme === 'light' ? 'Light mode' : 'Dark mode'}
-            >
+            <button onClick={onToggleTheme} className="icon-btn h-9 px-2 rounded-md border border-black/10 bg-white hover:bg-black/5 flex items-center gap-2" aria-label="Toggle theme">
               {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
               <span className="text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
             </button>
@@ -511,7 +481,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         </div>
       </div>
 
-      {/* NAV + MEGAMENU */}
+      {/* dark navbar + centered mega panel */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
@@ -527,6 +497,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
           </div>
 
+          {/* Mega panel (kept identical) */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
@@ -714,7 +685,7 @@ function Samples(){
 }
 
 /* =========================================================
-   FOOTER
+   FOOTER (Joyzze-style)
    ========================================================= */
 function FooterPromoRibbon(){
   return (
@@ -830,24 +801,27 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles + dark-mode overrides */}
+      {/* Global styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
         :root { --joyzze-teal: #1CD2C1; }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
+        /* ===== Theme palette ===== */
         :root{
           --app-bg: #ffffff;
           --app-surface: #ffffff;
           --app-muted: #475569;
           --app-border: rgba(0,0,0,.08);
+          --stage-bg: #f8fafc;
         }
         .theme-dark{
           --app-bg: #0f1115;
-          --app-surface: #0f1115;  /* darker to mimic studio */
+          --app-surface: #181a1f;
           --app-muted: rgba(229,231,235,.75);
           --app-border: rgba(255,255,255,.12);
+          --stage-bg: #0d0f13;
         }
         body{ background: var(--app-bg); }
         .theme-dark body{ color:#e5e7eb; }
@@ -857,10 +831,23 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* Studio-like panel surface */
-        .jz-studio-card{ background: var(--app-surface); }
-        .theme-dark .jz-studio-card{ background: #0f1115; }
+        /* ----- Tool style panels ----- */
+        .tool-shell {}
+        .tool-panel{ background: var(--app-surface); border-radius: 12px; box-shadow: 0 1px 0 var(--app-border), 0 2px 6px rgba(0,0,0,.05); }
+        .tool-title{ font-weight:700; letter-spacing:.02em; }
+        .tool-label{ font-size:13px; font-weight:600; opacity:.9; display:block; margin-bottom:6px; }
+        .tool-input{ height:38px; border-radius:8px; padding:0 10px; border:1px solid var(--app-border); background:var(--app-surface); outline:none; width:100%; }
+        .tool-input:focus{ box-shadow:0 0 0 3px rgba(28,210,193,.18); }
+        .tool-help{ font-size:12px; opacity:.7; margin-top:6px; }
+        .tool-details{ border:1px dashed var(--app-border); border-radius:8px; padding:10px 12px; background:transparent; }
+        .tool-btn{ background:#fff; border:1px solid var(--app-border); border-radius:8px; }
+        .tool-primary{ background: var(--joyzze-teal); color:#0b0b0b; border-radius:8px; padding:.55rem .9rem; }
+        .tool-ghost{ background:transparent; border:1px solid var(--app-border); border-radius:8px; padding:.55rem .9rem; color:inherit; }
+        .tool-switch{ display:flex; border:1px solid var(--app-border); border-radius:999px; padding:2px; background:transparent; }
+        .switch-seg{ padding:6px 10px; font-size:13px; border-radius:999px; opacity:.85; }
+        .switch-seg.is-active{ background:var(--joyzze-teal); color:#0b0b0b; opacity:1; }
 
+        /* Nav + mega styles (unchanged) */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
@@ -870,10 +857,21 @@ export default function Page(){
 
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
+        .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        .jz-mega { position: relative; border: 1px solid rgba(28,210,193,.85); border-top-width: 3px; background: rgba(255,255,255,.96); backdrop-filter: blur(1px); box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12); border-radius: 2px; overflow: hidden; z-index: 60; }
+        .jz-mega {
+          position: relative;
+          border: 1px solid rgba(28,210,193,.85);
+          border-top-width: 3px;
+          background: rgba(255,255,255,.96);
+          backdrop-filter: blur(1px);
+          box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
+          border-radius: 2px;
+          overflow: hidden;
+          z-index: 60;
+        }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
-
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
@@ -881,17 +879,17 @@ export default function Page(){
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
-        .jz-input{ background:var(--app-surface); color:inherit; border:1px solid var(--app-border); }
+        .jz-input{ background:#fff; color:inherit; border:1px solid var(--app-border); }
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
+        /* Inner app dark-mode harmonization */
+        .theme-dark .tool-btn{ background:var(--app-surface); }
+        .theme-dark .tool-input{ background:var(--app-surface); }
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
-        .theme-dark .bg-slate-50\\/60 { background: #0f1115 !important; }
-        .theme-dark .border-slate-300,
-        .theme-dark .ring-slate-200,
-        .theme-dark .ring-black\\/10 { border-color: var(--app-border) !important; box-shadow: 0 0 0 1px var(--app-border) inset !important; }
+        .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
         .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
+        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
