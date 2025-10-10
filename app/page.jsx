@@ -96,47 +96,16 @@ const Icon = {
   ),
   Sun: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/>
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M19.8 4.2l-2.1 2.1M4.2 19.8l2.1-2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   Moon: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M20 13.5A8.5 8.5 0 1 1 10.5 4a7 7 0 0 0 9.5 9.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
 };
-
-/* ---------------- Theme hook (Light/Dark) ---------------- */
-function useTheme() {
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
-    const initial =
-      stored === 'light' || stored === 'dark'
-        ? stored
-        : (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-          ? 'dark'
-          : 'light';
-
-    setTheme(initial);
-    document.documentElement.classList.toggle('theme-dark', initial === 'dark');
-    document.documentElement.classList.toggle('theme-light', initial === 'light');
-  }, []);
-
-  const toggle = () => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      document.documentElement.classList.remove(prev === 'dark' ? 'theme-dark' : 'theme-light');
-      document.documentElement.classList.add(next === 'dark' ? 'theme-dark' : 'theme-light');
-      localStorage.setItem('theme', next);
-      return next;
-    });
-  };
-
-  return { theme, toggle };
-}
 
 /* ---------------- Small UI helpers ---------------- */
 const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
@@ -355,9 +324,23 @@ function MegaSection({ title, children }) {
   );
 }
 
-function SigninHeader() {
+function ThemeToggle({ theme, onToggle }) {
+  const isDark = theme === 'dark';
+  return (
+    <button
+      className="icon-btn h-9 px-3 rounded-md flex items-center gap-2 bg-white/90 dark:bg-[#1c1c1c] ring-1 ring-black/10 dark:ring-white/15 hover:bg-black/5 dark:hover:bg-white/10"
+      onClick={onToggle}
+      aria-label="Toggle color mode"
+      title={isDark ? 'Switch to Light' : 'Switch to Dark'}
+    >
+      {isDark ? <Icon.Sun /> : <Icon.Moon />}
+      <span className="text-sm">{isDark ? 'Light' : 'Dark'}</span>
+    </button>
+  );
+}
+
+function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null); // 'all' | 'clippers' | 'blades' | 'combs' | 'info' | null
-  const { theme, toggle } = useTheme();
   const close = () => setOpen(null);
 
   useEffect(() => {
@@ -395,10 +378,10 @@ function SigninHeader() {
   return (
     <header className="w-full sticky top-0 z-50">
       {/* single row: phone | logo | search+icons */}
-      <div className="bg-[#bdbdbd] dark:!bg-[#2a2a2a]">
+      <div className="header-top">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: phone */}
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-[#e8e8e8]">
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
@@ -414,60 +397,50 @@ function SigninHeader() {
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
                 className="h-[52px] w-auto align-middle"
-                onError={(e)=>{ e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'; }}
+                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
               />
             </div>
           </a>
 
           {/* Right: search + icons + theme toggle */}
-          <div className="justify-self-end flex items-center gap-2 sm:gap-4">
+          <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white dark:bg-[#1c1c1c] dark:text-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10 dark:ring-white/10"
+                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search Raptor, c-series, Piranha..."
                   autoComplete="off"
                 />
               </form>
-              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 dark:text-white/85 pointer-events-none" />
+              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 pointer-events-none" />
               <button
-                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white dark:bg-[#1c1c1c] ring-1 ring-black/15 dark:ring-white/15 hover:bg-black/5 dark:hover:bg-white/5"
+                className="icon-btn absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white dark:bg-[#1c1c1c] ring-1 ring-black/15 dark:ring-white/15"
                 aria-label="Search"
               >
-                <Icon.Search className="dark:text-white" />
+                <Icon.Search />
               </button>
             </div>
 
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/compare" aria-label="Compare">
-              <Icon.Shuffle className="dark:text-white"/>
+            <a className="icon-btn hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/compare" aria-label="Compare">
+              <Icon.Shuffle />
             </a>
 
             <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/account.php" aria-label="Account">
-                <Icon.User className="dark:text-white"/>
+              <a className="icon-btn grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/account.php" aria-label="Account">
+                <Icon.User />
               </a>
-              <Icon.CaretDown className="ml-[2px] opacity-80 dark:text-white/80" />
+              <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
 
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/cart.php" aria-label="Cart">
-              <Icon.Bag className="dark:text-white"/>
+            <a className="icon-btn grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10" href="/cart.php" aria-label="Cart">
+              <Icon.Bag />
             </a>
 
             {/* Theme toggle */}
-            <button
-              onClick={toggle}
-              className="ml-1 px-3 h-9 rounded-md grid place-items-center ring-1 ring-black/10 dark:ring-white/10 bg-white dark:bg-[#1c1c1c] hover:bg-black/5 dark:hover:bg-white/5 text-sm font-medium"
-              aria-label="Toggle color theme"
-              title="Toggle color theme"
-            >
-              <span className="inline-flex items-center gap-2">
-                {theme === 'dark' ? <Icon.Sun className="text-yellow-300"/> : <Icon.Moon className="text-white"/>}
-                <span className="hidden md:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
-              </span>
-            </button>
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           </div>
         </div>
       </div>
@@ -714,7 +687,7 @@ function SigninFooter() {
         {/* Middle: Logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
-            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{ e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>' }}/>
+            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
 
@@ -767,49 +740,82 @@ function SigninFooter() {
 }
 
 /* =========================================================
-   PAGE
+   PAGE (Theme handling)
    ========================================================= */
 export default function Page(){
+  const [theme, setTheme] = useState('light');
+
+  // Read initial theme (localStorage -> system)
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('theme') : null;
+    if (stored === 'light' || stored === 'dark') {
+      setTheme(stored);
+    } else {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      setTheme(prefersDark ? 'dark' : 'light');
+    }
+  }, []);
+
+  // Apply theme class to <html>
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') root.classList.add('theme-dark'); else root.classList.remove('theme-dark');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => setTheme((t)=> (t==='dark' ? 'light' : 'dark'));
+
   return (
     <main>
-      <SigninHeader />
+      <SigninHeader theme={theme} onToggleTheme={toggleTheme} />
       <Hero />
       <HowItWorks />
       <UploadAndResult />
       <Samples />
       <SigninFooter />
 
-      {/* Global styles for Joyzze look + theme variables */}
+      {/* Global styles for Joyzze look + theming */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
+        :root { --joyzze-teal: #1CD2C1; }
+        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+
+        /* === Header top (light screenshot look; dark remains dark) === */
         :root {
-          --joyzze-teal: #1CD2C1;
-          --bg: #ffffff;
-          --text: #0b0b0b;
-          --muted: #6b6b6b;
-          --card-bg: #ffffff;
-          --card-ring: rgba(0,0,0,.06);
-          --ghost-border: rgba(0,0,0,.08);
+          --header-bg: #c9c9c9;   /* light gray like your figure */
+          --header-fg: #0f0f0f;   /* dark text/icons on light header */
         }
         .theme-dark {
-          --bg: #0f1113;
-          --text: #f0f0f0;
-          --muted: #c9c9c9;
-          --card-bg: #17191b;
-          --card-ring: rgba(255,255,255,.08);
-          --ghost-border: rgba(255,255,255,.12);
+          --header-bg: #2a2a2a;   /* dark header in dark mode */
+          --header-fg: #e8e8e8;   /* light text/icons on dark header */
         }
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); }
-        .dark\\:!bg\\[\\#2a2a2a\\] { background-color: #2a2a2a !important; } /* helper for header strip */
+        .header-top { background: var(--header-bg); color: var(--header-fg); }
+        .header-top a,
+        .header-top button,
+        .header-top svg { color: var(--header-fg); }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; transition:0.15s ease; }
+        /* Search input in the top header */
+        .header-top .jz-input {
+          background: #ffffff;
+          color: #0b0b0b;
+        }
+        .theme-dark .header-top .jz-input {
+          background: #1c1c1c;
+          color: #ffffff;
+        }
+
+        /* Buttons & cards */
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
-        .btn-ghost { background:transparent; border:1px solid var(--ghost-border); }
-        .btn:hover { filter:brightness(0.98); }
+        .btn-ghost { background:transparent; border:1px solid rgba(0,0,0,.08); }
+        .card { background:#fff; border-radius:1rem; box-shadow:0 1px 0 rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.06); }
 
-        .card { background:var(--card-bg); border-radius:1rem; box-shadow:0 1px 0 var(--card-ring), 0 1px 2px var(--card-ring); }
+        /* Icon hover helpers */
+        .icon-btn:hover { background: rgba(0,0,0,.05); }
+        .theme-dark .icon-btn:hover { background: rgba(255,255,255,.06); }
 
+        /* Nav + mega styles */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
@@ -834,31 +840,22 @@ export default function Page(){
           overflow: hidden;
           z-index: 60;
         }
-        .theme-dark .jz-mega {
-          background: rgba(23,25,27,.96);
-          box-shadow: 0 32px 64px -20px rgba(0,0,0,.65), 0 12px 24px rgba(0,0,0,.45);
-        }
         .jz-mega-bg {
           position:absolute; inset:0;
           background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%);
           opacity:.14; pointer-events:none; border-radius:2px;
         }
-
         .jz-sec-title {
           margin-bottom:12px; color:#2f2f2f; font-weight:700;
           text-transform:uppercase; letter-spacing:.06em; font-size:14px;
         }
-        .theme-dark .jz-sec-title { color:#f0f0f0; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
-        .theme-dark .jz-list li { border-bottom:1px solid rgba(255,255,255,.06); }
+        .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
-        .theme-dark .jz-list a { color:#e1e1e1; }
-        .theme-dark .jz-list a:hover { color:#fff; }
 
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-        .theme-dark .jz-input:focus { box-shadow: 0 0 0 3px rgba(255,255,255,.08); }
 
         /* responsive search width like Joyzze */
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
