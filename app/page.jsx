@@ -2,120 +2,72 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ---------------- Small SVG icons ---------------- */
+/* ---------------- Icons ---------------- */
 const Icon = {
-  Upload: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Wand: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  Reset: (props) => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  Download: (props) => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  Phone: (props)=>(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Search: (props)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
-      <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-    </svg>
-  ),
-  Plus: (props)=>(
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-    </svg>
-  ),
-  Shuffle: (props)=>(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props} style={{transform:'rotate(-8deg)'}}>
-      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  User: (props)=>(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  CaretDown: (props)=>(
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...props}>
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-    </svg>
-  ),
-  Bag: (props)=>(
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}>
-      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
-      <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-    </svg>
-  ),
-  Truck: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-    </svg>
-  ),
-  Return: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
-    </svg>
-  ),
-  Card: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
-    </svg>
-  ),
-  Lock: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/>
-      <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
-    </svg>
-  ),
-  Sun: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/>
-      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-    </svg>
-  ),
-  Moon: (p)=>(
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
+  Upload: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Wand: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Reset: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Download: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Phone: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Search: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/><path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Plus: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Shuffle: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}><path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  User: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  CaretDown:(p)=>(<svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Bag:(p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Truck:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>),
+  Return:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>),
+  Card:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/><path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/></svg>),
+  Lock:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/><path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/></svg>),
+  Sun:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ---------------- Small UI helpers ---------------- */
-const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
+/* ---------------- UI helpers ---------------- */
+const Button = ({ className="", disabled, onClick, children, type="button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
-const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
+const Card = ({ className="", children }) => (
+  <div className={`card ${className}`}>{children}</div>
+);
 
-/* ---------------- Compare slider ---------------- */
+/* ---------------- Compare slider (visible handle + labels) ---------------- */
 function CompareSlider({ beforeSrc, afterSrc }) {
-  const [pos, setPos] = useState(55); // percent
+  const [pos, setPos] = useState(50); // %
+  const wrapRef = useRef(null);
+
+  // drag support
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const onDown = (e) => {
+      const rect = el.getBoundingClientRect();
+      const move = (clientX) => {
+        const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+        setPos(Math.round((x / rect.width) * 100));
+      };
+      const onMove = (ev) => move(ev.touches ? ev.touches[0].clientX : ev.clientX);
+      const onUp = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('mouseup', onUp);
+        window.removeEventListener('touchend', onUp);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('mouseup', onUp);
+      window.addEventListener('touchend', onUp);
+    };
+    el.addEventListener('mousedown', onDown);
+    el.addEventListener('touchstart', onDown, { passive: true });
+    return () => {
+      el.removeEventListener('mousedown', onDown);
+      el.removeEventListener('touchstart', onDown);
+    };
+  }, []);
+
   return (
-    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
+    <div ref={wrapRef} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
       {/* After (full) */}
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
       {/* Before (clipped) */}
@@ -126,12 +78,37 @@ function CompareSlider({ beforeSrc, afterSrc }) {
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
         draggable={false}
       />
-      {/* Divider */}
-      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
-      {/* Slider control */}
-      <div className="absolute bottom-2 left-3 right-3">
-        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
+      {/* Divider + handle */}
+      <div
+        className="absolute top-0 bottom-0 w-[2px] bg-indigo-500"
+        style={{ left: `${pos}%` }}
+      />
+      <div
+        className="absolute top-1/2 -translate-y-1/2 -ml-4"
+        style={{ left: `${pos}%` }}
+      >
+        <div className="h-10 w-10 rounded-full bg-white/90 dark:bg-black/40 backdrop-blur border border-black/10 dark:border-white/10 shadow flex items-center justify-center">
+          {/* two chevrons */}
+          <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200">
+            <span className="inline-block -ml-[2px]">&lsaquo;</span>
+            <span className="inline-block -mr-[2px]">&rsaquo;</span>
+          </div>
+        </div>
       </div>
+      {/* Labels */}
+      <span className="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full bg-black/60 text-white">Before</span>
+      <span className="absolute top-3 right-3 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-600/90 text-white">After</span>
+
+      {/* Range control (keyboard accessible) */}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={pos}
+        onChange={(e)=>setPos(Number(e.target.value))}
+        className="absolute left-0 right-0 bottom-2 w-[98%] mx-auto accent-indigo-500"
+        aria-label="Compare before and after"
+      />
     </div>
   );
 }
@@ -170,7 +147,7 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result
+   Upload + Result (beautified)
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
@@ -183,16 +160,12 @@ function UploadAndResult(){
   const [imgH, setImgH] = useState(0);
   const controllerRef=useRef(null);
 
-  const [panelH, setPanelH] = useState(640);
+  const [panelH, setPanelH] = useState(560);
   const ACTION_H = 56;
 
   useEffect(() => {
-    const setH = () => {
-      const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
-      setPanelH(h);
-    };
-    setH();
-    window.addEventListener('resize', setH);
+    const setH = () => setPanelH(Math.round(Math.max(480, Math.min(760, window.innerHeight * 0.68))));
+    setH(); window.addEventListener('resize', setH);
     return () => window.removeEventListener('resize', setH);
   }, []);
 
@@ -249,12 +222,13 @@ function UploadAndResult(){
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
+      {/* Title bar */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
-            <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
+            <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-emerald-500">Joyzze – Dog Groomer</h1>
+            <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300">Upload → AI groom → compare before &amp; after</p>
           </div>
         </div>
         {resultUrl ? (
@@ -265,22 +239,22 @@ function UploadAndResult(){
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         {/* Left: Upload */}
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold invisible">Upload placeholder</div>
+          <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Upload</div>
           {!previewUrl && error && (
-            <div className="mb-4 rounded-2xl px-4 py-3 bg-red-50 text-red-700 border border-red-200">{String(error)}</div>
+            <div className="mb-4 rounded-xl px-4 py-3 bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/30">{String(error)}</div>
           )}
           {!previewUrl ? (
-            <label className="grid place-items-center rounded-2xl border border-dashed border-slate-300 text-center cursor-pointer hover:bg-white" style={{ height: panelH }}>
+            <label className="grid place-items-center rounded-2xl border border-dashed border-slate-300/80 dark:border-white/15 text-center cursor-pointer bg-white/70 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur transition-colors" style={{ height: panelH }}>
               <div className="grid place-items-center gap-3">
-                <div className="mx-auto w-14 h-14 rounded-2xl bg-white grid place-items-center shadow"><Icon.Upload /></div>
+                <div className="mx-auto w-14 h-14 rounded-2xl bg-white dark:bg-white/10 grid place-items-center shadow ring-1 ring-black/5 dark:ring-white/10"><Icon.Upload /></div>
                 <div className="font-medium">Drag &amp; drop or click to upload</div>
-                <div className="text-xs text-slate-600">PNG, JPG up to 12MB</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">PNG, JPG up to 12MB</div>
               </div>
               <input type="file" accept="image/*" className="hidden" onChange={selectFile} />
             </label>
           ) : (
             <div className="flex flex-col">
-              <div className="rounded-2xl overflow-hidden bg-slate-50" style={{ height: panelH }}>
+              <div className="rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/40 ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
                 <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
               </div>
               <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
@@ -300,13 +274,13 @@ function UploadAndResult(){
           )}
         </Card>
 
-        {/* Right: Result with BEFORE/AFTER SLIDER */}
+        {/* Right: Result + Slider */}
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
-          <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
+          <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Result</div>
+          <div className="rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 text-sm text-slate-600">
-                Your groomed image will appear here. After processing, use the slider to compare before/after.
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300/80 dark:border-white/10 bg-slate-50/60 dark:bg-slate-900/30 text-sm text-slate-600 dark:text-slate-400 px-6 text-center">
+                Your groomed image will appear here. After processing, drag the handle to compare before/after.
               </div>
             ) : (
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
@@ -320,9 +294,8 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER — one-row grid (phone | logo | search+icons)
+   Header (compact + mega)
    ========================================================= */
-
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -333,7 +306,7 @@ function MegaSection({ title, children }) {
 }
 
 function SigninHeader({ theme, onToggleTheme }) {
-  const [open, setOpen] = useState(null); // 'all'|'clippers'|'blades'|'combs'|'info'|null
+  const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
   useEffect(() => {
@@ -368,82 +341,61 @@ function SigninHeader({ theme, onToggleTheme }) {
     );
   };
 
-  const topBarClass = theme === 'light' ? 'bg-[#cfcfcf]' : 'bg-[#1c1f26]';
-  const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md hover:bg-black/5';
+  const topBarClass = theme === 'light' ? 'bg-[#e9ecef]' : 'bg-[#1c1f26]';
+  const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10';
 
   return (
-    <header className="w-full sticky top-0 z-50">
+    <header className="w-full sticky top-0 z-50 backdrop-blur supports-backdrop-blur:bg-white/60 dark:supports-backdrop-blur:bg-black/20">
       {/* single row: phone | logo | search+icons */}
       <div className={topBarClass}>
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[70px] grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: phone */}
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-white">
+          <a href="tel:(877) 456-9993" className="justify-self-start hidden sm:flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+            <span className="text-[14px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
           {/* Center: pill logo */}
           <a
-            href="https://joyzze.com/"
-            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
+            href="/"
+            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
-              <img
-                src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
-                alt="Joyzze"
-                className="h-[52px] w-auto align-middle"
-                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
-              />
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 py-2.5 rounded-[10px]">
+              <span className="text-white text-[22px] font-semibold tracking-[0.25em]">JOYZZE</span>
             </div>
           </a>
 
           {/* Right: search + icons + theme toggle */}
-          <div className="justify-self-end flex items-center gap-4">
+          <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
-              <form action="/search.php" method="get">
+              <form action="/search" method="get">
                 <input
-                  type="text"
-                  name="search_query"
-                  placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
-                  aria-label="Search Raptor, c-series, Piranha..."
-                  autoComplete="off"
+                  type="text" name="q" placeholder="Search…" autoComplete="off"
+                  className="jz-input h-[42px] w-[220px] rounded-md bg-white dark:bg-white/10 pl-4 pr-[58px] text-[14px] italic placeholder:italic placeholder:text-slate-500 dark:placeholder:text-slate-400 outline-none ring-1 ring-black/10 dark:ring-white/10"
                 />
               </form>
-              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-              <button
-                className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white ring-1 ring-black/15 hover:bg-black/5"
-                aria-label="Search"
-              >
+              <Icon.Plus className="absolute right-[56px] top-1/2 -translate-y-1/2 text-slate-700 dark:text-slate-300 pointer-events-none" />
+              <button className="absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full bg-white dark:bg-white/10 ring-1 ring-black/10 dark:ring-white/10 hover:bg-black/5 dark:hover:bg-white/15" aria-label="Search">
                 <Icon.Search />
               </button>
             </div>
 
-            <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare">
-              <Icon.Shuffle />
-            </a>
-
+            <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
             <div className="hidden sm:flex items-center">
-              <a className={`${iconBtn}`} href="/account.php" aria-label="Account">
-                <Icon.User />
-              </a>
+              <a className={`${iconBtn}`} href="/account" aria-label="Account"><Icon.User /></a>
               <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
-
-            <a className={`${iconBtn}`} href="/cart.php" aria-label="Cart">
-              <Icon.Bag />
-            </a>
+            <a className={`${iconBtn}`} href="/cart" aria-label="Cart"><Icon.Bag /></a>
 
             {/* Theme toggle */}
             <button
               onClick={onToggleTheme}
-              className="icon-btn h-9 px-2 rounded-md border border-black/10 bg-white hover:bg-black/5 flex items-center gap-2"
+              className="icon-btn h-9 px-2 rounded-md border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/10"
               aria-label="Toggle theme"
               title={theme === 'light' ? 'Light mode' : 'Dark mode'}
             >
               {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
-              <span className="text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
             </button>
           </div>
         </div>
@@ -453,15 +405,15 @@ function SigninHeader({ theme, onToggleTheme }) {
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
-            <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
+            <div className="px-4 text-[22px] text-emerald-400 select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
-              <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
-              <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
-              <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
-              <NavItem id="combs" href="https://joyzze.com/combs-accessories/">Combs &amp; Accessories</NavItem>
-              <NavItem id="info" href="https://joyzze.com/information/">Information</NavItem>
-              <a href="https://joyzze.com/recycling-sharpening/" className="jz-item">Recycling &amp; Sharpening</a>
-              <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
+              <NavItem id="all" href="#all">All Products</NavItem>
+              <NavItem id="clippers" href="#clippers">Clippers</NavItem>
+              <NavItem id="blades" href="#blades">Blades</NavItem>
+              <NavItem id="combs" href="#combs">Combs &amp; Accessories</NavItem>
+              <NavItem id="info" href="#info">Information</NavItem>
+              <a href="#recycle" className="jz-item">Recycling &amp; Sharpening</a>
+              <a href="#distributor" className="jz-item">Distributor</a>
             </div>
           </div>
 
@@ -473,102 +425,90 @@ function SigninHeader({ theme, onToggleTheme }) {
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
-                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
-                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
-                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
+                        <li><a href="#raptor">Raptor &amp; Falcon | A-Series</a></li>
+                        <li><a href="#hornet">Hornet | C-Series</a></li>
+                        <li><a href="#stinger">Stinger | C-Series</a></li>
+                        <li><a href="#piranha">Piranha | D-Series</a></li>
+                        <li><a href="#mini">Hornet Mini | M-Series</a></li>
                       </MegaSection>
                       <MegaSection title="BLADES">
-                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
-                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
-                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
-                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
+                        <li><a href="#a-series">A-Series | Raptor &amp; Falcon</a></li>
+                        <li><a href="#a-wide">A-Series | Wide</a></li>
+                        <li><a href="#c-series">C-Series | 5-in-1</a></li>
+                        <li><a href="#d-series">D-Series | Piranha</a></li>
+                        <li><a href="#m-series">M-Series | Mini</a></li>
                       </MegaSection>
                       <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
-                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
-                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
+                        <li><a href="#cases">Cases</a></li>
+                        <li><a href="#combs">Combs</a></li>
+                        <li><a href="#oil">Blade &amp; Scissor Oil</a></li>
+                        <li><a href="#bag">Multi-Functional Tool Bag</a></li>
                       </MegaSection>
                     </>
                   )}
-
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
-                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
+                        <li><a href="#hornet">Hornet</a></li>
+                        <li><a href="#stinger">Stinger</a></li>
                       </MegaSection>
-                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
-                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
-                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
+                      <MegaSection title="A5 STYLE | A-SERIES">
+                        <li><a href="#falcon">Falcon</a></li>
+                        <li><a href="#raptor">Raptor</a></li>
                       </MegaSection>
-                      <MegaSection title="D-SERIES CLIPPERS">
-                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
+                      <MegaSection title="D-SERIES">
+                        <li><a href="#piranha">Piranha</a></li>
                         <li className="mt-2" />
                         <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
-                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="MINI TRIMMERS | M-SERIES">
-                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
+                        <li><a href="#a5-falcon">A5 Falcon</a></li>
+                        <li><a href="#a5-raptor">A5 Raptor</a></li>
                       </MegaSection>
                     </>
                   )}
-
                   {open === 'blades' && (
                     <>
-                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li></MegaSection>
-                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
-                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
+                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="#a5blades">A5 Blades</a></li></MegaSection>
+                      <MegaSection title="A-SERIES WIDE | A5">
+                        <li><a href="#wide">Wide Blades</a></li>
+                        <li><a href="#bundle-plus">Bundle Plus</a></li>
+                        <li><a href="#bundle">Bundle</a></li>
                       </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS"><li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li></MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS"><li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li></MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1"><li><a href="#cmax">C-MAX Blades</a></li></MegaSection>
                     </>
                   )}
-
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
-                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
-                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
+                        <li><a href="#wide-combs">Wide Metal Combs</a></li>
+                        <li><a href="#bundle">Bundle</a></li>
+                        <li><a href="#bundle-plus">Bundle Plus</a></li>
                       </MegaSection>
-                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | STINGER & HORNET">
-                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                      <MegaSection title="A & D SERIES">
+                        <li><a href="#8pcs">8 Piece Metal Comb Set</a></li>
                       </MegaSection>
                       <MegaSection title="CASES">
-                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
-                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
+                        <li><a href="#12slot">12-Slot</a></li>
+                        <li><a href="#22slot">22-Slot</a></li>
                       </MegaSection>
                     </>
                   )}
-
                   {open === 'info' && (
                     <>
-                      <MegaSection title="ABOUT JOYZZE™">
-                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
-                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
-                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
+                      <MegaSection title="ABOUT">
+                        <li><a href="#about">About JOYZZE™</a></li>
+                        <li><a href="#faqs">FAQs</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
                       </MegaSection>
                       <MegaSection title="SUPPORT">
-                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
-                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
-                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                        <li><a href="#shipping">Shipping &amp; Returns</a></li>
+                        <li><a href="#access">Accessibility</a></li>
                       </MegaSection>
                       <MegaSection title="DOCS">
-                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
-                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
-                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
-                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
-                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
+                        <li><a href="#repair">Clipper Repair Form</a></li>
+                        <li><a href="#warranty">Warranty</a></li>
+                        <li><a href="#brochure">Product Brochure</a></li>
+                        <li><a href="#terms">Terms &amp; Conditions</a></li>
                       </MegaSection>
                     </>
                   )}
@@ -583,21 +523,23 @@ function SigninHeader({ theme, onToggleTheme }) {
 }
 
 /* =========================================================
-   HERO / HOW / SAMPLES
+   Hero / How / Samples (kept, tightened spacing)
    ========================================================= */
 function Hero(){
   return (
-    <header className="relative overflow-hidden bg-[#323030] text-white">
-      <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
+    <header className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="container mx-auto px-6 py-16 md:py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span></h1>
-          <p className="mt-4 text-slate-300 max-w-xl">
-            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
+          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-5">Joyzze</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+            Make your dog look freshly groomed—<span className="text-emerald-400">with AI</span>
+          </h1>
+          <p className="mt-4 text-slate-200/90 max-w-xl">
+            Upload a photo; we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>.
           </p>
           <div className="mt-6 flex items-center gap-3">
-            <a href="#app" className="btn btn-primary !bg-[#323030]">Try it free</a>
-            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] hover:bg-[#121a2b]">See how it works</a>
+            <a href="#app" className="btn btn-primary">Try it free</a>
+            <a href="#how" className="btn text-white border border-white/20 bg-white/5 hover:bg-white/10">See how it works</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -610,26 +552,26 @@ function Hero(){
 
 function HowItWorks() {
   return (
-    <section id="how" className="container mx-auto px-6 py-16">
+    <section id="how" className="container mx-auto px-6 py-14">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+      <p className="text-center text-slate-600 dark:text-slate-300 mb-8">Upload → AI groom → compare before &amp; after</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
+        <Card className="p-6 flex flex-col min-h-[200px]">
+          <div className="w-6 h-6 rounded-full bg-slate-900 text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
-          <p className="text-sm text-slate-600">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">PNG or JPG up to ~12MB.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
         </Card>
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
+        <Card className="p-6 flex flex-col min-h-[200px]">
+          <div className="w-6 h-6 rounded-full bg-slate-900 text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">We tidy fur around face and paws for a neat look.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a></div>
         </Card>
-        <Card className="p-6 flex flex-col min-h-[220px]">
-          <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
+        <Card className="p-6 flex flex-col min-h-[200px]">
+          <div className="w-6 h-6 rounded-full bg-slate-900 text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
-          <p className="text-sm text-slate-600">Use the slider to compare before/after. Download the result in one click.</p>
+          <p className="text-sm text-slate-600 dark:text-slate-300">Drag the slider to see the difference.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a></div>
         </Card>
       </div>
@@ -639,29 +581,29 @@ function HowItWorks() {
 
 function Samples(){
   return (
-    <section id="examples" className="container mx-auto px-6 py-16">
+    <section id="examples" className="container mx-auto px-6 py-14">
       <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
+      <p className="text-center text-slate-600 dark:text-slate-300 mb-8">Background, pose, and lighting stay identical—only grooming changes.</p>
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
-        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200"><img src="/dog-3.jpg" alt="Sample 3" className="w-full h-auto object-cover" /></div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-white/10"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-white/10"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
+        <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-white/10"><img src="/dog-3.jpg" alt="Sample 3" className="w-full h-auto object-cover" /></div>
       </div>
     </section>
   );
 }
 
 /* =========================================================
-   FOOTER (Joyzze-style)
+   Footer
    ========================================================= */
 function FooterPromoRibbon(){
   return (
-    <div className="bg-[#0e0e0e] text-[#d9d9d9]">
+    <div className="bg-slate-900 text-slate-200">
       <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
-        <div className="flex items-center gap-3"><Icon.Truck className="text-[var(--joyzze-teal)]" /><span>Free Shipping on orders over $350</span></div>
-        <div className="flex items-center gap-3"><Icon.Return className="text-[var(--joyzze-teal)]" /><span>Hassle Free Returns</span></div>
-        <div className="flex items-center gap-3"><Icon.Card className="text-[var(--joyzze-teal)]" /><span>All Major Cards Accepted</span></div>
-        <div className="flex items-center gap-3"><Icon.Lock className="text-[var(--joyzze-teal)]" /><span>100% Safe &amp; Secure Checkout</span></div>
+        <div className="flex items-center gap-3"><Icon.Truck className="text-emerald-400" /><span>Free Shipping over $350</span></div>
+        <div className="flex items-center gap-3"><Icon.Return className="text-emerald-400" /><span>Hassle Free Returns</span></div>
+        <div className="flex items-center gap-3"><Icon.Card className="text-emerald-400" /><span>All Major Cards</span></div>
+        <div className="flex items-center gap-3"><Icon.Lock className="text-emerald-400" /><span>Secure Checkout</span></div>
       </div>
     </div>
   );
@@ -669,86 +611,60 @@ function FooterPromoRibbon(){
 
 function SigninFooter() {
   return (
-    <footer className="bg-[#4a4a4a] text-slate-100">
+    <footer className="bg-slate-800 text-slate-100">
       <FooterPromoRibbon />
-
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
-        {/* Left: Links */}
         <div>
-          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
+          <h4 className="text-emerald-400 tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
-            <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
-            <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
-            <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
-            <li><a href="https://joyzze.com/combs-accessories/" className="hover:underline">Combs &amp; Accessories</a></li>
-            <li><a href="https://joyzze.com/information/" className="hover:underline">Information</a></li>
-            <li><a href="https://joyzze.com/recycling-sharpening/" className="hover:underline">Recycling &amp; Sharpening</a></li>
-            <li><a href="https://joyzze.com/distributor/" className="hover:underline">Distributor</a></li>
-            <li><a href="https://joyzze.com/sitemap.php" className="hover:underline">View All</a></li>
+            <li><a href="#all" className="hover:underline">All Products</a></li>
+            <li><a href="#clippers" className="hover:underline">Clippers</a></li>
+            <li><a href="#blades" className="hover:underline">Blades</a></li>
+            <li><a href="#combs" className="hover:underline">Combs &amp; Accessories</a></li>
+            <li><a href="#info" className="hover:underline">Information</a></li>
           </ul>
         </div>
-
-        {/* Middle: Logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
-            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
+            <span className="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
-
           <div className="mt-6 space-y-1 text-[15px] text-slate-100">
             <div>(877) 456-9993</div>
             <div><a href="mailto:info@joyzze.com" className="hover:underline">info@joyzze.com</a></div>
           </div>
-
-          <div className="mt-6 flex items-center justify-center gap-4">
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
-          </div>
         </div>
-
-        {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
-          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
+          <h4 className="text-emerald-400 tracking-wide text-lg mb-4">SUBSCRIBE</h4>
           <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
-            <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
+            <button type="submit" className="px-4 rounded-r-md bg-emerald-400 text-black text-sm font-semibold">✉</button>
           </form>
         </div>
       </div>
-
-      {/* Bottom row */}
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
-          <div className="flex items-center gap-6 text-[15px]">
-            <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
-            <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
-            <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
-            <a href="https://joyzze.com/d-series/" className="hover:underline">D-SERIES</a>
-            <a href="https://joyzze.com/m-series/" className="hover:underline">M-SERIES</a>
-            <a href="https://joyzze.com/all-products/" className="hover:underline">View All</a>
+          <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved.</div>
+          <div className="flex items-center gap-4 opacity-90 text-xs">
+            <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
+            <span className="px-2 py-1 rounded bg-white/10">Discover</span>
+            <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
+            <span className="px-2 py-1 rounded bg-white/10">VISA</span>
+            <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-4 opacity-90 text-xs">
-          <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
-          <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
-          <span className="px-2 py-1 rounded bg-white/10">VISA</span>
-          <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
-        </div>
       </div>
-
-      <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
     </footer>
   );
 }
 
 /* =========================================================
-   PAGE
+   Page
    ========================================================= */
 export default function Page(){
   const [theme, setTheme] = useState('light');
 
+  // init from localStorage
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
@@ -772,65 +688,61 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles for Joyzze look + dark-mode overrides */}
+      {/* Styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
-
-        :root { --joyzze-teal: #1CD2C1; }
+        :root { --joyzze-teal: #10b981; } /* emerald */
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
-
-        /* Theme vars */
         :root{
           --app-bg: #ffffff;
-          --app-surface: #ffffff;
+          --app-surface: rgba(255,255,255,.85);
           --app-muted: #475569;
           --app-border: rgba(0,0,0,.08);
         }
         .theme-dark{
           --app-bg: #0f1115;
-          --app-surface: #181a1f;
-          --app-muted: rgba(229,231,235,.75);
+          --app-surface: #141821;
+          --app-muted: rgba(229,231,235,.78);
           --app-border: rgba(255,255,255,.12);
         }
         body{ background: var(--app-bg); }
         .theme-dark body{ color:#e5e7eb; }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; }
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.65rem; transition:all .15s ease; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
+        .btn-primary:hover { filter:brightness(.95); }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
-        .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
+        .card { background:var(--app-surface); border-radius:1.05rem; box-shadow:0 1px 0 var(--app-border), 0 10px 25px rgba(0,0,0,.05); backdrop-filter: blur(6px); }
 
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: inherit; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
-        .jz-item:hover { color:#00e1c9; }
+        .jz-item:hover { color:#34d399; }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
-
-        .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:#34d399; opacity:0; transition:opacity .18s ease; }
+        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid #34d399; opacity:0; transition:opacity .18s ease; }
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* Mega */
+        /* Mega panel (glass) */
         .jz-mega {
           position: relative;
-          border: 1px solid rgba(28,210,193,.85);
+          border: 1px solid rgba(52,211,153,.65);
           border-top-width: 3px;
           background: rgba(255,255,255,.96);
-          backdrop-filter: blur(1px);
+          backdrop-filter: blur(3px);
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
-          border-radius: 2px;
+          border-radius: 10px;
           overflow: hidden;
           z-index: 60;
         }
         .jz-mega-bg {
           position:absolute; inset:0;
-          background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%);
-          opacity:.14; pointer-events:none; border-radius:2px;
+          background-image: radial-gradient(900px 380px at 70% 18%, rgba(0,0,0,.08), transparent 60%);
+          opacity:.18; pointer-events:none;
         }
-
-        .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
+        .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:13px; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
         .jz-list li:last-child { border-bottom:0; }
@@ -838,25 +750,20 @@ export default function Page(){
         .jz-list a:hover { color:#111; text-decoration:none; }
 
         .jz-input{ background:var(--app-surface); color:inherit; border:1px solid var(--app-border); }
-        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
+        .jz-input:focus { box-shadow: 0 0 0 3px rgba(16,185,129,.16); }
 
-        /* Dark-mode inner app */
+        /* Dark-mode overrides for app surfaces */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
-
         .theme-dark .border-slate-300,
         .theme-dark .ring-slate-200,
         .theme-dark .ring-black\\/10 { border-color: var(--app-border) !important; box-shadow: 0 0 0 1px var(--app-border) inset !important; }
-
         .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
-
         .icon-btn{ color: inherit; }
-        .theme-dark .icon-btn:hover{ background: rgba(255,255,255,.06) !important; }
-
-        .theme-dark .w-6.h-6.rounded-full.bg-\\[\\#323030\\]{ background:#0f1115 !important; }
+        .theme-dark .icon-btn:hover{ background: rgba(255,255,255,.08) !important; }
         .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
         /* Responsive search width */
