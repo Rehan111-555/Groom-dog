@@ -31,12 +31,11 @@ const Card = ({ className="", children }) => (
   <div className={`card ${className}`}>{children}</div>
 );
 
-/* ---------------- Compare slider (visible handle + labels) ---------------- */
+/* ---------------- Compare slider ---------------- */
 function CompareSlider({ beforeSrc, afterSrc }) {
-  const [pos, setPos] = useState(50); // %
+  const [pos, setPos] = useState(50);
   const wrapRef = useRef(null);
 
-  // drag support
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -68,9 +67,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
 
   return (
     <div ref={wrapRef} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
-      {/* After (full) */}
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
-      {/* Before (clipped) */}
       <img
         src={beforeSrc}
         alt="Before"
@@ -78,28 +75,17 @@ function CompareSlider({ beforeSrc, afterSrc }) {
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
         draggable={false}
       />
-      {/* Divider + handle */}
-      <div
-        className="absolute top-0 bottom-0 w-[2px] bg-indigo-500"
-        style={{ left: `${pos}%` }}
-      />
-      <div
-        className="absolute top-1/2 -translate-y-1/2 -ml-4"
-        style={{ left: `${pos}%` }}
-      >
+      <div className="absolute top-0 bottom-0 w-[2px] bg-indigo-500" style={{ left: `${pos}%` }} />
+      <div className="absolute top-1/2 -translate-y-1/2 -ml-4" style={{ left: `${pos}%` }}>
         <div className="h-10 w-10 rounded-full bg-white/90 dark:bg-black/40 backdrop-blur border border-black/10 dark:border-white/10 shadow flex items-center justify-center">
-          {/* two chevrons */}
           <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200">
             <span className="inline-block -ml-[2px]">&lsaquo;</span>
             <span className="inline-block -mr-[2px]">&rsaquo;</span>
           </div>
         </div>
       </div>
-      {/* Labels */}
       <span className="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full bg-black/60 text-white">Before</span>
       <span className="absolute top-3 right-3 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-600/90 text-white">After</span>
-
-      {/* Range control (keyboard accessible) */}
       <input
         type="range"
         min={0}
@@ -147,12 +133,12 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* =========================================================
-   Upload + Result (beautified)
+   Upload + Result
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
-  const [previewUrl,setPreviewUrl]=useState(null); // before
-  const [resultUrl,setResultUrl]=useState(null);   // after
+  const [previewUrl,setPreviewUrl]=useState(null);
+  const [resultUrl,setResultUrl]=useState(null);
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState(null);
   const [progress,setProgress]=useState(0);
@@ -294,7 +280,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   Header (compact + mega)
+   Header (with REAL URLs + close-on-click)
    ========================================================= */
 function MegaSection({ title, children }) {
   return (
@@ -320,6 +306,10 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
+  const LinkItem = ({ href, children }) => (
+    <a href={href} onClick={close}>{children}</a>
+  );
+
   const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
@@ -328,6 +318,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         className={`jz-item ${active ? 'text-white jz-active' : ''}`}
         onMouseEnter={() => setOpen(id)}
         onFocus={() => setOpen(id)}
+        onClick={close}
         aria-haspopup="true"
         aria-expanded={active ? 'true' : 'false'}
       >
@@ -346,27 +337,20 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full sticky top-0 z-50 backdrop-blur supports-backdrop-blur:bg-white/60 dark:supports-backdrop-blur:bg-black/20">
-      {/* single row: phone | logo | search+icons */}
+      {/* single row */}
       <div className={topBarClass}>
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[70px] grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* Left: phone */}
           <a href="tel:(877) 456-9993" className="justify-self-start hidden sm:flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
             <span className="text-[14px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          {/* Center: pill logo */}
-          <a
-            href="/"
-            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]"
-            aria-label="Joyzze"
-          >
+          <a href="/" className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]" aria-label="Joyzze">
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 py-2.5 rounded-[10px]">
               <span className="text-white text-[22px] font-semibold tracking-[0.25em]">JOYZZE</span>
             </div>
           </a>
 
-          {/* Right: search + icons + theme toggle */}
           <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search" method="get">
@@ -388,7 +372,6 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
             <a className={`${iconBtn}`} href="/cart" aria-label="Cart"><Icon.Bag /></a>
 
-            {/* Theme toggle */}
             <button
               onClick={onToggleTheme}
               className="icon-btn h-9 px-2 rounded-md border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/10"
@@ -407,13 +390,13 @@ function SigninHeader({ theme, onToggleTheme }) {
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-emerald-400 select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
-              <NavItem id="all" href="#all">All Products</NavItem>
-              <NavItem id="clippers" href="#clippers">Clippers</NavItem>
-              <NavItem id="blades" href="#blades">Blades</NavItem>
-              <NavItem id="combs" href="#combs">Combs &amp; Accessories</NavItem>
-              <NavItem id="info" href="#info">Information</NavItem>
-              <a href="#recycle" className="jz-item">Recycling &amp; Sharpening</a>
-              <a href="#distributor" className="jz-item">Distributor</a>
+              <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
+              <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
+              <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
+              <NavItem id="combs" href="https://joyzze.com/combs-accessories/">Combs &amp; Accessories</NavItem>
+              <NavItem id="info" href="https://joyzze.com/information/">Information</NavItem>
+              <a href="https://joyzze.com/recycling-sharpening/" className="jz-item" onClick={close}>Recycling &amp; Sharpening</a>
+              <a href="https://joyzze.com/distributor/" className="jz-item" onClick={close}>Distributor</a>
             </div>
           </div>
 
@@ -425,90 +408,94 @@ function SigninHeader({ theme, onToggleTheme }) {
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
-                        <li><a href="#raptor">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="#hornet">Hornet | C-Series</a></li>
-                        <li><a href="#stinger">Stinger | C-Series</a></li>
-                        <li><a href="#piranha">Piranha | D-Series</a></li>
-                        <li><a href="#mini">Hornet Mini | M-Series</a></li>
+                        <li><LinkItem href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/hornet/">Hornet | C-Series</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/stinger/">Stinger | C-Series</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/piranha/">Piranha | D-Series</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="BLADES">
-                        <li><a href="#a-series">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="#a-wide">A-Series | Wide</a></li>
-                        <li><a href="#c-series">C-Series | 5-in-1</a></li>
-                        <li><a href="#d-series">D-Series | Piranha</a></li>
-                        <li><a href="#m-series">M-Series | Mini</a></li>
+                        <li><LinkItem href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Wide</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | 5-in-1</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/m-series-hornet-mini/">M-Series | Mini</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="#cases">Cases</a></li>
-                        <li><a href="#combs">Combs</a></li>
-                        <li><a href="#oil">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="#bag">Multi-Functional Tool Bag</a></li>
+                        <li><LinkItem href="https://joyzze.com/cases-all-products/">Cases</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/joyzze-combs/">Combs</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</LinkItem></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="#hornet">Hornet</a></li>
-                        <li><a href="#stinger">Stinger</a></li>
+                        <li><LinkItem href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="A5 STYLE | A-SERIES">
-                        <li><a href="#falcon">Falcon</a></li>
-                        <li><a href="#raptor">Raptor</a></li>
+                        <li><LinkItem href="https://joyzze.com/falcon/">Falcon</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/raptor-clippers/">Raptor</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="D-SERIES">
-                        <li><a href="#piranha">Piranha</a></li>
+                        <li><LinkItem href="https://joyzze.com/piranha-clippers/">Piranha</LinkItem></li>
                         <li className="mt-2" />
                         <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="#a5-falcon">A5 Falcon</a></li>
-                        <li><a href="#a5-raptor">A5 Raptor</a></li>
+                        <li><LinkItem href="https://joyzze.com/a5-falcon/">A5 Falcon</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/a5-raptor/">A5 Raptor</LinkItem></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'blades' && (
                     <>
-                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="#a5blades">A5 Blades</a></li></MegaSection>
+                      <MegaSection title="A-SERIES | A5 STYLE"><li><LinkItem href="https://joyzze.com/a5-blades/">A5 Blades</LinkItem></li></MegaSection>
                       <MegaSection title="A-SERIES WIDE | A5">
-                        <li><a href="#wide">Wide Blades</a></li>
-                        <li><a href="#bundle-plus">Bundle Plus</a></li>
-                        <li><a href="#bundle">Bundle</a></li>
+                        <li><LinkItem href="https://joyzze.com/wide-blades-a-series/">Wide Blades</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/joyzze-bundle/">Bundle</LinkItem></li>
                       </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1"><li><a href="#cmax">C-MAX Blades</a></li></MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1"><li><LinkItem href="https://joyzze.com/c-max-blades/">C-MAX Blades</LinkItem></li></MegaSection>
                     </>
                   )}
+
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="#wide-combs">Wide Metal Combs</a></li>
-                        <li><a href="#bundle">Bundle</a></li>
-                        <li><a href="#bundle-plus">Bundle Plus</a></li>
+                        <li><LinkItem href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/bundle/">Bundle</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/bundle-plus/">Bundle Plus</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="A & D SERIES">
-                        <li><a href="#8pcs">8 Piece Metal Comb Set</a></li>
+                        <li><LinkItem href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="CASES">
-                        <li><a href="#12slot">12-Slot</a></li>
-                        <li><a href="#22slot">22-Slot</a></li>
+                        <li><LinkItem href="https://joyzze.com/12-slot/">12-Slot</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/22-slot/">22-Slot</LinkItem></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT">
-                        <li><a href="#about">About JOYZZE™</a></li>
-                        <li><a href="#faqs">FAQs</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
+                        <li><LinkItem href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/information/faqs/">FAQs</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="SUPPORT">
-                        <li><a href="#contact">Contact</a></li>
-                        <li><a href="#shipping">Shipping &amp; Returns</a></li>
-                        <li><a href="#access">Accessibility</a></li>
+                        <li><LinkItem href="https://joyzze.com/information/contact/">Contact</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/accessibility-statement/">Accessibility</LinkItem></li>
                       </MegaSection>
                       <MegaSection title="DOCS">
-                        <li><a href="#repair">Clipper Repair Form</a></li>
-                        <li><a href="#warranty">Warranty</a></li>
-                        <li><a href="#brochure">Product Brochure</a></li>
-                        <li><a href="#terms">Terms &amp; Conditions</a></li>
+                        <li><LinkItem href="https://joyzze.com/clipper-repair-form-joyzze/">Clipper Repair Form</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/warranty-joyzze/">Warranty</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/joyzze-product-brochure/">Product Brochure</LinkItem></li>
+                        <li><LinkItem href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</LinkItem></li>
                       </MegaSection>
                     </>
                   )}
@@ -523,7 +510,7 @@ function SigninHeader({ theme, onToggleTheme }) {
 }
 
 /* =========================================================
-   Hero / How / Samples (kept, tightened spacing)
+   Hero / How / Samples
    ========================================================= */
 function Hero(){
   return (
@@ -617,11 +604,11 @@ function SigninFooter() {
         <div>
           <h4 className="text-emerald-400 tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
-            <li><a href="#all" className="hover:underline">All Products</a></li>
-            <li><a href="#clippers" className="hover:underline">Clippers</a></li>
-            <li><a href="#blades" className="hover:underline">Blades</a></li>
-            <li><a href="#combs" className="hover:underline">Combs &amp; Accessories</a></li>
-            <li><a href="#info" className="hover:underline">Information</a></li>
+            <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
+            <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
+            <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
+            <li><a href="https://joyzze.com/combs-accessories/" className="hover:underline">Combs &amp; Accessories</a></li>
+            <li><a href="https://joyzze.com/information/" className="hover:underline">Information</a></li>
           </ul>
         </div>
         <div className="text-center">
@@ -664,7 +651,6 @@ function SigninFooter() {
 export default function Page(){
   const [theme, setTheme] = useState('light');
 
-  // init from localStorage
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
@@ -691,7 +677,7 @@ export default function Page(){
       {/* Styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
-        :root { --joyzze-teal: #10b981; } /* emerald */
+        :root { --joyzze-teal: #10b981; }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         :root{
           --app-bg: #ffffff;
@@ -725,7 +711,6 @@ export default function Page(){
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer,   .jz-item:hover .jz-pointer { opacity:1; }
 
-        /* Mega panel (glass) */
         .jz-mega {
           position: relative;
           border: 1px solid rgba(52,211,153,.65);
@@ -752,7 +737,6 @@ export default function Page(){
         .jz-input{ background:var(--app-surface); color:inherit; border:1px solid var(--app-border); }
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(16,185,129,.16); }
 
-        /* Dark-mode overrides for app surfaces */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -766,7 +750,6 @@ export default function Page(){
         .theme-dark .icon-btn:hover{ background: rgba(255,255,255,.08) !important; }
         .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
-        /* Responsive search width */
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
