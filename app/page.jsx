@@ -1,47 +1,59 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 
 /* -------------------------------- Icons -------------------------------- */
 const I = {
-  ArrowLeft: (p:any)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M15 18 9 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  ChevronDown:(p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>),
-  Upload:     (p:any)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  Reset:      (p:any)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Play:       (p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" {...p}><path d="M8 5v14l11-7-11-7Z"/></svg>),
-  Download:   (p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  File:       (p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" strokeWidth="1.6"/><path d="M14 2v6h6" stroke="currentColor" strokeWidth="1.6"/></svg>),
-  Image:      (p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6"/><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.6"/><path d="M21 15 16 10l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
-  Json:       (p:any)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M6 8c-2 2-2 6 0 8M18 8c2 2 2 6 0 8M10 4l4 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  ArrowLeft: (p)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M15 18 9 12l6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  ChevronDown:(p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg>),
+  Upload:     (p)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Reset:      (p)=>(<svg viewBox="0 0 24 24" width="18" height="18" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Play:       (p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" {...p}><path d="M8 5v14l11-7-11-7Z"/></svg>),
+  Download:   (p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  File:       (p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" stroke="currentColor" strokeWidth="1.6"/><path d="M14 2v6h6" stroke="currentColor" strokeWidth="1.6"/></svg>),
+  Image:      (p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.6"/><circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.6"/><path d="M21 15 16 10l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  Json:       (p)=>(<svg viewBox="0 0 24 24" width="16" height="16" fill="none" {...p}><path d="M6 8c-2 2-2 6 0 8M18 8c2 2 2 6 0 8M10 4l4 16" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
 };
 
 /* ------------------------------ UI helpers ----------------------------- */
-const cx = (...cls:(string|false|undefined)[]) => cls.filter(Boolean).join(' ');
-const Button = (p:{children:React.ReactNode; onClick?:()=>void; className?:string; disabled?:boolean; type?:"button"|"submit"} ) => (
-  <button type={p.type||'button'} disabled={p.disabled} onClick={p.onClick}
-    className={cx("inline-flex items-center gap-2 h-9 px-3 rounded-md text-sm font-medium border border-black/10 dark:border-white/10 bg-white dark:bg-[#141821] hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-50", p.className)}>
-    {p.children}
+const cx = (...cls)=>cls.filter(Boolean).join(' ');
+const Button = ({children, onClick, className, disabled, type}) => (
+  <button
+    type={type || 'button'}
+    disabled={disabled}
+    onClick={onClick}
+    className={cx(
+      "inline-flex items-center gap-2 h-9 px-3 rounded-md text-sm font-medium border border-black/10 dark:border-white/10 bg-white dark:bg-[#141821] hover:bg-black/5 dark:hover:bg-white/10 disabled:opacity-50",
+      className
+    )}
+  >
+    {children}
   </button>
 );
-const Card: React.FC<React.PropsWithChildren<{className?:string}>> = ({className, children}) => (
+const Card = ({className, children}) => (
   <div className={cx("rounded-xl border border-black/10 dark:border-white/10 bg-white/80 dark:bg-[#121620] backdrop-blur shadow-sm", className)}>{children}</div>
 );
 
 /* ----------------------------- Compare slider -------------------------- */
-function CompareSlider({ before, after }:{before:string; after:string}) {
+function CompareSlider({ before, after }) {
   const [pos, setPos] = useState(50);
-  const ref = useRef<HTMLDivElement|null>(null);
+  const ref = useRef(null);
 
   useEffect(() => {
     const root = ref.current; if(!root) return;
-    const down = (e:MouseEvent|TouchEvent) => {
+    const down = (e) => {
       const rect = root.getBoundingClientRect();
-      const move = (clientX:number) => {
+      const move = (clientX) => {
         const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
         setPos(Math.round((x / rect.width) * 100));
       };
-      const onMove = (ev:any) => move(ev.touches?ev.touches[0].clientX:ev.clientX);
-      const up = () => { window.removeEventListener('mousemove', onMove); window.removeEventListener('touchmove', onMove); window.removeEventListener('mouseup', up); window.removeEventListener('touchend', up); };
+      const onMove = (ev) => move(ev.touches?ev.touches[0].clientX:ev.clientX);
+      const up = () => {
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('mouseup', up);
+        window.removeEventListener('touchend', up);
+      };
       window.addEventListener('mousemove', onMove);
       window.addEventListener('touchmove', onMove, {passive:false});
       window.addEventListener('mouseup', up);
@@ -49,7 +61,7 @@ function CompareSlider({ before, after }:{before:string; after:string}) {
     };
     root.addEventListener('mousedown', down);
     root.addEventListener('touchstart', down, {passive:true});
-    return ()=>{ root.removeEventListener('mousedown', down); root.removeEventListener('touchstart', down as any); };
+    return ()=>{ root.removeEventListener('mousedown', down); root.removeEventListener('touchstart', down); };
   }, []);
 
   return (
@@ -69,64 +81,70 @@ function CompareSlider({ before, after }:{before:string; after:string}) {
 }
 
 /* ------------------------------ Small helpers -------------------------- */
-function readImageSize(url:string){ return new Promise<{w:number;h:number}>((res,rej)=>{ const img=new Image(); img.onload=()=>res({w:img.naturalWidth,h:img.naturalHeight}); img.onerror=rej; img.src=url; }); }
-function validateImageFile(f:File, maxMB=12){ if(!f.type.startsWith('image/')) return 'Please upload an image.'; if(f.size>maxMB*1024*1024) return `Keep image under ${maxMB}MB.`; return null; }
+function readImageSize(url){
+  return new Promise((res,rej)=>{
+    const img=new Image();
+    img.onload=()=>res({w:img.naturalWidth,h:img.naturalHeight});
+    img.onerror=rej;
+    img.src=url;
+  });
+}
+function validateImageFile(f, maxMB=12){
+  if(!f.type?.startsWith('image/')) return 'Please upload an image.';
+  if(f.size > maxMB*1024*1024) return `Keep image under ${maxMB}MB.`;
+  return null;
+}
 
 /* ============================== Inner App ============================== */
 export default function Page() {
-  const [theme, setTheme] = useState<'light'|'dark'>('dark'); // fal.ai vibe is dark
+  const [theme, setTheme] = useState('dark'); // fal.ai vibe is dark
   useEffect(()=>{ document.documentElement.classList.toggle('dark', theme==='dark'); },[theme]);
 
   // Inputs
   const [imageURL, setImageURL] = useState('');
-  const [fileThumb, setFileThumb] = useState<string|null>(null);
+  const [fileThumb, setFileThumb] = useState(null);
   const [prompt, setPrompt] = useState('Speed limit');
 
   // Result
-  const [jsonText, setJsonText] = useState<string>('');   // pretty JSON
-  const [resultImage, setResultImage] = useState<string>(''); // url
+  const [jsonText, setJsonText] = useState('');
+  const [resultImage, setResultImage] = useState('');
   const [running, setRunning] = useState(false);
   const [logsOpen, setLogsOpen] = useState(false);
-  const [tab, setTab] = useState<'preview'|'json'|'compare'>('preview');
+  const [tab, setTab] = useState('preview'); // 'preview' | 'json' | 'compare'
 
-  /* ----------------------- drag/drop & paste handlers ------------------ */
-  const onChoose = async (f:File) => {
+  // Choose file / drag-drop / paste
+  const onChoose = async (f) => {
     const err = validateImageFile(f); if (err) { alert(err); return; }
     const url = URL.createObjectURL(f);
     setFileThumb(url);
-    setImageURL(''); // clear URL field when file selected
+    setImageURL('');
   };
 
-  const dropRef = useRef<HTMLLabelElement|null>(null);
+  const dropRef = useRef(null);
   useEffect(()=>{
     const el = dropRef.current; if(!el) return;
-    const prevent = (e:DragEvent)=>{ e.preventDefault(); e.stopPropagation(); };
-    const onDrop = (e:DragEvent)=>{ prevent(e); const f = e.dataTransfer?.files?.[0]; if(f) onChoose(f); };
+    const prevent = (e)=>{ e.preventDefault(); e.stopPropagation(); };
+    const onDrop = (e)=>{ prevent(e); const f = e.dataTransfer?.files?.[0]; if(f) onChoose(f); };
     ['dragenter','dragover','dragleave','drop'].forEach(ev=>el.addEventListener(ev, prevent));
     el.addEventListener('drop', onDrop);
     return ()=>{ ['dragenter','dragover','dragleave','drop'].forEach(ev=>el.removeEventListener(ev, prevent)); el.removeEventListener('drop', onDrop); };
   },[]);
 
   useEffect(()=>{
-    const onPaste = (e:ClipboardEvent)=>{
+    const onPaste = (e)=>{
       const items = e.clipboardData?.items; if(!items) return;
-      for(const it of items){ if(it.type.startsWith('image/')){ const f = it.getAsFile(); if(f) onChoose(f); } }
+      for(const it of items){ if(it.type?.startsWith('image/')){ const f = it.getAsFile(); if(f) onChoose(f); } }
     };
-    window.addEventListener('paste', onPaste as any);
-    return ()=>window.removeEventListener('paste', onPaste as any);
+    window.addEventListener('paste', onPaste);
+    return ()=>window.removeEventListener('paste', onPaste);
   },[]);
 
-  /* --------------------------------- RUN --------------------------------
-     This is a UI-only mock. Replace the "simulate" block with your real
-     /api call and set resultImage + jsonText accordingly.
-  ----------------------------------------------------------------------- */
+  // Run (mock). Replace with your real API call.
   const run = useCallback(async ()=>{
     if(!imageURL && !fileThumb){ alert('Please provide an image (URL or file).'); return; }
     setRunning(true);
     try{
-      // Simulate response image + JSON (replace with real call)
-      const src = imageURL || fileThumb!;
-      // Fake “detect” boxes payload
+      const src = imageURL || fileThumb;
       const payload = {
         finish_reason: 'stop',
         usage_info: { output_tokens: 23, decode_time_ms: 812, input_tokens: 737, ttft_ms: 92, prefill_time_ms: 54.4 },
@@ -134,7 +152,7 @@ export default function Page() {
           { y_min: 0.163, x_max: 0.876, x_min: 0.817, y_max: 0.306 },
           { y_min: 0.099, x_max: 0.716, x_min: 0.671, y_max: 0.210 },
         ],
-        image: src, // show same image as a stand-in
+        image: src,
       };
       setJsonText(JSON.stringify(payload, null, 2));
       setResultImage(src);
@@ -145,8 +163,6 @@ export default function Page() {
   }, [imageURL, fileThumb]);
 
   const canCompare = !!(fileThumb && resultImage);
-
-  /* ----------------------------- render bits --------------------------- */
   const thumb = useMemo(()=> fileThumb ? <img src={fileThumb} alt="thumb" className="w-24 h-24 object-cover rounded-md ring-1 ring-white/10"/> : null, [fileThumb]);
 
   return (
@@ -278,13 +294,12 @@ export default function Page() {
                         className="w-full h-[420px] p-3 bg-black/40 outline-none text-xs font-mono"
                         spellCheck={false}/>
             ) : tab==='compare' && canCompare ? (
-              <div className="w-full h-[420px]"><CompareSlider before={fileThumb!} after={resultImage} /></div>
+              <div className="w-full h-[420px]"><CompareSlider before={fileThumb} after={resultImage} /></div>
             ) : (
               <img src={resultImage} alt="result" className="w-full h-full object-contain"/>
             )}
           </div>
 
-          {/* Cost note (like fal) */}
           <div className="mt-3 text-[11px] text-slate-400">
             Your request will cost <b>$0.3</b> / M input tokens, and <b>$2.5</b> / M output tokens.
           </div>
@@ -308,7 +323,6 @@ export default function Page() {
         </Card>
       </div>
 
-      {/* Page styles (small touch-ups) */}
       <style jsx global>{`
         :root { color-scheme: dark; }
         .dark body { background: #0b0e13; }
