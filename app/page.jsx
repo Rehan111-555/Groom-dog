@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ---------------- Icons ---------------- */
+/* -------------------------------- Icons -------------------------------- */
 const Icon = {
   Upload: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
   Wand: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
@@ -23,7 +23,7 @@ const Icon = {
   Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ---------------- UI helpers ---------------- */
+/* ---------------- Small UI helpers ---------------- */
 const Button = ({ className="", disabled, onClick, children, type="button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
@@ -31,19 +31,20 @@ const Card = ({ className="", children }) => <div className={`card ${className}`
 
 /* ---------------- Compare slider ---------------- */
 function CompareSlider({ beforeSrc, afterSrc }) {
-  const [pos, setPos] = useState(55);
+  const [pos, setPos] = useState(50);
   const wrapRef = useRef(null);
 
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const onDown = () => {
+
+    const onDown = (e) => {
       const rect = el.getBoundingClientRect();
-      const moveTo = (clientX) => {
-        const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
-        setPos(Math.round((x / rect.width) * 100));
+      const move = (x) => {
+        const cx = Math.min(Math.max(x - rect.left, 0), rect.width);
+        setPos(Math.round(100 * (cx / rect.width)));
       };
-      const onMove = (ev) => moveTo(ev.touches ? ev.touches[0].clientX : ev.clientX);
+      const onMove = (ev) => move(ev.touches ? ev.touches[0].clientX : ev.clientX);
       const onUp = () => {
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('touchmove', onMove);
@@ -55,6 +56,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
       window.addEventListener('mouseup', onUp);
       window.addEventListener('touchend', onUp);
     };
+
     el.addEventListener('mousedown', onDown);
     el.addEventListener('touchstart', onDown, { passive: true });
     return () => {
@@ -64,7 +66,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
   }, []);
 
   return (
-    <div ref={wrapRef} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
+    <div ref={wrapRef} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 select-none dark:bg-slate-800">
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
       <img
         src={beforeSrc}
@@ -73,17 +75,26 @@ function CompareSlider({ beforeSrc, afterSrc }) {
         style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
         draggable={false}
       />
-      <div className="absolute top-0 bottom-0 w-[2px] bg-emerald-500/90" style={{ left: `${pos}%` }} />
+      <div className="absolute top-0 bottom-0 w-[2px] bg-indigo-500" style={{ left: `${pos}%` }} />
       <div className="absolute top-1/2 -translate-y-1/2 -ml-4" style={{ left: `${pos}%` }}>
         <div className="h-10 w-10 rounded-full bg-white/90 dark:bg-black/40 backdrop-blur border border-black/10 dark:border-white/10 shadow flex items-center justify-center">
           <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200">
-            <span className="-ml-[2px]">&lsaquo;</span>
-            <span className="-mr-[2px]">&rsaquo;</span>
+            <span className="inline-block -ml-[2px]">&lsaquo;</span>
+            <span className="inline-block -mr-[2px]">&rsaquo;</span>
           </div>
         </div>
       </div>
-      <span className="absolute top-3 left-3 text-[10px] font-semibold px-2 py-1 rounded-full bg-black/60 text-white">Before</span>
-      <span className="absolute top-3 right-3 text-[10px] font-semibold px-2 py-1 rounded-full bg-emerald-600/90 text-white">After</span>
+      <span className="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full bg-black/60 text-white">Before</span>
+      <span className="absolute top-3 right-3 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-600/90 text-white">After</span>
+      <input
+        type="range"
+        min={0}
+        max={100}
+        value={pos}
+        onChange={(e)=>setPos(Number(e.target.value))}
+        className="absolute left-0 right-0 bottom-2 w-[98%] mx-auto accent-indigo-500"
+        aria-label="Compare before and after"
+      />
     </div>
   );
 }
@@ -92,7 +103,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
-      return data.image.indexOf("data:")===0 ? data.image : `data:image/png;base64,${data.image}`;
+      return data.image.startsWith("data:") ? data.image : `data:image/png;base64,${data.image}`;
     }
     if (typeof data.url === "string" && data.url.length) return data.url;
   }
@@ -121,9 +132,7 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* =========================================================
-   Upload + Result (Fal-style right panel)
-   ========================================================= */
+/* =========================== Upload + Result =========================== */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
   const [previewUrl,setPreviewUrl]=useState(null);
@@ -133,18 +142,13 @@ function UploadAndResult(){
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const [status, setStatus] = useState('idle'); // idle | working | ready | error
-  const [logs, setLogs] = useState([]);
-  const [logsOpen, setLogsOpen] = useState(false);
-
   const controllerRef=useRef(null);
+
   const [panelH, setPanelH] = useState(560);
   const ACTION_H = 56;
 
-  const log = (msg) => setLogs((L)=>[...L, `[${new Date().toLocaleTimeString()}] ${msg}`]);
-
   useEffect(() => {
-    const setH = () => setPanelH(Math.round(Math.max(480, Math.min(760, window.innerHeight * 0.68))));
+    const setH = () => setPanelH(Math.round(Math.max(480, Math.min(760, window.innerHeight * 0.68)))));
     setH(); window.addEventListener('resize', setH);
     return () => window.removeEventListener('resize', setH);
   }, []);
@@ -161,35 +165,32 @@ function UploadAndResult(){
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
     const url = URL.createObjectURL(f);
-    setFile(f); setResultUrl(null); setPreviewUrl(url); setStatus('idle'); setLogs([]);
-    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); log(`Loaded image ${w}x${h}`); } catch {}
+    setFile(f); setResultUrl(null); setPreviewUrl(url);
+    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
   const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
-  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); setStatus('idle'); setLogs([]); };
+  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
 
   const groom=async()=>{
     if(!file) return;
-    setLoading(true); setError(null); setProgress(12); setStatus('working'); setLogs([]);
-    log('POST /api/groom');
+    setLoading(true); setError(null); setProgress(12);
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
       form.append("image",file);
       form.append("dog_only","true");
-      if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); log(`Target size ${imgW}x${imgH}`); }
+      if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
 
       const res=await fetch("/api/groom",{ method:"POST", body:form, signal:controllerRef.current?.signal });
       setProgress(60);
-      log(`Response ${res.status}`);
-      if(!res.ok){ const msg=await safeReadText(res); log(`Error body: ${msg.slice(0,200)}`); throw new Error(msg||`Backend error (${res.status})`); }
+      if(!res.ok){ const msg=await safeReadText(res); throw new Error(msg||`Backend error (${res.status})`); }
       const data=await res.json();
       const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
       try {
         const { w, h } = await readImageSize(url);
         if (imgW && imgH && (w !== imgW || h !== imgH)) {
-          log(`Padding output from ${w}x${h} to ${imgW}x${imgH}`);
           const padded = await padToSize(url, imgW, imgH);
           setResultUrl(padded);
         } else {
@@ -197,29 +198,14 @@ function UploadAndResult(){
         }
       } catch { setResultUrl(url); }
       setProgress(100);
-      setStatus('ready');
-      log('Done.');
-    }catch(e){
-      setError(e?.message||"Something went wrong.");
-      setStatus('error');
-      log(`Failed: ${e?.message||'Unknown error'}`);
-    } finally {
-      setLoading(false);
-    }
+    }catch(e){ setError(e?.message||"Something went wrong."); }
+    finally{ setLoading(false); }
   };
 
-  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); setStatus('idle'); log('Aborted by user'); };
-
-  const statusPill = {
-    idle:   { text:'Idle',    cls:'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200' },
-    working:{ text:'Running', cls:'bg-indigo-600 text-white' },
-    ready:  { text:'Success', cls:'bg-emerald-600 text-white' },
-    error:  { text:'Error',   cls:'bg-rose-600 text-white' },
-  }[status];
+  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
-      {/* Title bar */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
@@ -271,78 +257,26 @@ function UploadAndResult(){
           )}
         </Card>
 
-        {/* Right: Fal-style Result panel */}
-        <Card className="p-0 overflow-hidden">
-          {/* Header */}
-          <div className="px-4 py-3 border-b border-black/10 dark:border-white/10 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="font-semibold">Result</span>
-              <span className={`text-xs px-2 py-0.5 rounded ${statusPill.cls}`}>{statusPill.text}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-500 dark:text-slate-300">Preview</label>
-              <select className="h-8 rounded-md bg-white dark:bg-slate-900 border border-black/10 dark:border-white/10 text-sm px-2">
-                <option>Image</option>
-                <option disabled>JSON (n/a)</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="p-4" style={{ minHeight: panelH + 16 }}>
-            {status === 'error' && (
-              <div className="h-[calc(100%-12px)] grid place-items-center rounded-xl border border-rose-300/50 bg-rose-50 dark:bg-rose-500/10 text-rose-700 dark:text-rose-300">
-                <div className="text-center max-w-sm">
-                  <div className="text-lg font-semibold mb-2">Not enough credits</div>
-                  <p className="text-sm opacity-90 mb-4">{String(error || 'Your request failed.')}</p>
-                  <a href="#" className="btn btn-primary inline-flex">Add credits</a>
-                </div>
+        {/* Right: Result + Slider */}
+        <Card className="p-4">
+          <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Result</div>
+          <div className="rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
+            {!resultUrl ? (
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300/80 dark:border-white/10 bg-slate-50/60 dark:bg-slate-900/30 text-sm text-slate-600 dark:text-slate-400 px-6 text-center">
+                Your groomed image will appear here. After processing, drag the handle to compare before/after.
               </div>
-            )}
-
-            {status !== 'error' && !resultUrl && (
-              <div className="h-[calc(100%-12px)] grid place-items-center rounded-xl border border-dashed border-slate-300/80 dark:border-white/10 bg-slate-50/60 dark:bg-slate-900/30 text-sm text-slate-600 dark:text-slate-400 px-6 text-center">
-                {loading ? 'Running…' : 'Your result will appear here after you run Groom.'}
-              </div>
-            )}
-
-            {resultUrl && status === 'ready' && previewUrl && (
-              <div className="rounded-xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
-                <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
-              </div>
-            )}
-
-            {/* cost note */}
-            <div className="mt-3 text-[12px] text-slate-500 dark:text-slate-400">
-              Your request will cost $0.3 per million input tokens, and $2.5 per million output tokens.
-            </div>
-          </div>
-
-          {/* Logs */}
-          <div className="border-t border-black/10 dark:border-white/10">
-            <div className="px-4 py-2 flex items-center justify-between">
-              <span className="font-medium">Logs</span>
-              <button onClick={()=>setLogsOpen(v=>!v)} className="text-sm px-2 py-1 rounded hover:bg-black/5 dark:hover:bg-white/10">
-                {logsOpen ? 'Hide' : 'Show'}
-              </button>
-            </div>
-            {logsOpen && (
-              <div className="px-4 pb-4">
-                <pre className="text-xs bg-black/5 dark:bg-white/5 rounded-md p-3 whitespace-pre-wrap leading-relaxed max-h-52 overflow-auto">
-                  {logs.length ? logs.join('\n') : '— No logs yet —'}
-                </pre>
-              </div>
+            ) : (
+              <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
+          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
   );
 }
 
-/* =========================================================
-   HEADER — same as your previous version
-   ========================================================= */
+/* ============================== Header =============================== */
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -352,7 +286,7 @@ function MegaSection({ title, children }) {
   );
 }
 
-function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
+function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
@@ -392,19 +326,20 @@ function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
   const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md hover:bg-black/5 dark:hover:bg-white/10';
 
   return (
-    <header className="w-full sticky top-0 z-50">
-      {/* single row: phone | logo | search+icons */}
+    <header className="w-full sticky top-0 z-50 backdrop-blur supports-backdrop-blur:bg-white/60 dark:supports-backdrop-blur:bg-black/20">
       <div className={topBarClass}>
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[70px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start hidden sm:flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
             <span className="text-[14px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
+
           <a href="/" className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]" aria-label="Joyzze">
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 py-2.5 rounded-[10px]">
               <span className="text-white text-[22px] font-semibold tracking-[0.25em]">JOYZZE</span>
             </div>
           </a>
+
           <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search" method="get">
@@ -418,12 +353,14 @@ function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
                 <Icon.Search />
               </button>
             </div>
+
             <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
             <div className="hidden sm:flex items-center">
               <a className={`${iconBtn}`} href="/account" aria-label="Account"><Icon.User /></a>
               <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
             <a className={`${iconBtn}`} href="/cart" aria-label="Cart"><Icon.Bag /></a>
+
             <button
               onClick={onToggleTheme}
               className="icon-btn h-9 px-2 rounded-md border border-black/10 dark:border-white/10 bg-white/80 dark:bg-white/10"
@@ -436,19 +373,19 @@ function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
         </div>
       </div>
 
-      {/* dark navbar + centered mega panel */}
+      {/* dark navbar + centered mega panel (with REAL external links) */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-emerald-400 select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
-              <NavItem id="all" href="#all">All Products</NavItem>
-              <NavItem id="clippers" href="#clippers">Clippers</NavItem>
-              <NavItem id="blades" href="#blades">Blades</NavItem>
-              <NavItem id="combs" href="#combs">Combs &amp; Accessories</NavItem>
-              <NavItem id="info" href="#info">Information</NavItem>
-              <a href="#recycle" className="jz-item">Recycling &amp; Sharpening</a>
-              <a href="#distributor" className="jz-item">Distributor</a>
+              <NavItem id="all"        href="https://joyzze.com/all-products/">All Products</NavItem>
+              <NavItem id="clippers"   href="https://joyzze.com/clippers/">Clippers</NavItem>
+              <NavItem id="blades"     href="https://joyzze.com/blades/">Blades</NavItem>
+              <NavItem id="combs"      href="https://joyzze.com/combs-accessories/">Combs &amp; Accessories</NavItem>
+              <NavItem id="info"       href="https://joyzze.com/information/">Information</NavItem>
+              <a href="https://joyzze.com/recycling-sharpening/" className="jz-item">Recycling &amp; Sharpening</a>
+              <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
             </div>
           </div>
 
@@ -460,90 +397,94 @@ function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
-                        <li><a href="#raptor">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="#hornet">Hornet | C-Series</a></li>
-                        <li><a href="#stinger">Stinger | C-Series</a></li>
-                        <li><a href="#piranha">Piranha | D-Series</a></li>
-                        <li><a href="#mini">Hornet Mini | M-Series</a></li>
+                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
+                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
+                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
                       </MegaSection>
                       <MegaSection title="BLADES">
-                        <li><a href="#a-series">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="#a-wide">A-Series | Wide</a></li>
-                        <li><a href="#c-series">C-Series | 5-in-1</a></li>
-                        <li><a href="#d-series">D-Series | Piranha</a></li>
-                        <li><a href="#m-series">M-Series | Mini</a></li>
+                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
+                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Wide</a></li>
+                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | 5-in-1</a></li>
+                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
+                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Mini</a></li>
                       </MegaSection>
                       <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="#cases">Cases</a></li>
-                        <li><a href="#combs">Combs</a></li>
-                        <li><a href="#oil">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="#bag">Multi-Functional Tool Bag</a></li>
+                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
+                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
+                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
+                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="#hornet">Hornet</a></li>
-                        <li><a href="#stinger">Stinger</a></li>
+                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
+                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
                       </MegaSection>
-                      <MegaSection title="A5 STYLE | A-SERIES">
-                        <li><a href="#falcon">Falcon</a></li>
-                        <li><a href="#raptor">Raptor</a></li>
+                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
+                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
                       </MegaSection>
-                      <MegaSection title="D-SERIES">
-                        <li><a href="#piranha">Piranha</a></li>
+                      <MegaSection title="D-SERIES CLIPPERS">
+                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
                         <li className="mt-2" />
                         <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="#a5-falcon">A5 Falcon</a></li>
-                        <li><a href="#a5-raptor">A5 Raptor</a></li>
+                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
+                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'blades' && (
                     <>
-                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="#a5blades">A5 Blades</a></li></MegaSection>
-                      <MegaSection title="A-SERIES WIDE | A5">
-                        <li><a href="#wide">Wide Blades</a></li>
-                        <li><a href="#bundle-plus">Bundle Plus</a></li>
-                        <li><a href="#bundle">Bundle</a></li>
+                      <MegaSection title="A-SERIES | A5 STYLE"><li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li></MegaSection>
+                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
                       </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1"><li><a href="#cmax">C-MAX Blades</a></li></MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS"><li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li></MegaSection>
                     </>
                   )}
+
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="#wide-combs">Wide Metal Combs</a></li>
-                        <li><a href="#bundle">Bundle</a></li>
-                        <li><a href="#bundle-plus">Bundle Plus</a></li>
+                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
+                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
+                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
                       </MegaSection>
-                      <MegaSection title="A & D SERIES">
-                        <li><a href="#8pcs">8 Piece Metal Comb Set</a></li>
+                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
                       </MegaSection>
                       <MegaSection title="CASES">
-                        <li><a href="#12slot">12-Slot</a></li>
-                        <li><a href="#22slot">22-Slot</a></li>
+                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
+                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
                       </MegaSection>
                     </>
                   )}
+
                   {open === 'info' && (
                     <>
-                      <MegaSection title="ABOUT">
-                        <li><a href="#about">About JOYZZE™</a></li>
-                        <li><a href="#faqs">FAQs</a></li>
-                        <li><a href="#privacy">Privacy Policy</a></li>
+                      <MegaSection title="ABOUT JOYZZE™">
+                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
+                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
+                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
                       </MegaSection>
                       <MegaSection title="SUPPORT">
-                        <li><a href="#contact">Contact</a></li>
-                        <li><a href="#shipping">Shipping &amp; Returns</a></li>
-                        <li><a href="#access">Accessibility</a></li>
+                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
+                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
+                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
                       </MegaSection>
                       <MegaSection title="DOCS">
-                        <li><a href="#repair">Clipper Repair Form</a></li>
-                        <li><a href="#warranty">Warranty</a></li>
-                        <li><a href="#brochure">Product Brochure</a></li>
-                        <li><a href="#terms">Terms &amp; Conditions</a></li>
+                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">Clipper Repair Form</a></li>
+                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
+                        <li><a href="https://joyzze.com/joyzze-product-brochure/">Product Brochure</a></li>
+                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
                       </MegaSection>
                     </>
                   )}
@@ -557,9 +498,7 @@ function SigninHeader({ theme='light', onToggleTheme=()=>{} }) {
   );
 }
 
-/* =========================================================
-   Simple hero/how/samples blocks (same styling as before)
-   ========================================================= */
+/* ========================= Hero / How / Samples ======================== */
 function Hero(){
   return (
     <header className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -628,9 +567,7 @@ function Samples(){
   );
 }
 
-/* =========================================================
-   FOOTER — same as your previous version
-   ========================================================= */
+/* =============================== Footer ================================ */
 function FooterPromoRibbon(){
   return (
     <div className="bg-slate-900 text-slate-200">
@@ -652,11 +589,11 @@ function SigninFooter() {
         <div>
           <h4 className="text-emerald-400 tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
-            <li><a href="#all" className="hover:underline">All Products</a></li>
-            <li><a href="#clippers" className="hover:underline">Clippers</a></li>
-            <li><a href="#blades" className="hover:underline">Blades</a></li>
-            <li><a href="#combs" className="hover:underline">Combs &amp; Accessories</a></li>
-            <li><a href="#info" className="hover:underline">Information</a></li>
+            <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
+            <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
+            <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
+            <li><a href="https://joyzze.com/combs-accessories/" className="hover:underline">Combs &amp; Accessories</a></li>
+            <li><a href="https://joyzze.com/information/" className="hover:underline">Information</a></li>
           </ul>
         </div>
         <div className="text-center">
@@ -693,9 +630,7 @@ function SigninFooter() {
   );
 }
 
-/* =========================================================
-   PAGE
-   ========================================================= */
+/* ================================ Page ================================ */
 export default function Page(){
   const [theme, setTheme] = useState('light');
 
@@ -722,7 +657,7 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles (same look) */}
+      {/* Global styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #10b981; }
@@ -771,7 +706,11 @@ export default function Page(){
           overflow: hidden;
           z-index: 60;
         }
-        .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(900px 380px at 70% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.18; pointer-events:none; }
+        .jz-mega-bg {
+          position:absolute; inset:0;
+          background-image: radial-gradient(900px 380px at 70% 18%, rgba(0,0,0,.08), transparent 60%);
+          opacity:.18; pointer-events:none;
+        }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:13px; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
@@ -793,8 +732,8 @@ export default function Page(){
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
         .icon-btn{ color: inherit; }
         .theme-dark .icon-btn:hover{ background: rgba(255,255,255,.08) !important; }
+        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
 
-        /* Responsive search width */
         @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
