@@ -2,72 +2,104 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* -------------------------------- Icons -------------------------------- */
+/* ---------------- Small SVG icons ---------------- */
 const Icon = {
-  Upload: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  Wand: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Reset: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Download: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Phone: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  Search: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/><path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Plus: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Shuffle: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}><path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  User: (p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  CaretDown:(p)=>(<svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Bag:(p)=>(<svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}><rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Truck:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>),
-  Return:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>),
+  Upload: (props) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Wand: (props) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  Reset: (props) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  Download: (props) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}>
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  ChevronDown:(p)=>(
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
+    </svg>
+  ),
+  Phone: (props)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Search: (props)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...props}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/><path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Plus: (props)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...props}><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Shuffle: (props)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props} style={{transform:'rotate(-8deg)'}}><path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  User: (props)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Bag: (props)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...props}><rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
   Card:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/><path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/></svg>),
+  Return:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>),
   Lock:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/><path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/></svg>),
   Sun:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
   Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ------------------ Small UI helpers ------------------ */
-const Button = ({ className="", disabled, onClick, children, type="button" }) => (
+/* ---------------- Tiny UI helpers ---------------- */
+const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
 const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
-/* ------------------ Compare Slider ------------------ */
+/* ---------------- Compare slider ---------------- */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(50);
-  const ref = useRef(null);
+  const wrapRef = useRef(null);
 
   useEffect(() => {
-    const el = ref.current;
+    const el = wrapRef.current;
     if (!el) return;
-    const down = (e) => {
+
+    const onDown = (e) => {
       const rect = el.getBoundingClientRect();
-      const moveTo = (clientX) => {
+      const move = (clientX) => {
         const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
         setPos(Math.round((x / rect.width) * 100));
       };
-      const onMove = (ev) => moveTo(ev.touches ? ev.touches[0].clientX : ev.clientX);
+      const onMove = (ev) => move(ev.touches ? ev.touches[0].clientX : ev.clientX);
       const onUp = () => {
         window.removeEventListener('mousemove', onMove);
-        window.removeEventListener('mouseup', onUp);
         window.removeEventListener('touchmove', onMove);
+        window.removeEventListener('mouseup', onUp);
         window.removeEventListener('touchend', onUp);
       };
       window.addEventListener('mousemove', onMove);
-      window.addEventListener('mouseup', onUp);
       window.addEventListener('touchmove', onMove, { passive: false });
+      window.addEventListener('mouseup', onUp);
       window.addEventListener('touchend', onUp);
     };
-    el.addEventListener('mousedown', down);
-    el.addEventListener('touchstart', down, { passive: true });
+
+    el.addEventListener('mousedown', onDown);
+    el.addEventListener('touchstart', onDown, { passive: true });
     return () => {
-      el.removeEventListener('mousedown', down);
-      el.removeEventListener('touchstart', down);
+      el.removeEventListener('mousedown', onDown);
+      el.removeEventListener('touchstart', onDown);
     };
   }, []);
 
   return (
-    <div ref={ref} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
+    <div ref={wrapRef} className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 select-none">
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
-      <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
-      <div className="absolute top-0 bottom-0 w-[2px] bg-indigo-500" style={{ left: `${pos}%` }} />
+      <img
+        src={beforeSrc}
+        alt="Before"
+        className="absolute inset-0 h-full w-full object-contain"
+        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
+        draggable={false}
+      />
+      <div className="absolute top-0 bottom-0 w-[2px] bg-emerald-500" style={{ left: `${pos}%` }} />
       <div className="absolute top-1/2 -translate-y-1/2 -ml-4" style={{ left: `${pos}%` }}>
         <div className="h-10 w-10 rounded-full bg-white/90 dark:bg-black/40 backdrop-blur border border-black/10 dark:border-white/10 shadow flex items-center justify-center">
           <div className="flex items-center gap-1 text-slate-700 dark:text-slate-200">
@@ -78,20 +110,11 @@ function CompareSlider({ beforeSrc, afterSrc }) {
       </div>
       <span className="absolute top-3 left-3 text-xs font-semibold px-2 py-1 rounded-full bg-black/60 text-white">Before</span>
       <span className="absolute top-3 right-3 text-xs font-semibold px-2 py-1 rounded-full bg-emerald-600/90 text-white">After</span>
-      <input
-        type="range"
-        min={0}
-        max={100}
-        value={pos}
-        onChange={(e)=>setPos(Number(e.target.value))}
-        className="absolute left-0 right-0 bottom-2 w-[98%] mx-auto accent-indigo-500"
-        aria-label="Compare before and after"
-      />
     </div>
   );
 }
 
-/* ------------------ Helpers ------------------ */
+/* ---------------- Helpers ---------------- */
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
@@ -124,26 +147,25 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* ============================ Upload + Result ============================ */
+/* =========================================================
+   Upload + Result — fal.ai-like layout (no Prompt)
+   ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
-  const [previewUrl,setPreviewUrl]=useState(null);
-  const [resultUrl,setResultUrl]=useState(null);
+  const [previewUrl,setPreviewUrl]=useState(null); // before
+  const [resultUrl,setResultUrl]=useState(null);   // after
   const [loading,setLoading]=useState(false);
   const [error,setError]=useState(null);
+  const [logs, setLogs] = useState([]);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(560);
-  const ACTION_H = 56;
 
   useEffect(() => {
-    const setH = () =>
-      setPanelH(
-        Math.round(Math.max(480, Math.min(760, window.innerHeight * 0.68)))
-      );
+    const setH = () => setPanelH(Math.round(Math.max(480, Math.min(760, window.innerHeight * 0.68))));
     setH();
     window.addEventListener('resize', setH);
     return () => window.removeEventListener('resize', setH);
@@ -156,21 +178,24 @@ function UploadAndResult(){
     };
   }, [previewUrl, resultUrl]);
 
+  const setLog = (msg) => setLogs((l)=>[...l, `[${new Date().toLocaleTimeString()}] ${msg}`]);
+
   const handleFile = async (f) => {
     setError(null);
     const validationError = validateImageFile(f, 12);
-    if (validationError){ setError(validationError); return; }
+    if (validationError){ setError(validationError); setLog(`Validation error: ${validationError}`); return; }
     const url = URL.createObjectURL(f);
     setFile(f); setResultUrl(null); setPreviewUrl(url);
-    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
+    setLog(`Selected file: ${f.name} (${Math.round(f.size/1024)} KB)`);
+    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); setLog(`Detected size: ${w}x${h}`); } catch {}
   };
   const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
-  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
+  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); setLogs([]); };
 
   const groom=async()=>{
-    if(!file) return;
-    setLoading(true); setError(null); setProgress(12);
+    if(!file) { setError("Please upload an image first."); return; }
+    setLoading(true); setError(null); setProgress(12); setLog("Submitting to /api/groom…");
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
@@ -180,7 +205,7 @@ function UploadAndResult(){
 
       const res=await fetch("/api/groom",{ method:"POST", body:form, signal:controllerRef.current?.signal });
       setProgress(60);
-      if(!res.ok){ const msg=await safeReadText(res); throw new Error(msg||`Backend error (${res.status})`); }
+      if(!res.ok){ const msg=await safeReadText(res); setLog(`Backend error ${res.status}`); throw new Error(msg||`Backend error (${res.status})`); }
       const data=await res.json();
       const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
@@ -194,88 +219,158 @@ function UploadAndResult(){
         }
       } catch { setResultUrl(url); }
       setProgress(100);
-    }catch(e){ setError(e?.message||"Something went wrong."); }
+      setLog("Success: image generated.");
+    }catch(e){
+      setError(e?.message||"Something went wrong.");
+      setLog(`Error: ${e?.message||"Unknown error"}`);
+    }
     finally{ setLoading(false); }
   };
 
-  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
+  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); setLog("Request aborted by user."); };
 
   return (
-    <section id="app" className="container mx-auto px-6 py-16">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-emerald-500">Joyzze – Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600 dark:text-slate-300">Upload → AI groom → compare before &amp; after</p>
-          </div>
-        </div>
-        {resultUrl ? (
-          <a className="btn btn-primary" href={resultUrl} download><Icon.Download /> Download</a>
-        ) : <div className="h-9" />}
-      </div>
-
-      {/* Two-column like fal.ai: Input (left) / Result (right) */}
-      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-        {/* Left: Input */}
+    <section id="app" className="container mx-auto px-6 py-12">
+      {/* Two columns like fal.ai: left Input, right Result */}
+      <div className="grid lg:grid-cols-2 gap-8">
+        {/* LEFT: Input panel */}
         <Card className="p-4">
-          <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Input</div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-slate-200/90 dark:text-slate-200">Input</h3>
+            <div className="text-[12px] text-slate-500">Form</div>
+          </div>
 
-          {!previewUrl && error && (
-            <div className="mb-4 rounded-xl px-4 py-3 bg-red-50 text-red-700 border border-red-200 dark:bg-red-500/10 dark:text-red-300 dark:border-red-500/30">{String(error)}</div>
-          )}
-
-          {!previewUrl ? (
-            <label className="grid place-items-center rounded-2xl border border-dashed border-slate-300/80 dark:border-white/15 text-center cursor-pointer bg-white/70 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10 backdrop-blur transition-colors" style={{ height: panelH }}>
-              <div className="grid place-items-center gap-3">
-                <div className="mx-auto w-14 h-14 rounded-2xl bg-white dark:bg-white/10 grid place-items-center shadow ring-1 ring-black/5 dark:ring-white/10"><Icon.Upload /></div>
-                <div className="font-medium">Drag &amp; drop or click to upload</div>
-                <div className="text-xs text-slate-600 dark:text-slate-400">PNG, JPG up to 12MB</div>
-              </div>
-              <input type="file" accept="image/*" className="hidden" onChange={selectFile} />
-            </label>
-          ) : (
-            <div className="flex flex-col">
-              <div className="rounded-2xl overflow-hidden bg-slate-50 dark:bg-slate-900/40 ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
-                <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
-              </div>
-              <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
-                {!loading ? (
-                  <>
-                    <Button className="btn-primary" onClick={groom}><Icon.Wand /> Run</Button>
-                    <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
-                  </>
-                ) : (
-                  <>
-                    <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
-                    <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
-                  </>
-                )}
-              </div>
+          {/* Image URL row (fal-style) */}
+          <div className="mb-3">
+            <div className="text-xs text-slate-400 mb-1">Image URL*</div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Add an image file or provide a URL"
+                className="flex-1 rounded-md bg-[#1d222b] text-slate-100 placeholder:text-slate-500 px-3 py-2 ring-1 ring-white/10 outline-none"
+                onPaste={(e)=>{
+                  const text=e.clipboardData.getData('text');
+                  if (!text) return;
+                  // Try to load pasted URL into preview
+                  setFile(null);
+                  setPreviewUrl(text);
+                  setResultUrl(null);
+                  setLog(`Pasted URL: ${text}`);
+                  readImageSize(text).then(({w,h})=>{setImgW(w);setImgH(h); setLog(`Detected size: ${w}x${h}`);}).catch(()=>{});
+                }}
+              />
+              <label className="relative">
+                <input type="file" accept="image/*" className="hidden" onChange={selectFile}/>
+                <span className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-[#2a303b] text-slate-100 ring-1 ring-white/10 cursor-pointer hover:bg-[#323a47]">
+                  Choose…
+                </span>
+              </label>
             </div>
-          )}
+            <div className="text-xs text-slate-500 mt-2">
+              Hint: Drag &amp; drop image files, paste from clipboard (Ctrl/Cmd+V), or provide a URL. Accepted: jpg, jpeg, png, webp, gif, avif.
+            </div>
+          </div>
+
+          {/* Thumbnail area (like fal.ai) */}
+          <div className="rounded-2xl border border-dashed border-white/10 bg-[#1a1f27] grid place-items-center" style={{ height: panelH }}>
+            {!previewUrl ? (
+              <div className="text-center">
+                <div className="mx-auto w-10 h-10 rounded-xl grid place-items-center bg-[#202631] text-slate-300 mb-4"><Icon.Upload/></div>
+                <div className="font-medium text-slate-200">Drag &amp; drop or click to upload</div>
+                <div className="text-xs text-slate-500 mt-1">PNG, JPG up to 12MB</div>
+              </div>
+            ) : (
+              <img src={previewUrl} alt="Uploaded" className="h-full w-full object-contain" />
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="mt-4 flex items-center justify-between">
+            <div>
+              <button onClick={resetAll} className="px-3 py-2 rounded-md bg-[#1f2530] text-slate-200 ring-1 ring-white/10 hover:bg-[#242b37]">
+                Reset
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              {!loading ? (
+                <button onClick={groom} className="px-4 py-2 rounded-md bg-emerald-500 text-black font-semibold hover:brightness-95">
+                  Run
+                </button>
+              ) : (
+                <>
+                  <button disabled className="px-4 py-2 rounded-md bg-emerald-600 text-black font-semibold">
+                    Working… {progress}%
+                  </button>
+                  <button onClick={cancel} className="px-3 py-2 rounded-md bg-[#1f2530] text-slate-200 ring-1 ring-white/10 hover:bg-[#242b37]">
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
         </Card>
 
-        {/* Right: Result (with compare slider when available) */}
+        {/* RIGHT: Result panel */}
         <Card className="p-4">
-          <div className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Result</div>
-          <div className="rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10" style={{ height: panelH }}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-slate-200">Result</h3>
+              {error && <span className="text-xs px-2 py-1 rounded bg-red-500/15 text-red-300 ring-1 ring-red-500/25">Error</span>}
+            </div>
+            <button className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-[#1f2530] text-slate-200 ring-1 ring-white/10">
+              Preview <Icon.ChevronDown className="opacity-80" />
+            </button>
+          </div>
+
+          <div className="rounded-2xl border border-dashed border-white/10 bg-[#0e1420]" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300/80 dark:border-white/10 bg-slate-50/60 dark:bg-slate-900/30 text-sm text-slate-600 dark:text-slate-400 px-6 text-center">
-                Your groomed image will appear here. After processing, drag the handle to compare before/after.
+              <div className="h-full grid place-items-center px-6 text-center text-slate-400 text-sm">
+                {error ? (
+                  <div className="max-w-md">
+                    <div className="mb-2 font-semibold text-red-300">An error occurred</div>
+                    <div className="text-slate-300 whitespace-pre-wrap">{String(error)}</div>
+                  </div>
+                ) : (
+                  <div className="max-w-md">
+                    Your groomed image will appear here. After processing, drag the handle to compare before/after.
+                  </div>
+                )}
               </div>
             ) : (
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          <div style={{ height: ACTION_H }} />
+
+          {/* Top-right download once we have a result */}
+          <div className="mt-3 flex justify-end">
+            {resultUrl && (
+              <a href={resultUrl} download className="inline-flex items-center gap-2 text-xs px-3 py-2 rounded-md bg-[#1f2530] text-slate-200 ring-1 ring-white/10 hover:bg-[#242b37]">
+                <Icon.Download/> Download
+              </a>
+            )}
+          </div>
+
+          {/* Logs like fal.ai (collapsed style) */}
+          <div className="mt-6">
+            <details className="group">
+              <summary className="cursor-pointer select-none flex items-center gap-2 text-sm text-slate-300">
+                Logs
+                <span className="ml-1 opacity-70 group-open:rotate-180 transition-transform"><Icon.ChevronDown/></span>
+              </summary>
+              <div className="mt-3 rounded-lg bg-[#0f141d] ring-1 ring-white/10 p-3 max-h-48 overflow-auto text-xs text-slate-400 whitespace-pre-wrap">
+                {logs.length ? logs.join('\n') : 'No logs yet.'}
+              </div>
+            </details>
+          </div>
         </Card>
       </div>
     </section>
   );
 }
 
-/* ============================ Header (with mega menu) ============================ */
+/* =========================================================
+   HEADER — (same as before)
+   ========================================================= */
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -333,7 +428,11 @@ function SigninHeader({ theme, onToggleTheme }) {
             <span className="text-[14px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          <a href="/" className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]" aria-label="Joyzze">
+          <a
+            href="/"
+            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.25)]"
+            aria-label="Joyzze"
+          >
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 py-2.5 rounded-[10px]">
               <span className="text-white text-[22px] font-semibold tracking-[0.25em]">JOYZZE</span>
             </div>
@@ -356,7 +455,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             <a className={`hidden sm:grid ${iconBtn}`} href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
             <div className="hidden sm:flex items-center">
               <a className={`${iconBtn}`} href="/account" aria-label="Account"><Icon.User /></a>
-              <Icon.CaretDown className="ml-[2px] opacity-80" />
+              <Icon.ChevronDown className="ml-[2px] opacity-80" />
             </div>
             <a className={`${iconBtn}`} href="/cart" aria-label="Cart"><Icon.Bag /></a>
 
@@ -372,7 +471,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         </div>
       </div>
 
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={()=>setOpen(null)}>
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-emerald-400 select-none leading-[1]">ʝ</div>
@@ -492,7 +591,9 @@ function SigninHeader({ theme, onToggleTheme }) {
   );
 }
 
-/* ============================ Hero / How / Samples ============================ */
+/* =========================================================
+   HERO / HOW / SAMPLES — (unchanged visuals)
+   ========================================================= */
 function Hero(){
   return (
     <header className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -561,7 +662,9 @@ function Samples(){
   );
 }
 
-/* ============================ Footer ============================ */
+/* =========================================================
+   FOOTER — (same as before)
+   ========================================================= */
 function FooterPromoRibbon(){
   return (
     <div className="bg-slate-900 text-slate-200">
@@ -624,7 +727,9 @@ function SigninFooter() {
   );
 }
 
-/* ============================ Page ============================ */
+/* =========================================================
+   PAGE
+   ========================================================= */
 export default function Page(){
   const [theme, setTheme] = useState('light');
 
@@ -651,31 +756,23 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* Global styles */}
+      {/* Styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal: #10b981; }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         :root{
-          --app-bg: #ffffff;
-          --app-surface: rgba(255,255,255,.85);
-          --app-muted: #475569;
-          --app-border: rgba(0,0,0,.08);
-        }
-        .theme-dark{
-          --app-bg: #0f1115;
-          --app-surface: #141821;
-          --app-muted: rgba(229,231,235,.78);
+          --app-bg: #0b111a;
+          --app-surface: #111827;
+          --app-muted: #9aa4b2;
           --app-border: rgba(255,255,255,.12);
         }
-        body{ background: var(--app-bg); }
-        .theme-dark body{ color:#e5e7eb; }
+        body{ background: var(--app-bg); color:#e5e7eb; }
 
         .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.65rem; transition:all .15s ease; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
-        .btn-primary:hover { filter:brightness(.95); }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
-        .card { background:var(--app-surface); border-radius:1.05rem; box-shadow:0 1px 0 var(--app-border), 0 10px 25px rgba(0,0,0,.05); backdrop-filter: blur(6px); }
+        .card { background:#121826; border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 10px 25px rgba(0,0,0,.25); }
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: inherit; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
@@ -713,23 +810,6 @@ export default function Page(){
 
         .jz-input{ background:var(--app-surface); color:inherit; border:1px solid var(--app-border); }
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(16,185,129,.16); }
-
-        .theme-dark .bg-white,
-        .theme-dark .bg-slate-50,
-        .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
-        .theme-dark .border-slate-300,
-        .theme-dark .ring-slate-200,
-        .theme-dark .ring-black\\/10 { border-color: var(--app-border) !important; box-shadow: 0 0 0 1px var(--app-border) inset !important; }
-        .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
-        .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
-        .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
-        .icon-btn{ color: inherit; }
-        .theme-dark .icon-btn:hover{ background: rgba(255,255,255,.08) !important; }
-        .theme-dark input::placeholder{ color: rgba(255,255,255,.55); }
-
-        @media (max-width: 1280px){ .jz-input { width: 520px !important; } }
-        @media (max-width: 1100px){ .jz-input { width: 420px !important; } }
-        @media (max-width: 980px){ .jz-input { display:none; } }
       `}</style>
     </main>
   );
