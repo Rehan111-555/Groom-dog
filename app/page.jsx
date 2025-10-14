@@ -2,75 +2,23 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ───────────────────────────── Brand: JOYZZE Logo ─────────────────────────────
-   Capsule with the JOYZZE lettering drawn as vector paths.
-   Looks the same in header & footer (dark pill, light text, soft highlight).
--------------------------------------------------------------------------------*/
-function JoyzzeLogo({ width = 220, height = 68, className = '' }) {
-  // Gradient capsule background + white wordmark
+/* ───────────────────────────── Logo Capsule (exact wordmark) ─────────────────────────────
+   This shows YOUR real logo file inside a black rounded capsule with gloss + shadow,
+   so the wordmark renders exactly as your asset (no path approximations).
+   Put /public/joyzze-wordmark.svg  (or .png) and update LOGO_SRC if needed.
+-------------------------------------------------------------------------------------------*/
+const LOGO_SRC = '/joyzze-wordmark.svg'; // or '/joyzze-wordmark.png'
+
+function LogoCapsule({ width = 210, height = 64, className = '' }) {
+  // The capsule is CSS; the image is your exact wordmark.
   return (
-    <svg
-      viewBox="0 0 440 136"
-      width={width}
-      height={height}
-      className={className}
+    <div
+      className={`jz-capsule ${className}`}
+      style={{ width: `${width}px`, height: `${height}px` }}
       aria-label="JOYZZE"
     >
-      <defs>
-        <linearGradient id="jz-cap" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#2a2a2a" />
-          <stop offset="1" stopColor="#0d0d0d" />
-        </linearGradient>
-        <linearGradient id="jz-gloss" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="rgba(255,255,255,.32)" />
-          <stop offset="1" stopColor="rgba(255,255,255,0)" />
-        </linearGradient>
-        <filter id="jz-shadow" x="-40%" y="-40%" width="180%" height="180%">
-          <feDropShadow dx="0" dy="10" stdDeviation="12" floodOpacity="0.35" />
-        </filter>
-      </defs>
-
-      {/* capsule */}
-      <rect
-        x="6"
-        y="6"
-        rx="26"
-        ry="26"
-        width="428"
-        height="124"
-        fill="url(#jz-cap)"
-        filter="url(#jz-shadow)"
-      />
-      {/* glossy sweep */}
-      <path
-        d="M20 28h400c-20 15-60 24-200 24S40 56 20 28z"
-        fill="url(#jz-gloss)"
-        opacity="0.55"
-      />
-
-      {/* JOYZZE wordmark – rounded mono-line look */}
-      <g
-        transform="translate(48,27)"
-        fill="none"
-        stroke="#fff"
-        strokeWidth="10"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        {/* J */}
-        <path d="M22 6v48a20 20 0 0 0 40 0" />
-        {/* O */}
-        <circle cx="104" cy="46" r="24" />
-        {/* Y (curvy) */}
-        <path d="M148 26l16 20m16-20-18 22v18" />
-        {/* Z */}
-        <path d="M208 28h48l-48 36h52" />
-        {/* Z */}
-        <path d="M276 28h48l-48 36h52" />
-        {/* E */}
-        <path d="M348 26v40m0-40h40m-40 20h28m-28 20h36" />
-      </g>
-    </svg>
+      <img src={LOGO_SRC} alt="JOYZZE" className="jz-logo-img" />
+    </div>
   );
 }
 
@@ -91,11 +39,11 @@ const Icon = {
   Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ───────────────────────────── Small helpers ───────────────────────────── */
 const Button = ({ className="", disabled, onClick, children, type="button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
 
+/* helpers */
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) return data.image.startsWith("data:") ? data.image : `data:image/png;base64,${data.image}`;
@@ -126,7 +74,7 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* ───────────────────────── Compare slider ───────────────────────── */
+/* compare slider */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(50);
   const wrapRef = useRef(null);
@@ -186,7 +134,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
   );
 }
 
-/* ─────────────────────── Upload + Result (fal-style) ─────────────────────── */
+/* Upload + Result */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
   const [previewUrl,setPreviewUrl]=useState(null);
@@ -197,7 +145,6 @@ function UploadAndResult(){
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const controllerRef=useRef(null);
-
   const [panelH, setPanelH] = useState(560);
 
   useEffect(() => {
@@ -260,7 +207,7 @@ function UploadAndResult(){
   return (
     <section id="app" className="container">
       <div className="two-col">
-        {/* Left — Input (fal-like card) */}
+        {/* Left — Input */}
         <div className="panel">
           <div className="panel-head">Input</div>
           <div className="panel-body" style={{height: panelH}}>
@@ -282,7 +229,6 @@ function UploadAndResult(){
 
           <div className="panel-actions">
             {!previewUrl && error && <div className="err">{String(error)}</div>}
-
             {!previewUrl ? (
               <Button className="btn-primary" onClick={()=>document.querySelector('#app input[type=file]')?.click()}>
                 <Icon.Upload/> Upload
@@ -301,7 +247,7 @@ function UploadAndResult(){
           </div>
         </div>
 
-        {/* Right — Result (fal-like) */}
+        {/* Right — Result */}
         <div className="panel">
           <div className="panel-head row">
             <span>Result</span>
@@ -327,7 +273,7 @@ function UploadAndResult(){
   );
 }
 
-/* ───────────────────────── Header (with working links) ───────────────────────── */
+/* Header + Mega */
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -385,18 +331,15 @@ function Header({ theme, onToggleTheme }) {
             <span className="ph-text">(877) 456-9993</span>
           </a>
 
-          {/* Brand logo (capsule SVG) */}
+          {/* EXACT wordmark inside capsule */}
           <a href="/" className="logo-pill" aria-label="Joyzze">
-            <JoyzzeLogo width={210} height={64} />
+            <LogoCapsule width={210} height={64} />
           </a>
 
           <div className="header-right">
             <div className="search">
               <form action="/search" method="get">
-                <input
-                  type="text" name="q" placeholder="Search…" autoComplete="off"
-                  className="jz-input"
-                />
+                <input type="text" name="q" placeholder="Search…" autoComplete="off" className="jz-input"/>
               </form>
               <Icon.Plus className="search-plus" />
               <button className="search-btn" aria-label="Search"><Icon.Search/></button>
@@ -540,7 +483,7 @@ function Header({ theme, onToggleTheme }) {
   );
 }
 
-/* ───────────────────────── Hero (after header) ───────────────────────── */
+/* Hero (after header) */
 function Hero() {
   return (
     <section className="hero">
@@ -567,7 +510,7 @@ function Hero() {
   );
 }
 
-/* ───────────────────────── Footer ───────────────────────── */
+/* Footer */
 function FooterPromoRibbon(){
   return (
     <div className="promo-ribbon">
@@ -596,7 +539,8 @@ function Footer(){
           </ul>
         </div>
         <div className="text-center">
-          <JoyzzeLogo width={180} height={56} />
+          {/* SAME EXACT LOGO IN FOOTER */}
+          <LogoCapsule width={190} height={58} />
           <p className="mt-3 text-sm opacity-80">Joy of Grooming Made Easy™</p>
           <div className="mt-4 space-y-1 text-[15px]">
             <div>(877) 456-9993</div>
@@ -621,7 +565,7 @@ function Footer(){
   );
 }
 
-/* ───────────────────────── Page ───────────────────────── */
+/* Page */
 export default function Page(){
   const [theme, setTheme] = useState('light');
 
@@ -642,12 +586,11 @@ export default function Page(){
   return (
     <main>
       <Header theme={theme} onToggleTheme={toggleTheme}/>
-      {/* NEW: hero directly after header */}
       <Hero />
       <UploadAndResult/>
       <Footer/>
 
-      {/* ───────── Global styles and theme vars ───────── */}
+      {/* Global styles */}
       <style jsx global>{`
         :root{
           --bg: #ffffff;
@@ -677,11 +620,25 @@ export default function Page(){
         html, body { background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
         a { color: inherit; text-decoration: none; }
 
-        /* Buttons & Cards */
         .btn{ display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; }
         .btn-primary{ background:var(--brand); color:var(--dark-ink); }
         .btn-ghost{ background:transparent; border-color:var(--panel-border); }
         .btn.small{ padding:.4rem .6rem; font-size:.875rem; }
+
+        /* Capsule + exact logo */
+        .jz-capsule{
+          position:relative; display:grid; place-items:center;
+          border-radius:14px;
+          background: linear-gradient(#2a2a2a, #0d0d0d);
+          box-shadow: 0 12px 26px rgba(0,0,0,.25);
+          overflow:hidden;
+        }
+        .jz-capsule::after{
+          content:""; position:absolute; inset:0 0 auto 0; height:36%;
+          background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,0));
+          pointer-events:none;
+        }
+        .jz-logo-img{ max-width:84%; height:auto; object-fit:contain; display:block; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
 
         /* Header */
         .bg-top-light{ background:#c9cbcd; }
@@ -723,10 +680,7 @@ export default function Page(){
         .jz-list a { color:#3f3f3f; font-size:15px; }
 
         /* Hero */
-        .hero{
-          background: linear-gradient(180deg, var(--hero-grad-start), var(--hero-grad-mid), var(--hero-grad-end));
-          color:#fff;
-        }
+        .hero{ background: linear-gradient(180deg, var(--hero-grad-start), var(--hero-grad-mid), var(--hero-grad-end)); color:#fff; }
         .hero-inner{ max-width:1280px; margin:0 auto; padding:2.5rem 1.25rem 2rem; display:grid; gap:2rem; grid-template-columns:1fr; align-items:center; }
         @media (min-width: 1024px){ .hero-inner{ grid-template-columns:1.1fr .9fr; padding:3rem 1.25rem; } }
         .hero-pill{ display:inline-block; padding:.35rem .7rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:.8rem; opacity:.9; margin-bottom:.8rem; }
@@ -743,7 +697,7 @@ export default function Page(){
           box-shadow: 0 24px 60px rgba(0,0,0,.35), inset 0 0 0 9999px rgba(0,0,0,.06);
         }
 
-        /* App layout (fal-style) */
+        /* Panels */
         .container{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
         .two-col{ display:grid; grid-template-columns: 1fr; gap:24px; }
         @media (min-width: 1024px){ .two-col{ grid-template-columns: 1fr 1fr; } }
