@@ -471,6 +471,62 @@ function Header({ theme, onToggleTheme }) {
   );
 }
 
+/* ───────────────────────── HERO (new) ───────────────────────── */
+function Hero(){
+  return (
+    <section className="hero">
+      <div className="hero-inner">
+        <div className="hero-left">
+          <div className="hero-chip">Joyzze</div>
+          <h1 className="hero-title">
+            Make your dog look freshly groomed—<span className="accent">with AI</span>
+          </h1>
+          <p className="hero-sub">
+            Upload a photo; we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>.
+          </p>
+          <div className="hero-cta">
+            <a href="#app" className="btn btn-primary">Try it free</a>
+            <a href="#how" className="btn btn-ghost">See how it works</a>
+          </div>
+        </div>
+        <div className="hero-right">
+          <img src="/dog-10.png" alt="Hero sample" className="hero-img"/>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────── AFTER-HERO / HOW IT WORKS (new) ─────────────────── */
+function HowItWorks(){
+  return (
+    <section id="how" className="how">
+      <h2 className="how-title">Three simple steps</h2>
+      <p className="how-sub">Upload → AI groom → Compare &amp; download</p>
+      <div className="how-grid">
+        <Card className="how-card">
+          <div className="how-step">1</div>
+          <h3 className="how-card-title">Upload a dog photo</h3>
+          <p className="how-card-sub">PNG/JPG up to 12MB.</p>
+          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Upload now</a></div>
+        </Card>
+        <Card className="how-card">
+          <div className="how-step">2</div>
+          <h3 className="how-card-title">Let AI groom</h3>
+          <p className="how-card-sub">We tidy fur around face & paws and keep everything else identical.</p>
+          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Start grooming</a></div>
+        </Card>
+        <Card className="how-card">
+          <div className="how-step">3</div>
+          <h3 className="how-card-title">Compare &amp; download</h3>
+          <p className="how-card-sub">Use the slider to compare and download your result.</p>
+          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Try the slider</a></div>
+        </Card>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── Footer ───────────────────────── */
 function FooterPromoRibbon(){
   return (
@@ -546,6 +602,10 @@ export default function Page(){
   return (
     <main>
       <Header theme={theme} onToggleTheme={toggleTheme}/>
+      {/* NEW sections below */}
+      <Hero />
+      <HowItWorks />
+      {/* Workbench */}
       <UploadAndResult/>
       <Footer/>
 
@@ -621,6 +681,31 @@ export default function Page(){
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
 
+        /* HERO */
+        .hero{ color:#fff; background:linear-gradient(#0f172a,#0b1220); border-bottom:1px solid rgba(255,255,255,.08); }
+        .hero-inner{ max-width:1280px; margin:0 auto; padding:2.5rem 1.25rem; display:grid; gap:2rem; grid-template-columns:1fr; align-items:center; }
+        @media (min-width: 1024px){ .hero-inner{ grid-template-columns:1.1fr .9fr; padding:3.5rem 1.5rem; } }
+        .hero-chip{ display:inline-block; padding:.25rem .6rem; font-size:12px; border:1px solid rgba(255,255,255,.25); border-radius:999px; opacity:.9; margin-bottom:12px; }
+        .hero-title{ font-size:32px; line-height:1.18; font-weight:800; }
+        @media (min-width: 768px){ .hero-title{ font-size:44px; } }
+        .hero-sub{ margin-top:10px; color:#e5e7eb; opacity:.92; max-width:40rem; }
+        .accent{ color:#34d399; }
+        .hero-cta{ margin-top:16px; display:flex; gap:.75rem; }
+        .hero-right{ border-radius:22px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08); }
+        .hero-img{ display:block; width:100%; height:auto; object-fit:cover; }
+
+        /* HOW IT WORKS */
+        .how{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
+        .how-title{ text-align:center; font-weight:700; font-size:22px; margin-bottom:.25rem; }
+        .how-sub{ text-align:center; color:var(--muted); margin-bottom:1.25rem; }
+        .how-grid{ display:grid; gap:18px; grid-template-columns:1fr; }
+        @media (min-width: 768px){ .how-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+        .how-card{ padding:1rem; display:flex; flex-direction:column; min-height:200px; }
+        .how-step{ width:24px; height:24px; border-radius:999px; display:grid; place-items:center; background:#0f172a; color:#fff; font-size:12px; margin-bottom:.5rem; }
+        .how-card-title{ font-weight:600; margin-bottom:.25rem; }
+        .how-card-sub{ color:var(--muted); font-size:14px; }
+        .how-card-cta{ margin-top:auto; padding-top:.75rem; }
+
         /* App layout (fal-style) */
         .container{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
         .two-col{ display:grid; grid-template-columns: 1fr; gap:24px; }
@@ -629,6 +714,7 @@ export default function Page(){
         .panel-head{ padding:14px 18px; font-weight:600; border-bottom:1px dashed var(--panel-border); display:flex; align-items:center; justify-content:space-between; }
         .panel-body{ padding:12px; border-radius:12px; margin:12px; background:var(--surface); border:1px dashed var(--panel-border); overflow:hidden; }
         .panel-actions{ display:flex; gap:10px; align-items:center; padding:0 12px 16px 12px; }
+        .panel-head.row{ display:flex; align-items:center; justify-content:space-between; }
         .err{ color:#ef4444; font-size:.92rem; margin-right:auto; }
 
         .dropzone{ height:100%; width:100%; display:grid; place-items:center; cursor:pointer; }
