@@ -2,6 +2,78 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+/* ───────────────────────────── Brand: JOYZZE Logo ─────────────────────────────
+   Capsule with the JOYZZE lettering drawn as vector paths.
+   Looks the same in header & footer (dark pill, light text, soft highlight).
+-------------------------------------------------------------------------------*/
+function JoyzzeLogo({ width = 220, height = 68, className = '' }) {
+  // Gradient capsule background + white wordmark
+  return (
+    <svg
+      viewBox="0 0 440 136"
+      width={width}
+      height={height}
+      className={className}
+      aria-label="JOYZZE"
+    >
+      <defs>
+        <linearGradient id="jz-cap" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#2a2a2a" />
+          <stop offset="1" stopColor="#0d0d0d" />
+        </linearGradient>
+        <linearGradient id="jz-gloss" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="rgba(255,255,255,.32)" />
+          <stop offset="1" stopColor="rgba(255,255,255,0)" />
+        </linearGradient>
+        <filter id="jz-shadow" x="-40%" y="-40%" width="180%" height="180%">
+          <feDropShadow dx="0" dy="10" stdDeviation="12" floodOpacity="0.35" />
+        </filter>
+      </defs>
+
+      {/* capsule */}
+      <rect
+        x="6"
+        y="6"
+        rx="26"
+        ry="26"
+        width="428"
+        height="124"
+        fill="url(#jz-cap)"
+        filter="url(#jz-shadow)"
+      />
+      {/* glossy sweep */}
+      <path
+        d="M20 28h400c-20 15-60 24-200 24S40 56 20 28z"
+        fill="url(#jz-gloss)"
+        opacity="0.55"
+      />
+
+      {/* JOYZZE wordmark – rounded mono-line look */}
+      <g
+        transform="translate(48,27)"
+        fill="none"
+        stroke="#fff"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        {/* J */}
+        <path d="M22 6v48a20 20 0 0 0 40 0" />
+        {/* O */}
+        <circle cx="104" cy="46" r="24" />
+        {/* Y (curvy) */}
+        <path d="M148 26l16 20m16-20-18 22v18" />
+        {/* Z */}
+        <path d="M208 28h48l-48 36h52" />
+        {/* Z */}
+        <path d="M276 28h48l-48 36h52" />
+        {/* E */}
+        <path d="M348 26v40m0-40h40m-40 20h28m-28 20h36" />
+      </g>
+    </svg>
+  );
+}
+
 /* ───────────────────────────── Icons ───────────────────────────── */
 const Icon = {
   Upload: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
@@ -19,11 +91,10 @@ const Icon = {
   Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ────────────────────────── Small helpers ────────────────────────── */
+/* ───────────────────────────── Small helpers ───────────────────────────── */
 const Button = ({ className="", disabled, onClick, children, type="button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
-const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
 function pickResultUrl(data){
   if (data && typeof data === "object") {
@@ -55,39 +126,7 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* ───────────── JOYZZE pill + wordmark (SVG) ───────────── */
-function JoyzzeLogo({ size = 180, className = "" }) {
-  const h = Math.round(size * (48 / 170));
-  return (
-    <div
-      className={`joyzze-pill ${className}`}
-      style={{ width: `${size}px`, height: `${h}px` }}
-      aria-label="Joyzze"
-      role="img"
-    >
-      <div className="joyzze-pill-bg" />
-      <svg viewBox="0 0 300 90" className="joyzze-svg" aria-hidden="true" focusable="false">
-        <g fill="none" stroke="#fff" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
-          {/* j */}
-          <path d="M30 12 v41 a22 22 0 1 0 22 22" />
-          {/* o */}
-          <path d="M92 28 a20 20 0 1 1 0 40 a20 20 0 1 1 0-40z" />
-          {/* y */}
-          <path d="M130 28 v34" />
-          <path d="M130 50 q20-18 36 0 v22" />
-          {/* z */}
-          <path d="M188 32 h42 l-42 28 h42" />
-          {/* z */}
-          <path d="M240 32 h42 l-42 28 h42" />
-          {/* e */}
-          <path d="M289 48 h-28 a20 20 0 1 0 0 0" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-/* ─────────────────────── Compare slider ─────────────────────── */
+/* ───────────────────────── Compare slider ───────────────────────── */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(50);
   const wrapRef = useRef(null);
@@ -147,7 +186,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
   );
 }
 
-/* ────────── Upload + Result (fal-style, no prompt) ────────── */
+/* ─────────────────────── Upload + Result (fal-style) ─────────────────────── */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
   const [previewUrl,setPreviewUrl]=useState(null);
@@ -221,7 +260,7 @@ function UploadAndResult(){
   return (
     <section id="app" className="container">
       <div className="two-col">
-        {/* Left — Input */}
+        {/* Left — Input (fal-like card) */}
         <div className="panel">
           <div className="panel-head">Input</div>
           <div className="panel-body" style={{height: panelH}}>
@@ -262,7 +301,7 @@ function UploadAndResult(){
           </div>
         </div>
 
-        {/* Right — Result */}
+        {/* Right — Result (fal-like) */}
         <div className="panel">
           <div className="panel-head row">
             <span>Result</span>
@@ -288,7 +327,7 @@ function UploadAndResult(){
   );
 }
 
-/* ───────────────────────── Mega menu ───────────────────────── */
+/* ───────────────────────── Header (with working links) ───────────────────────── */
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -339,7 +378,6 @@ function Header({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* top row */}
       <div className={topBarClass}>
         <div className="header-row">
           <a href="tel:(877) 456-9993" className="phone">
@@ -347,9 +385,9 @@ function Header({ theme, onToggleTheme }) {
             <span className="ph-text">(877) 456-9993</span>
           </a>
 
-          {/* NEW JOYZZE WORDMARK */}
-          <a href="/" className="logo-link" aria-label="Joyzze">
-            <JoyzzeLogo size={180} />
+          {/* Brand logo (capsule SVG) */}
+          <a href="/" className="logo-pill" aria-label="Joyzze">
+            <JoyzzeLogo width={210} height={64} />
           </a>
 
           <div className="header-right">
@@ -378,7 +416,6 @@ function Header({ theme, onToggleTheme }) {
         </div>
       </div>
 
-      {/* nav + mega */}
       <nav className="nav-dark" onMouseLeave={close}>
         <div className="nav-wrap">
           <div className="flex items-center">
@@ -503,6 +540,33 @@ function Header({ theme, onToggleTheme }) {
   );
 }
 
+/* ───────────────────────── Hero (after header) ───────────────────────── */
+function Hero() {
+  return (
+    <section className="hero">
+      <div className="hero-inner">
+        <div className="hero-left">
+          <span className="hero-pill">Joyzze</span>
+          <h1 className="hero-title">
+            Make your dog look freshly groomed — <span className="emph">with AI</span>
+          </h1>
+          <p className="hero-sub">
+            Upload a photo; we tidy fur and outline while keeping the <b>breed, pose, background,
+            lighting, and colors identical.</b>
+          </p>
+          <div className="hero-cta">
+            <a href="#app" className="btn btn-primary">Try it free</a>
+            <a href="#how" className="btn btn-ghost">See how it works</a>
+          </div>
+        </div>
+        <div className="hero-right">
+          <div className="hero-image" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────── Footer ───────────────────────── */
 function FooterPromoRibbon(){
   return (
@@ -532,7 +596,7 @@ function Footer(){
           </ul>
         </div>
         <div className="text-center">
-          <div className="logo-bg inline-block"><span className="logo-text small">JOYZZE</span></div>
+          <JoyzzeLogo width={180} height={56} />
           <p className="mt-3 text-sm opacity-80">Joy of Grooming Made Easy™</p>
           <div className="mt-4 space-y-1 text-[15px]">
             <div>(877) 456-9993</div>
@@ -578,10 +642,12 @@ export default function Page(){
   return (
     <main>
       <Header theme={theme} onToggleTheme={toggleTheme}/>
+      {/* NEW: hero directly after header */}
+      <Hero />
       <UploadAndResult/>
       <Footer/>
 
-      {/* Global styles */}
+      {/* ───────── Global styles and theme vars ───────── */}
       <style jsx global>{`
         :root{
           --bg: #ffffff;
@@ -592,6 +658,9 @@ export default function Page(){
           --panel-border: rgba(0,0,0,.08);
           --brand: #10b981;
           --dark-ink: #0b0b0b;
+          --hero-grad-start: #0f172a;
+          --hero-grad-mid: #1f2937;
+          --hero-grad-end: #0f172a;
         }
         .theme-dark{
           --bg: #0f1115;
@@ -601,6 +670,9 @@ export default function Page(){
           --panel: #0f141c;
           --panel-border: rgba(255,255,255,.12);
           --brand: #10b981;
+          --hero-grad-start: #0b1220;
+          --hero-grad-mid: #0f172a;
+          --hero-grad-end: #0b1220;
         }
         html, body { background: var(--bg); color: var(--text); font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
         a { color: inherit; text-decoration: none; }
@@ -610,40 +682,16 @@ export default function Page(){
         .btn-primary{ background:var(--brand); color:var(--dark-ink); }
         .btn-ghost{ background:transparent; border-color:var(--panel-border); }
         .btn.small{ padding:.4rem .6rem; font-size:.875rem; }
-        .card{ background:var(--surface); border-radius:1rem; box-shadow:0 1px 0 var(--panel-border), 0 10px 25px rgba(0,0,0,.05); }
 
         /* Header */
-        .bg-top-light{ background:#e9ecef; }
+        .bg-top-light{ background:#c9cbcd; }
         .bg-top-dark{ background:#1c1f26; }
         .hover-bg:hover{ background: rgba(0,0,0,.06); }
         .theme-dark .hover-bg:hover{ background: rgba(255,255,255,.10); }
         .header-row{ max-width:1280px; margin:0 auto; padding:0 1rem; height:70px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
         .phone{ justify-self:start; display:flex; align-items:center; gap:.5rem; color:inherit; }
         .ph-text{ font-size:14px; font-weight:600; letter-spacing:.01em; }
-
-        /* JOYZZE pill logo */
-        .logo-link { justify-self: center; display: block; }
-        .joyzze-pill {
-          position: relative;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 14px 28px rgba(0,0,0,.35);
-          display: grid;
-          place-items: center;
-        }
-        .joyzze-pill-bg {
-          position: absolute; inset: 0;
-          border-radius: 12px;
-          background: linear-gradient(180deg, #2b2b2b 0%, #0a0a0a 100%);
-        }
-        .joyzze-svg { position: relative; width: 86%; height: auto; }
-        .joyzze-pill::after{
-          content:""; position:absolute; left:12px; bottom:6px;
-          width:56px; height:10px; border-radius:16px;
-          background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,255,255,0));
-          filter: blur(2px); opacity:.55; pointer-events:none;
-        }
-
+        .logo-pill{ justify-self:center; display:block; }
         .header-right{ justify-self:end; display:flex; align-items:center; gap:.75rem; }
         .jz-input{ height:42px; width:220px; border:1px solid var(--panel-border); background:var(--surface); color:inherit; border-radius:.5rem; padding:0 58px 0 16px; outline:none; }
         .jz-input::placeholder{ color: var(--muted); }
@@ -653,8 +701,8 @@ export default function Page(){
         .search-btn{ position:absolute; right:8px; top:50%; transform:translateY(-50%); height:32px; width:32px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--panel-border); background:var(--surface); }
         .theme-toggle{ height:36px; padding:0 .5rem; border:1px solid var(--panel-border); border-radius:.5rem; background:var(--surface); }
 
-        /* Nav + Mega */
-        .nav-dark{ background:#2f2f2f; color:#d7d7d7; border-top:1px solid rgba(0,0,0,.1); }
+        .nav-dark{ background:#333333; color:#d7d7d7; border-top:1px solid rgba(0,0,0,.12); }
+        .theme-dark .nav-dark{ background:#2f2f2f; }
         .nav-wrap{ max-width:1280px; margin:0 auto; padding:0 .75rem; position:relative; }
         .jz-nav{ font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; }
@@ -673,6 +721,27 @@ export default function Page(){
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
+
+        /* Hero */
+        .hero{
+          background: linear-gradient(180deg, var(--hero-grad-start), var(--hero-grad-mid), var(--hero-grad-end));
+          color:#fff;
+        }
+        .hero-inner{ max-width:1280px; margin:0 auto; padding:2.5rem 1.25rem 2rem; display:grid; gap:2rem; grid-template-columns:1fr; align-items:center; }
+        @media (min-width: 1024px){ .hero-inner{ grid-template-columns:1.1fr .9fr; padding:3rem 1.25rem; } }
+        .hero-pill{ display:inline-block; padding:.35rem .7rem; border:1px solid rgba(255,255,255,.2); border-radius:999px; font-size:.8rem; opacity:.9; margin-bottom:.8rem; }
+        .hero-title{ font-size:2rem; line-height:1.2; font-weight:800; margin:0; }
+        @media (min-width: 768px){ .hero-title{ font-size:2.6rem; } }
+        .hero-sub{ margin:.8rem 0 1.2rem; color:#e5e7eb; }
+        .emph{ color:#34d399; }
+        .hero-cta{ display:flex; gap:.6rem; flex-wrap:wrap; }
+        .hero-right{ display:grid; place-items:center; }
+        .hero-image{
+          width:100%; aspect-ratio: 16/10; border-radius:18px;
+          background: radial-gradient(80% 60% at 70% 35%, rgba(255,255,255,.08), transparent 60%), url('/dog-10.png');
+          background-size: cover; background-position: center; border:1px solid rgba(255,255,255,.14);
+          box-shadow: 0 24px 60px rgba(0,0,0,.35), inset 0 0 0 9999px rgba(0,0,0,.06);
+        }
 
         /* App layout (fal-style) */
         .container{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
