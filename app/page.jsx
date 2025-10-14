@@ -376,7 +376,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          {/* Center: pill logo */}
+          {/* Center: exact Joyzze wordmark image in pill */}
           <a
             href="https://joyzze.com/"
             className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
