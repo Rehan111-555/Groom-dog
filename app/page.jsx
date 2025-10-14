@@ -19,7 +19,7 @@ const Icon = {
   Moon:(p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
-/* ───────────────────────────── Small helpers ───────────────────────────── */
+/* ────────────────────────── Small helpers ────────────────────────── */
 const Button = ({ className="", disabled, onClick, children, type="button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
@@ -55,7 +55,39 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* ───────────────────────── Compare slider ───────────────────────── */
+/* ───────────── JOYZZE pill + wordmark (SVG) ───────────── */
+function JoyzzeLogo({ size = 180, className = "" }) {
+  const h = Math.round(size * (48 / 170));
+  return (
+    <div
+      className={`joyzze-pill ${className}`}
+      style={{ width: `${size}px`, height: `${h}px` }}
+      aria-label="Joyzze"
+      role="img"
+    >
+      <div className="joyzze-pill-bg" />
+      <svg viewBox="0 0 300 90" className="joyzze-svg" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="#fff" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round">
+          {/* j */}
+          <path d="M30 12 v41 a22 22 0 1 0 22 22" />
+          {/* o */}
+          <path d="M92 28 a20 20 0 1 1 0 40 a20 20 0 1 1 0-40z" />
+          {/* y */}
+          <path d="M130 28 v34" />
+          <path d="M130 50 q20-18 36 0 v22" />
+          {/* z */}
+          <path d="M188 32 h42 l-42 28 h42" />
+          {/* z */}
+          <path d="M240 32 h42 l-42 28 h42" />
+          {/* e */}
+          <path d="M289 48 h-28 a20 20 0 1 0 0 0" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+/* ─────────────────────── Compare slider ─────────────────────── */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(50);
   const wrapRef = useRef(null);
@@ -63,7 +95,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    const onDown = (e) => {
+    const onDown = () => {
       const rect = el.getBoundingClientRect();
       const move = (clientX) => {
         const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
@@ -115,7 +147,7 @@ function CompareSlider({ beforeSrc, afterSrc }) {
   );
 }
 
-/* ─────────────────────── Upload + Result (fal-style) ─────────────────────── */
+/* ────────── Upload + Result (fal-style, no prompt) ────────── */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
   const [previewUrl,setPreviewUrl]=useState(null);
@@ -189,7 +221,7 @@ function UploadAndResult(){
   return (
     <section id="app" className="container">
       <div className="two-col">
-        {/* Left — Input (fal-like card) */}
+        {/* Left — Input */}
         <div className="panel">
           <div className="panel-head">Input</div>
           <div className="panel-body" style={{height: panelH}}>
@@ -230,7 +262,7 @@ function UploadAndResult(){
           </div>
         </div>
 
-        {/* Right — Result (fal-like) */}
+        {/* Right — Result */}
         <div className="panel">
           <div className="panel-head row">
             <span>Result</span>
@@ -256,7 +288,7 @@ function UploadAndResult(){
   );
 }
 
-/* ───────────────────────── Header (with working links) ───────────────────────── */
+/* ───────────────────────── Mega menu ───────────────────────── */
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -307,6 +339,7 @@ function Header({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full sticky top-0 z-50">
+      {/* top row */}
       <div className={topBarClass}>
         <div className="header-row">
           <a href="tel:(877) 456-9993" className="phone">
@@ -314,10 +347,9 @@ function Header({ theme, onToggleTheme }) {
             <span className="ph-text">(877) 456-9993</span>
           </a>
 
-          <a href="/" className="logo-pill" aria-label="Joyzze">
-            <div className="logo-bg">
-              <span className="logo-text">JOYZZE</span>
-            </div>
+          {/* NEW JOYZZE WORDMARK */}
+          <a href="/" className="logo-link" aria-label="Joyzze">
+            <JoyzzeLogo size={180} />
           </a>
 
           <div className="header-right">
@@ -346,12 +378,12 @@ function Header({ theme, onToggleTheme }) {
         </div>
       </div>
 
+      {/* nav + mega */}
       <nav className="nav-dark" onMouseLeave={close}>
         <div className="nav-wrap">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-emerald-400 select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px] pointer-events-auto">
-              {/* anchor links — no JS prevents navigation */}
               <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
               <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
               <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
@@ -471,62 +503,6 @@ function Header({ theme, onToggleTheme }) {
   );
 }
 
-/* ───────────────────────── HERO (new) ───────────────────────── */
-function Hero(){
-  return (
-    <section className="hero">
-      <div className="hero-inner">
-        <div className="hero-left">
-          <div className="hero-chip">Joyzze</div>
-          <h1 className="hero-title">
-            Make your dog look freshly groomed—<span className="accent">with AI</span>
-          </h1>
-          <p className="hero-sub">
-            Upload a photo; we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>.
-          </p>
-          <div className="hero-cta">
-            <a href="#app" className="btn btn-primary">Try it free</a>
-            <a href="#how" className="btn btn-ghost">See how it works</a>
-          </div>
-        </div>
-        <div className="hero-right">
-          <img src="/dog-10.png" alt="Hero sample" className="hero-img"/>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ───────────────────── AFTER-HERO / HOW IT WORKS (new) ─────────────────── */
-function HowItWorks(){
-  return (
-    <section id="how" className="how">
-      <h2 className="how-title">Three simple steps</h2>
-      <p className="how-sub">Upload → AI groom → Compare &amp; download</p>
-      <div className="how-grid">
-        <Card className="how-card">
-          <div className="how-step">1</div>
-          <h3 className="how-card-title">Upload a dog photo</h3>
-          <p className="how-card-sub">PNG/JPG up to 12MB.</p>
-          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Upload now</a></div>
-        </Card>
-        <Card className="how-card">
-          <div className="how-step">2</div>
-          <h3 className="how-card-title">Let AI groom</h3>
-          <p className="how-card-sub">We tidy fur around face & paws and keep everything else identical.</p>
-          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Start grooming</a></div>
-        </Card>
-        <Card className="how-card">
-          <div className="how-step">3</div>
-          <h3 className="how-card-title">Compare &amp; download</h3>
-          <p className="how-card-sub">Use the slider to compare and download your result.</p>
-          <div className="how-card-cta"><a href="#app" className="btn btn-primary">Try the slider</a></div>
-        </Card>
-      </div>
-    </section>
-  );
-}
-
 /* ───────────────────────── Footer ───────────────────────── */
 function FooterPromoRibbon(){
   return (
@@ -602,14 +578,10 @@ export default function Page(){
   return (
     <main>
       <Header theme={theme} onToggleTheme={toggleTheme}/>
-      {/* NEW sections below */}
-      <Hero />
-      <HowItWorks />
-      {/* Workbench */}
       <UploadAndResult/>
       <Footer/>
 
-      {/* ───────── Global styles and theme vars ───────── */}
+      {/* Global styles */}
       <style jsx global>{`
         :root{
           --bg: #ffffff;
@@ -618,7 +590,7 @@ export default function Page(){
           --surface: #ffffff;
           --panel: #f7f8fa;
           --panel-border: rgba(0,0,0,.08);
-          --brand: #10b981; /* emerald */
+          --brand: #10b981;
           --dark-ink: #0b0b0b;
         }
         .theme-dark{
@@ -648,10 +620,30 @@ export default function Page(){
         .header-row{ max-width:1280px; margin:0 auto; padding:0 1rem; height:70px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; }
         .phone{ justify-self:start; display:flex; align-items:center; gap:.5rem; color:inherit; }
         .ph-text{ font-size:14px; font-weight:600; letter-spacing:.01em; }
-        .logo-pill{ justify-self:center; }
-        .logo-bg{ background:linear-gradient(#2a2a2a,#0d0d0d); padding:.6rem 1.4rem; border-radius:10px; box-shadow:0 12px 26px rgba(0,0,0,.25); }
-        .logo-text{ color:#fff; letter-spacing:.25em; font-weight:700; font-size:22px; }
-        .logo-text.small{ font-size:18px; }
+
+        /* JOYZZE pill logo */
+        .logo-link { justify-self: center; display: block; }
+        .joyzze-pill {
+          position: relative;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 14px 28px rgba(0,0,0,.35);
+          display: grid;
+          place-items: center;
+        }
+        .joyzze-pill-bg {
+          position: absolute; inset: 0;
+          border-radius: 12px;
+          background: linear-gradient(180deg, #2b2b2b 0%, #0a0a0a 100%);
+        }
+        .joyzze-svg { position: relative; width: 86%; height: auto; }
+        .joyzze-pill::after{
+          content:""; position:absolute; left:12px; bottom:6px;
+          width:56px; height:10px; border-radius:16px;
+          background: linear-gradient(90deg, rgba(255,255,255,.45), rgba(255,255,255,0));
+          filter: blur(2px); opacity:.55; pointer-events:none;
+        }
+
         .header-right{ justify-self:end; display:flex; align-items:center; gap:.75rem; }
         .jz-input{ height:42px; width:220px; border:1px solid var(--panel-border); background:var(--surface); color:inherit; border-radius:.5rem; padding:0 58px 0 16px; outline:none; }
         .jz-input::placeholder{ color: var(--muted); }
@@ -661,6 +653,7 @@ export default function Page(){
         .search-btn{ position:absolute; right:8px; top:50%; transform:translateY(-50%); height:32px; width:32px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--panel-border); background:var(--surface); }
         .theme-toggle{ height:36px; padding:0 .5rem; border:1px solid var(--panel-border); border-radius:.5rem; background:var(--surface); }
 
+        /* Nav + Mega */
         .nav-dark{ background:#2f2f2f; color:#d7d7d7; border-top:1px solid rgba(0,0,0,.1); }
         .nav-wrap{ max-width:1280px; margin:0 auto; padding:0 .75rem; position:relative; }
         .jz-nav{ font-weight:600; font-size:15px; letter-spacing:.01em; }
@@ -681,31 +674,6 @@ export default function Page(){
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
 
-        /* HERO */
-        .hero{ color:#fff; background:linear-gradient(#0f172a,#0b1220); border-bottom:1px solid rgba(255,255,255,.08); }
-        .hero-inner{ max-width:1280px; margin:0 auto; padding:2.5rem 1.25rem; display:grid; gap:2rem; grid-template-columns:1fr; align-items:center; }
-        @media (min-width: 1024px){ .hero-inner{ grid-template-columns:1.1fr .9fr; padding:3.5rem 1.5rem; } }
-        .hero-chip{ display:inline-block; padding:.25rem .6rem; font-size:12px; border:1px solid rgba(255,255,255,.25); border-radius:999px; opacity:.9; margin-bottom:12px; }
-        .hero-title{ font-size:32px; line-height:1.18; font-weight:800; }
-        @media (min-width: 768px){ .hero-title{ font-size:44px; } }
-        .hero-sub{ margin-top:10px; color:#e5e7eb; opacity:.92; max-width:40rem; }
-        .accent{ color:#34d399; }
-        .hero-cta{ margin-top:16px; display:flex; gap:.75rem; }
-        .hero-right{ border-radius:22px; overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08); }
-        .hero-img{ display:block; width:100%; height:auto; object-fit:cover; }
-
-        /* HOW IT WORKS */
-        .how{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
-        .how-title{ text-align:center; font-weight:700; font-size:22px; margin-bottom:.25rem; }
-        .how-sub{ text-align:center; color:var(--muted); margin-bottom:1.25rem; }
-        .how-grid{ display:grid; gap:18px; grid-template-columns:1fr; }
-        @media (min-width: 768px){ .how-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
-        .how-card{ padding:1rem; display:flex; flex-direction:column; min-height:200px; }
-        .how-step{ width:24px; height:24px; border-radius:999px; display:grid; place-items:center; background:#0f172a; color:#fff; font-size:12px; margin-bottom:.5rem; }
-        .how-card-title{ font-weight:600; margin-bottom:.25rem; }
-        .how-card-sub{ color:var(--muted); font-size:14px; }
-        .how-card-cta{ margin-top:auto; padding-top:.75rem; }
-
         /* App layout (fal-style) */
         .container{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
         .two-col{ display:grid; grid-template-columns: 1fr; gap:24px; }
@@ -714,7 +682,6 @@ export default function Page(){
         .panel-head{ padding:14px 18px; font-weight:600; border-bottom:1px dashed var(--panel-border); display:flex; align-items:center; justify-content:space-between; }
         .panel-body{ padding:12px; border-radius:12px; margin:12px; background:var(--surface); border:1px dashed var(--panel-border); overflow:hidden; }
         .panel-actions{ display:flex; gap:10px; align-items:center; padding:0 12px 16px 12px; }
-        .panel-head.row{ display:flex; align-items:center; justify-content:space-between; }
         .err{ color:#ef4444; font-size:.92rem; margin-right:auto; }
 
         .dropzone{ height:100%; width:100%; display:grid; place-items:center; cursor:pointer; }
@@ -728,7 +695,7 @@ export default function Page(){
 
         .placeholder{ height:100%; display:grid; place-items:center; text-align:center; color:var(--muted); padding:0 18px; }
 
-        /* Compare slider styles that follow theme */
+        /* Compare slider */
         .cmp-wrap{ position:relative; height:100%; width:100%; border-radius:12px; overflow:hidden; background:var(--panel); }
         .cmp-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
         .cmp-divider{ position:absolute; top:0; bottom:0; width:2px; background:#6366f1; }
