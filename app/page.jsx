@@ -2,56 +2,56 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ───────────────────────────── Icons ───────────────────────────── */
+/* ───────────────────────────── Icons (no TS) ───────────────────────────── */
 const Icon = {
-  Upload: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  Wand: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Reset: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Download: (p:any)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Phone: (p:any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
-  Search: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/><path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Plus: (p:any)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Shuffle: (p:any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}><path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  User: (p:any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  CaretDown: (p:any)=>(<svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
-  Bag: (p:any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Truck: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>),
-  Return: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>),
-  Card: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/><path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/></svg>),
-  Lock: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/><path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/></svg>),
-  Sun: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
-  Moon: (p:any)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Upload: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Wand: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Reset: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Download: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Phone: (p)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>),
+  Search: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/><path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Plus: (p)=>(<svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}><path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Shuffle: (p)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}><path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/><path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  User: (p)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  CaretDown: (p)=>(<svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/></svg>),
+  Bag: (p)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/><path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Truck: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/></svg>),
+  Return: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/><path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>),
+  Card: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/><path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/></svg>),
+  Lock: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/><path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/></svg>),
+  Sun: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>),
+  Moon: (p)=>(<svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>),
 };
 
 /* ───────────────────────── Helpers ───────────────────────── */
-const Button = ({ className="", disabled, onClick, children, type="button" }:{
-  className?: string; disabled?: boolean; onClick?: any; children?: any; type?: "button"|"submit";
-}) => (<button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>);
+const Button = ({ className="", disabled, onClick, children, type="button" }) => (
+  <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
+);
 
-function pickResultUrl(data:any){
+function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) return data.image.startsWith("data:") ? data.image : `data:image/png;base64,${data.image}`;
     if (typeof data.url === "string" && data.url.length) return data.url;
   }
   return null;
 }
-function validateImageFile(f:File,maxMB:number){
+function validateImageFile(f,maxMB){
   const MAX = typeof maxMB==="number" ? maxMB : 12;
   if (!f || typeof f!=="object") return "Invalid file.";
-  const type = String((f as any).type||"");
-  const size = Number((f as any).size||0);
+  const type = String(f.type||"");
+  const size = Number(f.size||0);
   if (type.indexOf("image/")!==0) return "Please upload an image file.";
   if (size > MAX*1024*1024) return `Image too large. Please keep it under ${MAX}MB.`;
   return null;
 }
-async function safeReadText(res:Response){ try{return await res.text();}catch(e){return "";} }
-function readImageSize(url:string){
-  return new Promise<{w:number;h:number}>((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve({w: img.naturalWidth, h: img.naturalHeight}); img.onerror=reject; img.src=url; });
+async function safeReadText(res){ try{return await res.text();}catch(e){return "";} }
+function readImageSize(url){
+  return new Promise((resolve,reject)=>{ const img=new Image(); img.onload=()=>resolve({w: img.naturalWidth, h: img.naturalHeight}); img.onerror=reject; img.src=url; });
 }
-async function padToSize(dataUrl:string, targetW:number, targetH:number) {
-  const img = new Image(); img.src = dataUrl; await new Promise(r => (img.onload = r as any));
+async function padToSize(dataUrl, targetW, targetH) {
+  const img = new Image(); img.src = dataUrl; await new Promise(r => (img.onload = r));
   const canvas = document.createElement("canvas"); canvas.width = targetW; canvas.height = targetH;
-  const ctx = canvas.getContext("2d")!; ctx.clearRect(0,0,targetW,targetH);
+  const ctx = canvas.getContext("2d"); ctx.clearRect(0,0,targetW,targetH);
   const scale = Math.min(targetW / img.naturalWidth, targetH / img.naturalHeight);
   const nw = Math.round(img.naturalWidth * scale); const nh = Math.round(img.naturalHeight * scale);
   const dx = Math.floor((targetW - nw) / 2); const dy = Math.floor((targetH - nh) / 2);
@@ -59,7 +59,7 @@ async function padToSize(dataUrl:string, targetW:number, targetH:number) {
 }
 
 /* ───────────────────────── Compare slider ───────────────────────── */
-function CompareSlider({ beforeSrc, afterSrc }:{beforeSrc:string;afterSrc:string}) {
+function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
     <div className="cmp-wrap">
@@ -67,10 +67,7 @@ function CompareSlider({ beforeSrc, afterSrc }:{beforeSrc:string;afterSrc:string
       <img src={beforeSrc} alt="Before" className="cmp-img" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
       <div className="cmp-divider" style={{ left: `${pos}%` }} />
       <div className="cmp-handle" style={{ left: `${pos}%` }}>
-        <div className="cmp-handle-dot">
-          <span className="arrow">&lsaquo;</span>
-          <span className="arrow">&rsaquo;</span>
-        </div>
+        <div className="cmp-handle-dot"><span className="arrow">&lsaquo;</span><span className="arrow">&rsaquo;</span></div>
       </div>
       <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="cmp-range" aria-label="Compare before / after"/>
     </div>
@@ -79,16 +76,15 @@ function CompareSlider({ beforeSrc, afterSrc }:{beforeSrc:string;afterSrc:string
 
 /* ───────────────────────── Upload + Result ───────────────────────── */
 function UploadAndResult(){
-  const [file,setFile]=useState<File|null>(null);
-  const [previewUrl,setPreviewUrl]=useState<string|null>(null);
-  const [resultUrl,setResultUrl]=useState<string|null>(null);
+  const [file,setFile]=useState(null);
+  const [previewUrl,setPreviewUrl]=useState(null);
+  const [resultUrl,setResultUrl]=useState(null);
   const [loading,setLoading]=useState(false);
-  const [error,setError]=useState<string|null>(null);
+  const [error,setError]=useState(null);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const controllerRef=useRef<AbortController|null>(null);
-
+  const controllerRef=useRef(null);
   const [panelH, setPanelH] = useState(640);
 
   useEffect(() => {
@@ -104,7 +100,7 @@ function UploadAndResult(){
     };
   }, [previewUrl, resultUrl]);
 
-  const handleFile = async (f:File) => {
+  const handleFile = async (f) => {
     setError(null);
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
@@ -112,7 +108,7 @@ function UploadAndResult(){
     setFile(f); setResultUrl(null); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
-  const selectFile=(e:React.ChangeEvent<HTMLInputElement>)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
+  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setResultUrl(null); setProgress(0); setError(null); };
 
@@ -142,7 +138,7 @@ function UploadAndResult(){
         }
       } catch { setResultUrl(url); }
       setProgress(100);
-    }catch(e:any){ setError(e?.message||"Something went wrong."); }
+    }catch(e){ setError(e?.message||"Something went wrong."); }
     finally{ setLoading(false); }
   };
 
@@ -151,7 +147,6 @@ function UploadAndResult(){
   return (
     <section id="app" className="container">
       <div className="two-col">
-        {/* Left: Upload */}
         <div className="panel">
           <div className="panel-head">Input</div>
           <div className="panel-body" style={{height: panelH}}>
@@ -173,7 +168,7 @@ function UploadAndResult(){
           <div className="panel-actions">
             {!previewUrl && error && <div className="err">{String(error)}</div>}
             {!previewUrl ? (
-              <Button className="btn-primary" onClick={()=>document.querySelector<HTMLInputElement>('#app input[type=file]')?.click()}>
+              <Button className="btn-primary" onClick={()=>document.querySelector('#app input[type=file]')?.click()}>
                 <Icon.Upload/> Upload
               </Button>
             ) : !loading ? (
@@ -190,7 +185,6 @@ function UploadAndResult(){
           </div>
         </div>
 
-        {/* Right: Result */}
         <div className="panel">
           <div className="panel-head row">
             <span>Groomed dog using hornet</span>
@@ -202,7 +196,7 @@ function UploadAndResult(){
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
-              <CompareSlider beforeSrc={previewUrl!} afterSrc={resultUrl}/>
+              <CompareSlider beforeSrc={previewUrl || ''} afterSrc={resultUrl}/>
             )}
           </div>
         </div>
@@ -212,7 +206,7 @@ function UploadAndResult(){
 }
 
 /* ───────────────────────── Header + Mega ───────────────────────── */
-function MegaSection({ title, children }:{title:string;children:any}) {
+function MegaSection({ title, children }) {
   return (
     <div>
       <p className="jz-sec-title">{title}</p>
@@ -221,22 +215,22 @@ function MegaSection({ title, children }:{title:string;children:any}) {
   );
 }
 
-function SigninHeader({ theme, onToggleTheme }:{theme:'light'|'dark'; onToggleTheme:()=>void}) {
-  const [open, setOpen] = useState<string|null>(null);
+function SigninHeader({ theme, onToggleTheme }) {
+  const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e:KeyboardEvent)=>{ if(e.key==='Escape') close(); };
+    const onKey = (e)=>{ if(e.key==='Escape') close(); };
     const onScroll = () => close();
     window.addEventListener('keydown', onKey);
-    window.addEventListener('scroll', onScroll, { passive: true } as any);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
-  const NavItem = ({ id, href, children }:{id:string;href:string;children:any}) => {
+  const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
       <a
@@ -268,24 +262,20 @@ function SigninHeader({ theme, onToggleTheme }:{theme:'light'|'dark'; onToggleTh
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
-          {/* exact site logo (capsule) */}
           <a href="https://joyzze.com/" className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]" aria-label="Joyzze">
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
                 className="h-[52px] w-auto align-middle"
-                onError={(e:any)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
+                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
               />
             </div>
           </a>
           <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
-                <input
-                  type="text" name="search_query" placeholder="Search..." autoComplete="off" aria-label="Search"
-                  className="jz-input"
-                />
+                <input type="text" name="search_query" placeholder="Search..." autoComplete="off" aria-label="Search" className="jz-input"/>
               </form>
               <Icon.Plus className="search-plus text-[#0f0f0f]/85" />
               <button className="search-btn" aria-label="Search"><Icon.Search/></button>
@@ -526,7 +516,7 @@ function SigninFooter() {
 
         <div className="text-center">
           <div className="logo-capsule">
-            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" onError={(e:any)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
+            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/85">Joy of Grooming Made Easy™</p>
           <div className="mt-4 space-y-1 text-[15px]">
@@ -569,10 +559,10 @@ function SigninFooter() {
 
 /* ───────────────────────── Page ───────────────────────── */
 export default function Page(){
-  const [theme, setTheme] = useState<'light'|'dark'>('light');
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') as 'light'|'dark'|null : null;
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
     setTheme(initial);
     if (initial === 'dark') document.documentElement.classList.add('theme-dark');
@@ -594,45 +584,32 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* ───────── Global styles: theme-safe (no hard-coded whites) ───────── */}
+      {/* Global CSS (unchanged, theme-safe) */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
         :root { --joyzze-teal:#1CD2C1; }
-
         html,body{ font-family:'Josefin Sans',system-ui,-apple-system,Segoe UI,Arial,sans-serif; }
 
-        /* Theme tokens */
         :root{
-          --bg:#ffffff;
-          --text:#0f1115;
-          --muted:#475569;
-          --surface:#ffffff;
-          --panel:#f7f8fa;
-          --border:rgba(0,0,0,.10);
-          --panelBorder:rgba(0,0,0,.12);
+          --bg:#ffffff; --text:#0f1115; --muted:#475569;
+          --surface:#ffffff; --panel:#f7f8fa;
+          --border:rgba(0,0,0,.10); --panelBorder:rgba(0,0,0,.12);
           --heroStart:#0f172a; --heroMid:#1f2937; --heroEnd:#0f172a;
         }
         .theme-dark{
-          --bg:#0f1115;
-          --text:#e5e7eb;
-          --muted:rgba(229,231,235,.78);
-          --surface:#15181f;      /* <— dark surface */
-          --panel:#0e1218;        /* <— panel background */
-          --border:rgba(255,255,255,.10);
-          --panelBorder:rgba(255,255,255,.14);
+          --bg:#0f1115; --text:#e5e7eb; --muted:rgba(229,231,235,.78);
+          --surface:#15181f; --panel:#0e1218;
+          --border:rgba(255,255,255,.10); --panelBorder:rgba(255,255,255,.14);
           --heroStart:#0b1220; --heroMid:#0f172a; --heroEnd:#0b1220;
         }
-
         body{ background:var(--bg); color:var(--text); }
 
-        /* Buttons & cards */
         .btn{ display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; }
         .btn-primary{ background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost{ background:transparent; border:1px solid var(--panelBorder); color:inherit; }
         .card{ background:var(--surface); border-radius:1rem; box-shadow:0 1px 0 var(--panelBorder), 0 10px 25px rgba(0,0,0,.05); }
         .p-6{ padding:1.5rem; } .mb-1{ margin-bottom:.25rem; }
 
-        /* Header shared */
         .jz-input{ height:44px; width:520px; max-width:520px; border:1px solid var(--panelBorder); background:var(--surface); color:inherit; border-radius:.5rem; padding:0 58px 0 16px; outline:none; }
         .search-plus{ position:absolute; right:56px; top:50%; transform:translateY(-50%); opacity:.7; }
         .search-btn{ position:absolute; right:8px; top:50%; transform:translateY(-50%); height:32px; width:32px; display:grid; place-items:center; border-radius:999px; border:1px solid var(--panelBorder); background:var(--surface); }
@@ -658,7 +635,6 @@ export default function Page(){
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
 
-        /* Hero */
         .hero{ background:linear-gradient(180deg,var(--heroStart),var(--heroMid),var(--heroEnd)); color:#fff; }
         .hero-inner{ max-width:1280px; margin:0 auto; padding:2.8rem 1.25rem; display:grid; gap:2rem; grid-template-columns:1fr; align-items:center; }
         @media (min-width:1024px){ .hero-inner{ grid-template-columns:1.1fr .9fr; } }
@@ -670,7 +646,6 @@ export default function Page(){
         .emph{ color:var(--joyzze-teal); }
         .hero-art{ width:100%; aspect-ratio:16/10; border-radius:18px; background: radial-gradient(80% 60% at 70% 35%, rgba(255,255,255,.08), transparent 60%), url('/dog-10.png'); background-size:cover; background-position:center; border:1px solid rgba(255,255,255,.14); box-shadow: 0 24px 60px rgba(0,0,0,.35), inset 0 0 0 9999px rgba(0,0,0,.06); }
 
-        /* Sections */
         .container{ max-width:1280px; margin:0 auto; padding:2rem 1.25rem; }
         .section-title{ text-align:center; font-size:1.6rem; font-weight:700; margin:0 0 .5rem; }
         .section-sub{ text-align:center; color:var(--muted); margin:0 0 1.2rem; }
@@ -681,7 +656,6 @@ export default function Page(){
         .sample{ border-radius:18px; overflow:hidden; border:1px solid var(--panelBorder); background:var(--surface); }
         .sample img{ display:block; width:100%; height:auto; object-fit:cover; }
 
-        /* App panels (DARK MODE FIX HERE) */
         .two-col{ display:grid; grid-template-columns:1fr; gap:24px; }
         @media (min-width:1024px){ .two-col{ grid-template-columns:1fr 1fr; } }
         .panel{ background:var(--panel); border:1px dashed var(--panelBorder); border-radius:16px; }
@@ -701,7 +675,6 @@ export default function Page(){
 
         .placeholder{ height:100%; display:grid; place-items:center; text-align:center; color:var(--muted); padding:0 18px; background:var(--panel); border-radius:12px; }
 
-        /* Compare slider (theme aware) */
         .cmp-wrap{ position:relative; height:100%; width:100%; border-radius:12px; overflow:hidden; background:var(--panel); }
         .cmp-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
         .cmp-divider{ position:absolute; top:0; bottom:0; width:2px; background:#6366f1; }
@@ -709,7 +682,6 @@ export default function Page(){
         .cmp-handle-dot{ width:40px; height:40px; border-radius:999px; background:color-mix(in oklab, var(--surface) 90%, transparent); border:1px solid var(--panelBorder); display:flex; align-items:center; justify-content:center; box-shadow:0 2px 10px rgba(0,0,0,.15); }
         .cmp-range{ position:absolute; left:1%; right:1%; bottom:10px; width:98%; accent-color:#6366f1; }
 
-        /* Footer */
         .promo-ribbon{ background:#0e0e0e; color:#d9d9d9; }
         .promo-grid{ max-width:1280px; margin:0 auto; padding:.75rem 1rem; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
         @media (min-width:768px){ .promo-grid{ grid-template-columns:repeat(4,minmax(0,1fr)); } }
@@ -740,7 +712,6 @@ export default function Page(){
 
         .pref{ background:#000000cc; color:#fff; font-size:.78rem; padding:.45rem .75rem; }
 
-        /* Responsive search widths */
         @media (max-width:1280px){ .jz-input{ width:420px; } }
         @media (max-width:980px){ .jz-input{ display:none; } }
       `}</style>
