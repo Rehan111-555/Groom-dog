@@ -276,7 +276,7 @@ function UploadAndResult(){
     <section id="app" className="container mx-auto px-6 py-16">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          {/* 👉 your requested local logo; unchanged */}
+          {/* logo file you specified */}
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
@@ -396,18 +396,14 @@ function SigninHeader({ theme, onToggleTheme }) {
     return (
       <a
         href={href}
-        className={`jz-item ${active ? 'text-white jz-active' : ''}`}
+        className={`jz-item ${active ? 'jz-active' : ''}`}
         onMouseEnter={() => setOpen(id)}
         onFocus={() => setOpen(id)}
-        onClick={(e)=>{ // open on click too
-          e.preventDefault();
-          setOpen(prev => (prev === id ? null : id));
-        }}
         aria-haspopup="true"
         aria-expanded={active ? 'true' : 'false'}
       >
         <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
           <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
         <span className="jz-underline" />
@@ -416,7 +412,7 @@ function SigninHeader({ theme, onToggleTheme }) {
     );
   };
 
-  const headerStyle = { background: 'var(--header-bg)' };
+  const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
 
   return (
     <header className="w-full z-50">
@@ -424,12 +420,12 @@ function SigninHeader({ theme, onToggleTheme }) {
         {/* Top row */}
         <div style={headerStyle}>
           <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-            <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[var(--header-text)]">
+            <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
               <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
             </a>
 
-            {/* Center logo capsule (unchanged) */}
+            {/* center logo */}
             <a
               href="https://joyzze.com/"
               className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -462,12 +458,12 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              <a className={`hidden sm:grid icon-btn w-9 h-9 rounded-md`} href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
+              <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
               <div className="hidden sm:flex items-center">
-                <a className={`icon-btn w-9 h-9 rounded-md`} href="/account.php" aria-label="Account"><Icon.User /></a>
+                <a className="icon-btn w-9 h-9 rounded-md" href="/account.php" aria-label="Account"><Icon.User /></a>
                 <Icon.CaretDown className="ml-[2px] opacity-80" />
               </div>
-              <a className={`icon-btn w-9 h-9 rounded-md`} href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
+              <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
               <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
@@ -477,7 +473,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* Half-inch gap, same color as header */}
+        {/* fixed half-inch gap, same color */}
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Navbar row */}
@@ -693,7 +689,7 @@ function Samples(){
 }
 
 /* =========================================================
-   FOOTER (unchanged)
+   FOOTER
    ========================================================= */
 function FooterPromoRibbon(){
   return (
@@ -714,7 +710,7 @@ function SigninFooter() {
       <FooterPromoRibbon />
 
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
-        {/* ... same content as before ... */}
+        {/* Links */}
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -729,6 +725,7 @@ function SigninFooter() {
           </ul>
         </div>
 
+        {/* Middle */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
             <img
@@ -751,6 +748,7 @@ function SigninFooter() {
           </div>
         </div>
 
+        {/* Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]">
@@ -821,16 +819,19 @@ export default function Page(){
 
         :root {
           --joyzze-teal: #1CD2C1;
-          /* unified header + navbar colors for LIGHT */
+
+          /* LIGHT theme header + nav */
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
           --nav-bg: var(--header-bg);
+          --nav-text: #2b2f36; /* strong contrast on light */
         }
         .theme-dark {
-          /* unified header + navbar colors for DARK */
+          /* DARK theme header + nav */
           --header-bg: #1c1f26;
           --header-text: #ffffff;
           --nav-bg: var(--header-bg);
+          --nav-text: #d7d7d7;
         }
 
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
@@ -856,11 +857,11 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* NAV + MEGA */
-        .nav-dark{ background: var(--nav-bg); color:#d7d7d7; border-top:1px solid rgba(0,0,0,.12); }
+        /* NAV + MEGA (theme-aware) */
+        .nav-dark{ background: var(--nav-bg); color: var(--nav-text); border-top:1px solid rgba(0,0,0,.12); }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
-        .jz-item:hover { color:inherit; }
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; }
+        .jz-item:hover { color: var(--nav-text); } /* keep color stable */
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
         .jz-underline, .jz-pointer { opacity:0; }
