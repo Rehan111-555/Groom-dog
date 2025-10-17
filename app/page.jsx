@@ -31,7 +31,7 @@ const Icon = {
   ),
   Phone: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0  0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   Search: (p)=>(
@@ -111,7 +111,7 @@ const Button = ({ className = "", disabled, onClick, children, type = "button" }
 );
 const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
-/* ─────────────────── Utility functions ─────────────────── */
+/* ─────────────────── Utility ─────────────────── */
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
@@ -133,7 +133,7 @@ async function safeReadText(res){ try{return await res.text();}catch{ return "";
 function readImageSize(url){
   return new Promise((resolve,reject)=>{
     const img=new Image();
-    img.crossOrigin = 'anonymous';
+    img.crossOrigin='anonymous';
     img.onload=()=>resolve({w: img.naturalWidth, h: img.naturalHeight});
     img.onerror=reject;
     img.src=url;
@@ -276,7 +276,6 @@ function UploadAndResult(){
     <section id="app" className="container mx-auto px-6 py-16">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          {/* logo file you specified */}
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
@@ -391,24 +390,31 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
+  /* nav item: label navigates, caret toggles mega */
   const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
-      <a
-        href={href}
-        className={`jz-item ${active ? 'jz-active' : ''}`}
-        onMouseEnter={() => setOpen(id)}
-        onFocus={() => setOpen(id)}
-        aria-haspopup="true"
-        aria-expanded={active ? 'true' : 'false'}
-      >
-        <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-        </svg>
-        <span className="jz-underline" />
-        <span className="jz-pointer" />
-      </a>
+      <div className="relative flex items-stretch">
+        <a
+          href={href}
+          className="jz-item"
+          onMouseEnter={() => setOpen(id)}
+          onFocus={() => setOpen(id)}
+          aria-haspopup="true"
+          aria-expanded={active ? 'true' : 'false'}
+        >
+          <span>{children}</span>
+        </a>
+        <button
+          className={`jz-caret-btn ${active ? 'open' : ''}`}
+          aria-label={`Open ${children} menu`}
+          aria-expanded={active ? 'true' : 'false'}
+          onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); setOpen(active ? null : id); }}
+          onTouchStart={(e)=>{ e.preventDefault(); e.stopPropagation(); setOpen(active ? null : id); }}
+        >
+          <Icon.CaretDown />
+        </button>
+      </div>
     );
   };
 
@@ -487,8 +493,8 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
                 <NavItem id="combs" href="https://joyzze.com/combs-accessories/">Combs &amp; Accessories</NavItem>
                 <NavItem id="info" href="https://joyzze.com/information/">Information</NavItem>
-                <a href="https://joyzze.com/recycling-sharpening/" className="jz-item">Recycling &amp; Sharpening</a>
-                <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
+                <NavItem id="recycling" href="https://joyzze.com/recycling-sharpening/">Recycling &amp; Sharpening</NavItem>
+                <NavItem id="dist" href="https://joyzze.com/distributor/">Distributor</NavItem>
               </div>
             </div>
 
@@ -710,7 +716,6 @@ function SigninFooter() {
       <FooterPromoRibbon />
 
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
-        {/* Links */}
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -725,7 +730,6 @@ function SigninFooter() {
           </ul>
         </div>
 
-        {/* Middle */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
             <img
@@ -748,7 +752,6 @@ function SigninFooter() {
           </div>
         </div>
 
-        {/* Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]">
@@ -813,21 +816,18 @@ export default function Page(){
       <Samples />
       <SigninFooter />
 
-      {/* ───────── Global styles ───────── */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
         :root {
           --joyzze-teal: #1CD2C1;
 
-          /* LIGHT theme header + nav */
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
           --nav-bg: var(--header-bg);
-          --nav-text: #2b2f36; /* strong contrast on light */
+          --nav-text: #2b2f36;
         }
         .theme-dark {
-          /* DARK theme header + nav */
           --header-bg: #1c1f26;
           --header-text: #ffffff;
           --nav-bg: var(--header-bg);
@@ -857,14 +857,18 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* NAV + MEGA (theme-aware) */
+        /* NAV + MEGA (theme aware) */
         .nav-dark{ background: var(--nav-bg); color: var(--nav-text); border-top:1px solid rgba(0,0,0,.12); }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; }
-        .jz-item:hover { color: var(--nav-text); } /* keep color stable */
-        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
-        .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
-        .jz-underline, .jz-pointer { opacity:0; }
+        .jz-item:hover { color: var(--nav-text); }
+        .jz-caret-btn{
+          display:grid; place-items:center;
+          padding:0 6px; margin-left:2px; border:0; background:transparent; color:var(--nav-text);
+          border-radius:6px; cursor:pointer;
+        }
+        .jz-caret-btn:hover{ background:rgba(0,0,0,.06); }
+        .theme-dark .jz-caret-btn:hover{ background:rgba(255,255,255,.06); }
 
         .jz-mega {
           position: relative;
@@ -875,7 +879,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 60;
+          z-index: 1000; /* ensure above content */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -894,7 +898,6 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
-        /* App dark corrections */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -907,7 +910,6 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
-        /* responsive search width */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
