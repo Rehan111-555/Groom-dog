@@ -323,7 +323,7 @@ function UploadAndResult(){
 
             {/* small thumbnail like SS3 */}
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg白/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -400,7 +400,28 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // 2-inch gap under the top bar
+  const NavItem = ({ id, href, children }) => {
+    const active = open === id;
+    return (
+      <a
+        href={href}
+        className={`jz-item ${active ? 'text-white jz-active' : ''}`}
+        onMouseEnter={() => setOpen(id)}
+        onFocus={() => setOpen(id)}
+        aria-haspopup="true"
+        aria-expanded={active ? 'true' : 'false'}
+      >
+        <span>{children}</span>
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+        </svg>
+        <span className="jz-underline" />
+        <span className="jz-pointer" />
+      </a>
+    );
+  };
+
+  // add ~2 inch gap under the top bar
   const topBarClass = `${theme === 'light' ? 'bg-[#cfcfcf]' : 'bg-[#1c1f26]'} mb-[192px]`;
   const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md';
 
@@ -411,7 +432,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
           {/* Joyzze capsule logo */}
@@ -736,7 +757,7 @@ function SigninFooter() {
         {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w全 max-w-[360px]">
+          <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
