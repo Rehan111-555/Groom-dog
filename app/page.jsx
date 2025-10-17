@@ -182,6 +182,11 @@ function UploadAndResult(){
   const [panelH, setPanelH] = useState(640);
   const ACTION_H = 56;
 
+  // 🔧 alignment refs
+  const leftTopRef = useRef(null);     // left: (invisible title + URL row) block
+  const rightTitleRef = useRef(null);  // right: title "Groomed dog using hornet"
+  const [spacerH, setSpacerH] = useState(0);
+
   useEffect(() => {
     const setH = () => {
       const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
@@ -192,10 +197,28 @@ function UploadAndResult(){
     return () => window.removeEventListener('resize', setH);
   }, []);
 
+  // measure and align both cards' inner boxes
+  useEffect(() => {
+    const measure = () => {
+      const L = leftTopRef.current?.getBoundingClientRect()?.height || 0;
+      const R = rightTitleRef.current?.getBoundingClientRect()?.height || 0;
+      setSpacerH(Math.max(0, Math.round(L - R)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (leftTopRef.current) ro.observe(leftTopRef.current);
+    if (rightTitleRef.current) ro.observe(rightTitleRef.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro.disconnect();
+    };
+  }, [urlText, previewUrl, panelH]);
+
   useEffect(() => {
     return () => {
-      if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
-      if (resultUrl && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
+      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
     };
   }, [previewUrl, resultUrl]);
 
@@ -269,18 +292,21 @@ function UploadAndResult(){
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         {/* Left: Upload (small thumb style) */}
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold invisible">Upload</div>
+          {/* Group the top bits so we can measure as one */}
+          <div ref={leftTopRef}>
+            <div className="mb-2 text-sm font-semibold invisible">Upload</div>
 
-          {/* URL paste row */}
-          <div className="flex items-stretch gap-2 mb-3">
-            <input
-              type="url"
-              value={urlText}
-              onChange={(e)=>setUrlText(e.target.value)}
-              placeholder="Paste image URL…"
-              className="flex-1 min-w-0 px-3 py-2 rounded-md ring-1 ring-[var(--app-border)] bg-[var(--app-surface)] text-inherit outline-none"
-            />
-            <button className="btn btn-ghost" onClick={handleUrlLoad}>Load</button>
+            {/* URL paste row */}
+            <div className="flex items-stretch gap-2 mb-3">
+              <input
+                type="url"
+                value={urlText}
+                onChange={(e)=>setUrlText(e.target.value)}
+                placeholder="Paste image URL…"
+                className="flex-1 min-w-0 px-3 py-2 rounded-md ring-1 ring-[var(--app-border)] bg-[var(--app-surface)] text-inherit outline-none"
+              />
+              <button className="btn btn-ghost" onClick={handleUrlLoad}>Load</button>
+            </div>
           </div>
 
           {/* panel body (same height as result) */}
@@ -329,7 +355,9 @@ function UploadAndResult(){
 
         {/* Right: Result */}
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
+          {/* dynamic spacer makes the right panel's image box start at the same Y as the left */}
+          <div style={{ height: spacerH }} aria-hidden="true" />
+          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
               <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 dark:text-[var(--app-muted)]">
@@ -404,7 +432,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
           </a>
 
           {/* Joyzze capsule logo */}
@@ -627,7 +655,7 @@ function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+      <p className="text-center text-slate-600 dark:text={[ 'var(--app-muted)']} mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
