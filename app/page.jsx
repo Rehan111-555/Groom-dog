@@ -323,7 +323,7 @@ function UploadAndResult(){
 
             {/* small thumbnail like SS3 */}
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg白/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -400,7 +400,7 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // ⬇️ Added a ~2 inch gap (192px) under the top bar
+  // 2-inch gap under the top bar
   const topBarClass = `${theme === 'light' ? 'bg-[#cfcfcf]' : 'bg-[#1c1f26]'} mb-[192px]`;
   const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md';
 
@@ -634,7 +634,7 @@ function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 dark:text={[ 'var(--app-muted)']} mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
@@ -736,7 +736,7 @@ function SigninFooter() {
         {/* Right: Newsletter */}
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w-[360px]">
+          <form className="flex items-stretch w全 max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -830,10 +830,10 @@ export default function Page(){
         .nav-dark{ background:#2f2f2f; color:#d7d7d7; border-top:1px solid rgba(0,0,0,.12); }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; }
-        .jz-item:hover { color:inherit; } /* no hover color edits */
+        .jz-item:hover { color:inherit; }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
-        .jz-underline, .jz-pointer { opacity:0; } /* hide accent hover */
+        .jz-underline, .jz-pointer { opacity:0; }
 
         .jz-mega {
           position: relative;
@@ -853,7 +853,6 @@ export default function Page(){
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
 
-        /* Search / toggle (dark-mode fix) */
         .jz-input { background:#ffffff; color:#0f0f0f; border:0; }
         .search-btn { background:#ffffff; border:1px solid rgba(0,0,0,.15); }
         .search-plus { color:#0f0f0f; opacity:.85; }
@@ -861,9 +860,9 @@ export default function Page(){
         .theme-dark .search-btn { background: var(--app-surface); border:1px solid var(--app-border); color:#e5e7eb; }
         .theme-dark .search-plus { color:#e5e7eb; opacity:.8; }
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
-        .icon-btn:hover{ background: transparent; } /* remove hover bg */
 
-        /* App dark corrections */
+        .icon-btn:hover{ background: transparent; }
+
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -876,7 +875,6 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
-        /* responsive search width */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
