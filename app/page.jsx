@@ -183,8 +183,8 @@ function UploadAndResult(){
   const ACTION_H = 56;
 
   // 🔧 alignment refs
-  const leftTopRef = useRef(null);     // left: (invisible title + URL row) block
-  const rightTitleRef = useRef(null);  // right: title "Groomed dog using hornet"
+  const leftTopRef = useRef(null);
+  const rightTitleRef = useRef(null);
   const [spacerH, setSpacerH] = useState(0);
 
   useEffect(() => {
@@ -197,7 +197,6 @@ function UploadAndResult(){
     return () => window.removeEventListener('resize', setH);
   }, []);
 
-  // measure and align both cards' inner boxes
   useEffect(() => {
     const measure = () => {
       const L = leftTopRef.current?.getBoundingClientRect()?.height || 0;
@@ -324,7 +323,7 @@ function UploadAndResult(){
 
             {/* small thumbnail like SS3 */}
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg:white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -360,7 +359,7 @@ function UploadAndResult(){
           <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)]">
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 dark:text-[var(--app-muted)]">
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
@@ -401,28 +400,8 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  const NavItem = ({ id, href, children }) => {
-    const active = open === id;
-    return (
-      <a
-        href={href}
-        className={`jz-item ${active ? 'text-white jz-active' : ''}`}
-        onMouseEnter={() => setOpen(id)}
-        onFocus={() => setOpen(id)}
-        aria-haspopup="true"
-        aria-expanded={active ? 'true' : 'false'}
-      >
-        <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
-          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-        </svg>
-        <span className="jz-underline" />
-        <span className="jz-pointer" />
-      </a>
-    );
-  };
-
-  const topBarClass = theme === 'light' ? 'bg-[#cfcfcf]' : 'bg-[#1c1f26]';
+  // ⬇️ Added a ~2 inch gap (192px) under the top bar
+  const topBarClass = `${theme === 'light' ? 'bg-[#cfcfcf]' : 'bg-[#1c1f26]'} mb-[192px]`;
   const iconBtn = 'icon-btn grid place-items-center w-9 h-9 rounded-md';
 
   return (
@@ -430,7 +409,7 @@ function SigninHeader({ theme, onToggleTheme }) {
       {/* top row: phone | logo | search + icons */}
       <div className={topBarClass}>
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text:white">
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f] dark:text-white">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
           </a>
@@ -451,7 +430,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
           </a>
 
-          <div className="justify-self-end flex items:center gap-4">
+          <div className="justify-self-end flex items-center gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
@@ -627,19 +606,11 @@ function SigninHeader({ theme, onToggleTheme }) {
    ========================================================= */
 function Hero(){
   return (
-    <header className="relative overflow-hidden text:white"
+    <header className="relative overflow-hidden text-white"
       style={{background: 'linear-gradient(135deg,#2a2f36 0%, #22262c 45%, #1a1e24 100%)'}}>
       <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          {/* REPLACED PILL WITH LOGO IMAGE — only change requested */}
-          <div className="mb-6">
-            <img
-              src="/dog-5.png"
-              alt="Joyzze"
-              className="w-9 h-9 rounded-xl bg-white shadow ring-1 ring-black/10 object-contain p-0.5"
-            />
-          </div>
-
+          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
           <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
             Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span>
           </h1>
@@ -671,7 +642,7 @@ function HowItWorks() {
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
         </Card>
-        <Card className="p-6 flex flex-col min-h:[220px]">
+        <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
@@ -723,7 +694,7 @@ function SigninFooter() {
     <footer className="bg-[#4a4a4a] text-slate-100">
       <FooterPromoRibbon />
 
-      <div className="max-w:[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
         {/* Left: Links */}
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
@@ -787,7 +758,7 @@ function SigninFooter() {
         </div>
         <div className="mt-6 flex items-center justify-end gap-4 opacity-90 text-xs">
           <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg:white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
           <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
