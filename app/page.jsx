@@ -428,7 +428,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
             <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
-              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
+              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
             </a>
 
             {/* center logo */}
@@ -483,11 +483,8 @@ function SigninHeader({ theme, onToggleTheme }) {
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Navbar row */}
-        <nav className="nav-dark">
-          <div
-            className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
-            onMouseLeave={close}   /* close only when leaving the whole nav+dropdown area */
-          >
+        <nav className="nav-dark" onMouseLeave={close}>
+          <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
               <div className="jz-nav flex items-stretch gap-[2px]">
@@ -502,12 +499,10 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
 
             {open && (
-              /* No padding gap → dropdown touches the nav */
-              <div className="absolute left-1/2 -translate-x-1/2 top-full">
+              <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
-                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -533,7 +528,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Clippers */}
                     {open === 'clippers' && (
                       <>
                         <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -557,7 +551,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Blades */}
                     {open === 'blades' && (
                       <>
                         <MegaSection title="A-SERIES | A5 STYLE">
@@ -577,7 +570,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Combs & Accessories */}
                     {open === 'combs' && (
                       <>
                         <MegaSection title="A-SERIES | WIDE COMBS">
@@ -598,7 +590,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Information */}
                     {open === 'info' && (
                       <>
                         <MegaSection title="ABOUT JOYZZE™">
@@ -617,27 +608,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                           <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
                           <li><a href="https://joyzze.com/educational/">Educational</a></li>
                           <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
-                        </MegaSection>
-                      </>
-                    )}
-
-                    {/* Recycling */}
-                    {open === 'recycling' && (
-                      <>
-                        <MegaSection title="RECYCLING & SHARPENING">
-                          <li><a href="https://joyzze.com/recycling-sharpening/">Program Overview</a></li>
-                          <li><a href="https://joyzze.com/recycling-sharpening/#shipping">Shipping</a></li>
-                          <li><a href="https://joyzze.com/recycling-sharpening/#faq">FAQ</a></li>
-                        </MegaSection>
-                      </>
-                    )}
-
-                    {/* Distributor */}
-                    {open === 'dist' && (
-                      <>
-                        <MegaSection title="DISTRIBUTOR">
-                          <li><a href="https://joyzze.com/distributor/">Find a Distributor</a></li>
-                          <li><a href="https://joyzze.com/distributor/#become">Become a Distributor</a></li>
                         </MegaSection>
                       </>
                     )}
@@ -784,7 +754,7 @@ function SigninFooter() {
 
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w=[360px]">
+          <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -909,7 +879,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000; /* ensure over page content */
+          z-index: 1000; /* ensure above content */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -928,7 +898,6 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
-        /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
