@@ -316,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg白/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -428,7 +428,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
             <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
-              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
             </a>
 
             {/* center logo */}
@@ -484,7 +484,10 @@ function SigninHeader({ theme, onToggleTheme }) {
 
         {/* Navbar row */}
         <nav className="nav-dark">
-          <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
+          <div
+            className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
+            onMouseLeave={close}   /* close only when leaving the whole nav+dropdown area */
+          >
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
               <div className="jz-nav flex items-stretch gap-[2px]">
@@ -499,14 +502,8 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
 
             {open && (
-              /* ⬇ moved onMouseLeave here so leaving the panel closes it, not when leaving the top bar */
-              <div
-                className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]"
-                onMouseEnter={()=>setOpen(open)}
-                onMouseLeave={close}
-                role="menu"
-                aria-label="Mega menu"
-              >
+              /* No padding gap → dropdown touches the nav */
+              <div className="absolute left-1/2 -translate-x-1/2 top-full">
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
@@ -624,7 +621,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Recycling & Distributor just link to pages */}
+                    {/* Recycling */}
                     {open === 'recycling' && (
                       <>
                         <MegaSection title="RECYCLING & SHARPENING">
@@ -635,6 +632,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Distributor */}
                     {open === 'dist' && (
                       <>
                         <MegaSection title="DISTRIBUTOR">
@@ -911,7 +909,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000; /* ↑ ensure over page content */
+          z-index: 2000; /* ensure over page content */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
