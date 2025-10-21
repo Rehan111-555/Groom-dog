@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   ICONS (header set + Email + Google + eye + ribbon + theme)
+   ICONS (plain JS — no TS types)
    ================================ */
 const Icon = {
   Phone: (p) => (
@@ -26,7 +26,7 @@ const Icon = {
     </svg>
   ),
   Shuffle: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{ transform: 'rotate(-8deg)' }}>
       <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
@@ -113,7 +113,7 @@ const Icon = {
 };
 
 /* ================================
-   HEADER (mega + theme toggle) + extra spacing before navbar
+   HEADER (with theme toggle + spacing)
    ================================ */
 function MegaSection({ title, children }) {
   return (
@@ -126,10 +126,9 @@ function MegaSection({ title, children }) {
 
 function AppHeader() {
   const [open, setOpen] = useState(null);
-  const [theme, setTheme] = useState('light'); // light | dark
   const close = () => setOpen(null);
 
-  // init theme
+  const [theme, setTheme] = useState('light');
   useEffect(() => {
     const stored = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -137,7 +136,6 @@ function AppHeader() {
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
   }, []);
-
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
@@ -146,7 +144,7 @@ function AppHeader() {
   };
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') close(); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
     const onScroll = () => close();
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -176,9 +174,9 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row */}
+      {/* Top row with logo/tools */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[84px] grid grid-cols-[1fr_auto_1fr] items-center">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
@@ -186,15 +184,15 @@ function AppHeader() {
 
           <a
             href="/"
-            className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
+            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-[52px] w-auto align-middle"
-                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
+                className="h-[58px] w-auto align-middle"
+                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
               />
             </div>
           </a>
@@ -206,7 +204,7 @@ function AppHeader() {
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[240px] max-w-[240px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -215,23 +213,17 @@ function AppHeader() {
               <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
-              <Icon.Shuffle />
-            </a>
+            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
             <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
-                <Icon.User />
-              </a>
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account"><Icon.User /></a>
               <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
-              <Icon.Bag />
-            </a>
+            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-            {/* Theme toggle */}
+            {/* Theme pill */}
             <button
               onClick={toggleTheme}
-              className="ml-2 inline-flex items-center gap-2 px-2 py-1.5 rounded-md border border-black/10 hover:bg-black/5 text-[13px]"
+              className="ml-1 inline-flex items-center gap-2 h-9 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px]"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
@@ -241,11 +233,11 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* EXTRA SPACE between logo row and navbar */}
-      <div className="h-4" />
+      {/* Added space + subtle divider between logo row & navbar */}
+      <div className="h-6 bg-[var(--header-top-bg)] shadow-[0_10px_20px_-18px_rgba(0,0,0,.35)]" />
 
       {/* Navbar */}
-      <nav className="bg-[var(--nav-bg)] text-[var(--nav-fg)] border-t border-black/10 transition-colors" onMouseLeave={close}>
+      <nav className="bg-[var(--nav-bg)] text-[var(--nav-fg)] transition-colors" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -265,6 +257,7 @@ function AppHeader() {
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
+                  {/* ALL */}
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
@@ -290,6 +283,7 @@ function AppHeader() {
                     </>
                   )}
 
+                  {/* CLIPPERS */}
                   {open === 'clippers' && (
                     <>
                       <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -313,6 +307,7 @@ function AppHeader() {
                     </>
                   )}
 
+                  {/* BLADES */}
                   {open === 'blades' && (
                     <>
                       <MegaSection title="A-SERIES | A5 STYLE">
@@ -332,6 +327,7 @@ function AppHeader() {
                     </>
                   )}
 
+                  {/* COMBS */}
                   {open === 'combs' && (
                     <>
                       <MegaSection title="A-SERIES | WIDE COMBS">
@@ -352,6 +348,7 @@ function AppHeader() {
                     </>
                   )}
 
+                  {/* INFO */}
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT JOYZZE™">
@@ -384,7 +381,7 @@ function AppHeader() {
 }
 
 /* ================================
-   FOOTER (full version)
+   FOOTER
    ================================ */
 function FooterPromoRibbon(){
   return (
@@ -428,7 +425,7 @@ function AppFooter() {
         </div>
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w/full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
+          <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -453,7 +450,7 @@ function AppFooter() {
 }
 
 /* ================================
-   AUTH PAGE — template layout; teal primary; right image panel
+   AUTH PAGE
    ================================ */
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -495,7 +492,7 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Split like the template */}
+      {/* Split layout */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
         {/* LEFT: form */}
         <section className="flex items-center justify-center px-6 py-12">
@@ -555,7 +552,7 @@ export default function AuthPage() {
           </div>
         </section>
 
-        {/* RIGHT: image panel (contain = no crop) */}
+        {/* RIGHT: image panel — no crop */}
         <aside className="hidden lg:flex items-center justify-center bg-[#0b0c2e] relative">
           <Image
             src="/dog-7.png"
@@ -570,16 +567,16 @@ export default function AuthPage() {
 
       <AppFooter />
 
-      {/* Global & theme styles */}
+      {/* Global styles (theme vars, nav polish, promo, google btn) */}
       <style jsx global>{`
         :root {
           --joyzze-teal: #1CD2C1;
 
-          /* THEME VARS: LIGHT (default) */
+          /* LIGHT THEME */
           --page-bg: #ffffff;
           --page-fg: #0f172a;
 
-          --header-top-bg: #e9eef3;     /* light gray-blue */
+          --header-top-bg: #edf2f7;
           --header-top-fg: #0f0f0f;
 
           --nav-bg: #2f2f2f;
@@ -600,8 +597,8 @@ export default function AuthPage() {
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; color: var(--page-fg); background: var(--page-bg); }
 
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:var(--nav-fg); text-decoration:none; border-radius:6px 6px 0 0; }
-        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
+        .jz-item { padding:16px 22px; position:relative; line-height:1; color:var(--nav-fg); text-decoration:none; border-radius:8px 8px 0 0; }
+        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f6fafa,#eef6f6); }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
@@ -609,17 +606,36 @@ export default function AuthPage() {
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
         .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
 
-        .jz-mega { position: relative; border: 1px solid rgba(28,210,193,.85); border-top-width: 3px; background: rgba(255,255,255,.96); backdrop-filter: blur(1px); box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12); border-radius: 2px; overflow: hidden; z-index: 60; }
-        .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
-        .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
+        .jz-mega {
+          position: relative;
+          border: 1px solid rgba(28,210,193,.85);
+          border-top-width: 3px;
+          background: rgba(255,255,255,.96);
+          backdrop-filter: blur(1px);
+          box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
+          border-radius: 2px;
+          overflow: hidden;
+          z-index: 60;
+        }
+        .jz-mega-bg {
+          position:absolute; inset:0;
+          background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%);
+          opacity:.14; pointer-events:none; border-radius:2px;
+        }
+        .jz-sec-title {
+          margin-bottom:12px; color:#2f2f2f; font-weight:700;
+          text-transform:uppercase; letter-spacing:.06em; font-size:14px;
+        }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
+
         .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
+        /* Promo ribbon */
         .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row{ max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item{ display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
@@ -627,6 +643,7 @@ export default function AuthPage() {
         @media (max-width: 900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
         @media (max-width: 560px){ .promo-row{ grid-template-columns:1fr; } }
 
+        /* Google button */
         .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
       `}</style>
