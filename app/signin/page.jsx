@@ -148,7 +148,7 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* single row: phone | logo | search+icons */}
+      {/* single row */}
       <div className="bg-[#bdbdbd]">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
@@ -377,7 +377,6 @@ function AppFooter() {
       <FooterPromoRibbon />
 
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
-        {/* Links */}
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -392,7 +391,6 @@ function AppFooter() {
           </ul>
         </div>
 
-        {/* Center logo + contact */}
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
             <img
@@ -409,30 +407,18 @@ function AppFooter() {
           </div>
         </div>
 
-        {/* Newsletter */}
         <div className="lg:justify-self-end">
-          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">
-            SUBSCRIBE TO<br/>OUR NEWSLETTER
-          </h4>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
-            <input
-              type="email"
-              placeholder="Email address..."
-              className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"
-            />
-            <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">
-              ✉
-            </button>
+            <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
+            <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
         </div>
       </div>
 
-      {/* Series row */}
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="text-sm text-white/80">
-            © {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap
-          </div>
+          <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
           <div className="flex items-center gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -444,19 +430,17 @@ function AppFooter() {
         </div>
       </div>
 
-      {/* Bottom bar */}
-      <div className="bg-black/80 text-white text-xs px-4 py-2">
-        Manage Website Data Collection Preferences
-      </div>
+      <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
     </footer>
   );
 }
 
 /* ================================
-   AUTH PAGE — template layout; teal primary; right artwork image
+   AUTH PAGE — template layout; teal primary; right image panel
    ================================ */
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
+  the
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -497,7 +481,7 @@ export default function AuthPage() {
 
       {/* Split like the template */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-2">
-        {/* LEFT: template form */}
+        {/* LEFT: form */}
         <section className="flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-[520px]">
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-[#5a54f9]/10 text-[#5a54f9] mb-6">
@@ -621,18 +605,16 @@ export default function AuthPage() {
           </div>
         </section>
 
-        {/* RIGHT: exact template artwork via image */}
+        {/* RIGHT: fill area with your image */}
         <aside className="hidden lg:block relative">
           <Image
-            src="/img/auth-art-template.png"  // <-- put file in /public/img/
-            alt=""
+            src="/dog-7.png"           // <<-- place file in /public/dog-7.png
+            alt="Promotional artwork"
             fill
             sizes="50vw"
             priority
             className="object-cover"
           />
-          {/* optional vignette to blend */}
-          <div className="absolute inset-0 pointer-events-none" style={{background: 'radial-gradient(120% 120% at 30% 30%, transparent 0 70%, rgba(0,0,0,.08) 80%, rgba(0,0,0,.18) 100%)'}}/>
         </aside>
       </div>
 
