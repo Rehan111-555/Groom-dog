@@ -6,7 +6,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   ICONS (header set + Email + Google + eye + ribbon icons)
+   ICONS (header set + Email + Google + eye + ribbon + theme)
    ================================ */
 const Icon = {
   Phone: (p) => (
@@ -99,10 +99,21 @@ const Icon = {
       <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
+  Sun: (p) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/>
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+    </svg>
+  ),
+  Moon: (p) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.6"/>
+    </svg>
+  ),
 };
 
 /* ================================
-   HEADER (with distinct mega links + hover color)
+   HEADER (mega + theme toggle) + extra spacing before navbar
    ================================ */
 function MegaSection({ title, children }) {
   return (
@@ -115,7 +126,24 @@ function MegaSection({ title, children }) {
 
 function AppHeader() {
   const [open, setOpen] = useState(null);
+  const [theme, setTheme] = useState('light'); // light | dark
   const close = () => setOpen(null);
+
+  // init theme
+  useEffect(() => {
+    const stored = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = stored || (prefersDark ? 'dark' : 'light');
+    setTheme(initial);
+    document.documentElement.classList.toggle('theme-dark', initial === 'dark');
+  }, []);
+
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.classList.toggle('theme-dark', next === 'dark');
+    try { localStorage.setItem('joyzze-theme', next); } catch {}
+  };
 
   useEffect(() => {
     const onKey = (e)=>{ if(e.key==='Escape') close(); };
@@ -149,9 +177,9 @@ function AppHeader() {
   return (
     <header className="w-full sticky top-0 z-50">
       {/* Top row */}
-      <div className="bg-[#bdbdbd]">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
+      <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[84px] grid grid-cols-[1fr_auto_1fr] items-center">
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
@@ -199,12 +227,25 @@ function AppHeader() {
             <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
               <Icon.Bag />
             </a>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="ml-2 inline-flex items-center gap-2 px-2 py-1.5 rounded-md border border-black/10 hover:bg-black/5 text-[13px]"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
+              <span className="hidden md:inline">{theme === 'dark' ? 'Dark' : 'Light'}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* dark navbar + centered mega panel */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
+      {/* EXTRA SPACE between logo row and navbar */}
+      <div className="h-4" />
+
+      {/* Navbar */}
+      <nav className="bg-[var(--nav-bg)] text-[var(--nav-fg)] border-t border-black/10 transition-colors" onMouseLeave={close}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -219,7 +260,6 @@ function AppHeader() {
             </div>
           </div>
 
-          {/* Distinct mega content per tab */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
@@ -388,7 +428,7 @@ function AppFooter() {
         </div>
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
+          <form className="flex items-stretch w/full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -452,7 +492,7 @@ export default function AuthPage() {
   }
 
   return (
-    <main className="min-h-screen flex flex-col bg-white">
+    <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
       {/* Split like the template */}
@@ -463,7 +503,7 @@ export default function AuthPage() {
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-[#5a54f9]/10 text-[#5a54f9] mb-6">
               <div className="font-black text-xl leading-none">✦</div>
             </div>
-            <h1 className="text-[34px] font-semibold text-slate-900 tracking-wide mb-2">
+            <h1 className="text-[34px] font-semibold tracking-wide mb-2">
               {mode === 'login' ? 'Welcome back !' : 'Create your account'}
             </h1>
             <p className="text-[14px] text-slate-500 mb-8">
@@ -515,29 +555,52 @@ export default function AuthPage() {
           </div>
         </section>
 
-        {/* RIGHT: image panel */}
-        <aside className="hidden lg:block relative">
+        {/* RIGHT: image panel (contain = no crop) */}
+        <aside className="hidden lg:flex items-center justify-center bg-[#0b0c2e] relative">
           <Image
             src="/dog-7.png"
             alt="Promotional artwork"
             fill
-            sizes="40vw"
+            sizes="50vw"
             priority
-            className="object-cover"
+            className="object-contain p-6"
           />
         </aside>
       </div>
 
       <AppFooter />
 
-      {/* Global & auth styles */}
+      {/* Global & theme styles */}
       <style jsx global>{`
-        :root { --joyzze-teal: #1CD2C1; }
+        :root {
+          --joyzze-teal: #1CD2C1;
+
+          /* THEME VARS: LIGHT (default) */
+          --page-bg: #ffffff;
+          --page-fg: #0f172a;
+
+          --header-top-bg: #e9eef3;     /* light gray-blue */
+          --header-top-fg: #0f0f0f;
+
+          --nav-bg: #2f2f2f;
+          --nav-fg: #d7d7d7;
+        }
+        .theme-dark {
+          --page-bg: #0b0c10;
+          --page-fg: #e6e7ea;
+
+          --header-top-bg: #121418;
+          --header-top-fg: #e6e7ea;
+
+          --nav-bg: #1b1d22;
+          --nav-fg: #d7d7d7;
+        }
+
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap');
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; color: var(--page-fg); background: var(--page-bg); }
 
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color:var(--nav-fg); text-decoration:none; border-radius:6px 6px 0 0; }
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
