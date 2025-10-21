@@ -521,7 +521,7 @@ export default function AuthPage() {
             src="/dog-7.png"
             alt="Promotional artwork"
             fill
-            sizes="50vw"
+            sizes="40vw"
             priority
             className="object-cover"
           />
