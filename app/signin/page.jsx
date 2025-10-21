@@ -1,61 +1,60 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   ICONS (header set + Email + Google G + ribbon icons)
+   ICONS
    ================================ */
 const Icon = {
-  Phone: (p)=>(
+  Phone: (p:any)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Search: (p)=>(
+  Search: (p:any)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Plus: (p)=>(
+  Plus: (p:any)=>(
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Shuffle: (p)=>(
+  Shuffle: (p:any)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}>
       <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  User: (p)=>(
+  User: (p:any)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  CaretDown: (p)=>(
+  CaretDown: (p:any)=>(
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Bag: (p)=>(
+  Bag: (p:any)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Mail: (p)=>(
+  Mail: (p:any)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  /* Official Google “G” */
-  GoogleG: (p)=>(
+  GoogleG: (p:any)=>(
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" {...p}>
       <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.18-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.25h2.9c1.7-1.57 2.7-3.88 2.7-6.6z"/>
       <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.2l-2.9-2.25c-.8.54-1.82.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H1.9v2.33C3.38 15.98 6 18 9 18z"/>
@@ -63,27 +62,26 @@ const Icon = {
       <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
     </svg>
   ),
-  /* Ribbon icons */
-  Truck: (p)=>(
+  Truck: (p:any)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M3 7h10v7H3zM13 11h4l4 4v3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
       <circle cx="8" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
       <circle cx="18" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
-  Return: (p)=>(
+  Return: (p:any)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 9v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
       <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
-  Card: (p)=>(
+  Card: (p:any)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
-  Lock: (p)=>(
+  Lock: (p:any)=>(
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6"/>
@@ -92,9 +90,9 @@ const Icon = {
 };
 
 /* ================================
-   HEADER (with distinct mega links + hover color)
+   HEADER + FIXED MEGA
    ================================ */
-function MegaSection({ title, children }) {
+function MegaSection({ title, children }:any) {
   return (
     <div>
       <p className="jz-sec-title">{title}</p>
@@ -104,18 +102,27 @@ function MegaSection({ title, children }) {
 }
 
 function AppHeader() {
-  const [open, setOpen] = useState(null);
+  const [open, setOpen] = useState<string|null>(null);
+  const [megaTop, setMegaTop] = useState<number>(0);
+  const navRef = useRef<HTMLDivElement|null>(null);
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') close(); };
-    const onScroll = () => close();
-    window.addEventListener('keydown', onKey);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('scroll', onScroll); };
+    function computeTop(){
+      const r = navRef.current?.getBoundingClientRect();
+      const top = (r?.bottom ?? 0) + window.scrollY + 8; // 8px gap, matches design
+      setMegaTop(top);
+    }
+    computeTop();
+    window.addEventListener('resize', computeTop, { passive: true });
+    window.addEventListener('scroll', computeTop, { passive: true });
+    return () => {
+      window.removeEventListener('resize', computeTop);
+      window.removeEventListener('scroll', computeTop);
+    };
   }, []);
 
-  const NavItem = ({ id, href, children }) => {
+  const NavItem = ({ id, href, children }:any) => {
     const active = open === id;
     return (
       <a
@@ -137,8 +144,8 @@ function AppHeader() {
   };
 
   return (
-    <header className="w-full sticky top-0 z-50">
-      {/* single row: phone | logo | search+icons */}
+    <header className="w-full sticky top-0 z-[999]">
+      {/* top strip */}
       <div className="bg-[#bdbdbd]">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2 text-[#0f0f0f]">
@@ -156,7 +163,7 @@ function AppHeader() {
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
                 className="h-[52px] w-auto align-middle"
-                onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';}}
+                onError={(e:any)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
               />
             </div>
           </a>
@@ -193,9 +200,9 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* dark navbar + centered mega panel */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={close}>
-        <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
+      {/* navbar */}
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10">
+        <div ref={navRef} className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
@@ -208,154 +215,146 @@ function AppHeader() {
               <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
             </div>
           </div>
-
-          {/* Distinct mega content per tab (matches inner app) */}
-          {open && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={()=>setOpen(open)}>
-              <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
-                <div className="jz-mega-bg" />
-                <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {open === 'all' && (
-                    <>
-                      <MegaSection title="CLIPPERS">
-                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
-                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
-                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
-                      </MegaSection>
-                      <MegaSection title="BLADES">
-                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
-                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
-                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
-                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
-                      </MegaSection>
-                      <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
-                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
-                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'clippers' && (
-                    <>
-                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
-                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
-                      </MegaSection>
-                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
-                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
-                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="D-SERIES CLIPPERS">
-                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
-                        <li className="mt-2" />
-                        <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
-                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="MINI TRIMMERS | M-SERIES">
-                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'blades' && (
-                    <>
-                      <MegaSection title="A-SERIES | A5 STYLE">
-                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
-                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS">
-                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'combs' && (
-                    <>
-                      <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
-                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
-                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
-                      </MegaSection>
-                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | STINGER & HORNET">
-                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="CASES">
-                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
-                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'info' && (
-                    <>
-                      <MegaSection title="ABOUT JOYZZE™">
-                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
-                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
-                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
-                      </MegaSection>
-                      <MegaSection title="SUPPORT">
-                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
-                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
-                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
-                      </MegaSection>
-                      <MegaSection title="DOCS">
-                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
-                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
-                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
-                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
-                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
+
+      {/* FIXED mega panel; pointer stays open while hovering it */}
+      {open && (
+        <div
+          onMouseEnter={()=>setOpen(open)}
+          onMouseLeave={()=>setOpen(null)}
+          style={{ position:'fixed', left:'50%', transform:'translateX(-50%)', top: megaTop, zIndex: 1000 }}
+        >
+          <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
+            <div className="jz-mega-bg" />
+            <div className="relative grid grid-cols-3 gap-14 p-8">
+              {open === 'all' && (
+                <>
+                  <MegaSection title="CLIPPERS">
+                    <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
+                    <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
+                    <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
+                    <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
+                    <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
+                  </MegaSection>
+                  <MegaSection title="BLADES">
+                    <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
+                    <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                    <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
+                    <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
+                    <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
+                  </MegaSection>
+                  <MegaSection title="COMBS & ACCESSORIES">
+                    <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
+                    <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
+                    <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
+                    <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
+                  </MegaSection>
+                </>
+              )}
+
+              {open === 'clippers' && (
+                <>
+                  <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
+                    <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
+                    <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
+                  </MegaSection>
+                  <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                    <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
+                    <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
+                  </MegaSection>
+                  <MegaSection title="D-SERIES CLIPPERS">
+                    <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
+                    <li className="mt-2" />
+                    <li className="jz-sec-title !mb-2">PARTS</li>
+                    <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
+                    <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
+                  </MegaSection>
+                  <MegaSection title="MINI TRIMMERS | M-SERIES">
+                    <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
+                  </MegaSection>
+                </>
+              )}
+
+              {open === 'blades' && (
+                <>
+                  <MegaSection title="A-SERIES | A5 STYLE">
+                    <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
+                  </MegaSection>
+                  <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                    <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
+                    <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
+                    <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
+                  </MegaSection>
+                  <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                    <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
+                  </MegaSection>
+                  <MegaSection title="M-SERIES | MINI TRIMMERS">
+                    <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
+                  </MegaSection>
+                </>
+              )}
+
+              {open === 'combs' && (
+                <>
+                  <MegaSection title="A-SERIES | WIDE COMBS">
+                    <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
+                    <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
+                    <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
+                  </MegaSection>
+                  <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                    <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                  </MegaSection>
+                  <MegaSection title="C-SERIES | STINGER & HORNET">
+                    <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                  </MegaSection>
+                  <MegaSection title="CASES">
+                    <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
+                    <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
+                  </MegaSection>
+                </>
+              )}
+
+              {open === 'info' && (
+                <>
+                  <MegaSection title="ABOUT JOYZZE™">
+                    <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
+                    <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
+                    <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
+                  </MegaSection>
+                  <MegaSection title="SUPPORT">
+                    <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
+                    <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
+                    <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
+                  </MegaSection>
+                  <MegaSection title="DOCS">
+                    <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
+                    <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
+                    <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
+                    <li><a href="https://joyzze.com/educational/">Educational</a></li>
+                    <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
+                  </MegaSection>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
 
 /* ================================
-   FOOTER with exact black promo ribbon
+   FOOTER
    ================================ */
 function FooterPromoRibbon(){
   return (
     <div className="promo-wrap">
       <div className="promo-row">
-        <div className="promo-item">
-          <Icon.Truck className="promo-ico" />
-          <span>Free Shipping on orders over $350</span>
-        </div>
-        <div className="promo-item">
-          <Icon.Return className="promo-ico" />
-          <span>Hassle Free Returns</span>
-        </div>
-        <div className="promo-item">
-          <Icon.Card className="promo-ico" />
-          <span>All Major Cards Accepted</span>
-        </div>
-        <div className="promo-item !border-r-0">
-          <Icon.Lock className="promo-ico" />
-          <span>100% Safe &amp; Secure Checkout</span>
-        </div>
+        <div className="promo-item"><Icon.Truck className="promo-ico"/><span>Free Shipping on orders over $350</span></div>
+        <div className="promo-item"><Icon.Return className="promo-ico"/><span>Hassle Free Returns</span></div>
+        <div className="promo-item"><Icon.Card className="promo-ico"/><span>All Major Cards Accepted</span></div>
+        <div className="promo-item !border-r-0"><Icon.Lock className="promo-ico"/><span>100% Safe &amp; Secure Checkout</span></div>
       </div>
     </div>
   );
@@ -365,7 +364,6 @@ function AppFooter() {
   return (
     <footer className="bg-[#4a4a4a] text-slate-100 mt-auto">
       <FooterPromoRibbon />
-
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
@@ -380,10 +378,9 @@ function AppFooter() {
             <li><a href="https://joyzze.com/sitemap.php" className="hover:underline">View All</a></li>
           </ul>
         </div>
-
         <div className="text-center">
           <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
-            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
+            <img src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png" alt="Joyzze" className="h-9 w-auto" onError={(e:any)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}/>
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
           <div className="mt-6 space-y-1 text-[15px] text-slate-100">
@@ -391,7 +388,6 @@ function AppFooter() {
             <div><a href="mailto:info@joyzze.com" className="hover:underline">info@joyzze.com</a></div>
           </div>
         </div>
-
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
@@ -400,7 +396,6 @@ function AppFooter() {
           </form>
         </div>
       </div>
-
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
@@ -414,20 +409,20 @@ function AppFooter() {
           </div>
         </div>
       </div>
-
       <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
     </footer>
   );
 }
 
 /* ================================
-   AUTH PAGE
+   AUTH PAGE (template-style split)
    ================================ */
 const BRAND = { charcoal: '#2f2f31' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState<'login'|'signup'>('login');
+  const [remember, setRemember] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -442,7 +437,7 @@ export default function AuthPage() {
     } finally { setLoading(false); }
   }
 
-  async function handleCredentials(e) {
+  async function handleCredentials(e:any) {
     e.preventDefault();
     setLoading(true);
     try {
@@ -466,132 +461,120 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[#f2f3f5]">
       <AppHeader />
 
-      {/* Auth card */}
-      <div className="flex-1 flex items-center justify-center px-4 py-10">
-        <div className="w-full max-w-md">
-          <section className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-xl px-3 py-2 shadow">
-                <span className="text-white text-lg leading-none">ʝ</span>
+      {/* TEMPLATE-STYLE TWO COLUMN */}
+      <section className="flex-1 grid md:grid-cols-2">
+        {/* LEFT: form block with wide padding like template */}
+        <div className="bg-white px-8 md:px-16 py-12 md:py-20">
+          <div className="max-w-[460px]">
+            <div className="mb-10">
+              <div className="w-10 h-10 rounded-lg grid place-items-center bg-[#6842ff]/10 text-[#6842ff] font-black mb-6">
+                ✦
               </div>
-              <div>
-                <h1 className="text-[18px] font-semibold text-slate-800">Joyzze — Dog Groomer</h1>
-                <p className="text-xs text-slate-500">
-                  {mode === 'login' ? 'Sign in to continue' : 'Sign up to get started'}
-                </p>
-              </div>
+              <h1 className="text-3xl md:text-[34px] font-extrabold text-[#0f0f0f]">Welcome back !</h1>
+              <p className="mt-2 text-[15px] text-[#6b6b6b]">Enter to get unlimited access to data &amp; information.</p>
             </div>
 
-            <form onSubmit={handleCredentials} className="mb-4">
+            <form onSubmit={handleCredentials}>
               {mode === 'signup' && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full h-11 rounded-xl px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-blue-600"
-                    required
-                  />
+                  <label className="block text-sm font-medium text-[#1f1f1f] mb-1">Name <span className="text-[#6842ff]">*</span></label>
+                  <input value={name} onChange={(e)=>setName(e.target.value)} required
+                         className="w-full h-12 rounded-xl px-4 ring-1 ring-[#d2d2d7] focus:ring-2 focus:ring-[#6842ff] outline-none" />
                 </div>
               )}
+
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full h-11 rounded-xl px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-blue-600"
-                  required
-                />
+                <label className="block text-sm font-medium text-[#1f1f1f] mb-1">Email <span className="text-[#6842ff]">*</span></label>
+                <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} required
+                       className="w-full h-12 rounded-xl px-4 ring-1 ring-[#d2d2d7] focus:ring-2 focus:ring-[#6842ff] outline-none" />
               </div>
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full h-11 rounded-xl px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-blue-600"
-                  required
-                />
+
+              <div className="mb-2">
+                <label className="block text-sm font-medium text-[#1f1f1f] mb-1">Password <span className="text-[#6842ff]">*</span></label>
+                <div className="relative">
+                  <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required
+                         className="w-full h-12 rounded-xl px-4 pr-10 ring-1 ring-[#d2d2d7] focus:ring-2 focus:ring-[#6842ff] outline-none" />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9aa0a6]">👁‍🗨</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-[13px] text-[#585c62] mb-4">
+                <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+                  <input type="checkbox" checked={remember} onChange={()=>setRemember(!remember)} className="accent-[#6842ff]" />
+                  Remember me
+                </label>
+                <a className="text-[#6842ff] hover:underline" href="/forgot">Forgot your password ?</a>
               </div>
 
               <button
                 type="submit"
-                className="w-full h-11 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition flex items-center justify-center gap-2"
-                style={{ backgroundColor: BRAND.charcoal }}
+                className="w-full h-12 rounded-xl text-white font-medium shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 bg-[#6842ff]"
                 disabled={loading}
               >
-                <Icon.Mail className="text-white" />
-                {loading
-                  ? 'Connecting…'
-                  : mode === 'login'
-                  ? 'Continue with Email'
-                  : 'Create Account'}
+                {loading ? 'Connecting…' : (mode === 'login' ? 'Log In' : 'Create Account')}
               </button>
+
+              <div className="my-5 flex items-center">
+                <div className="flex-1 border-t border-[#e5e7eb]"></div>
+                <p className="mx-4 text-sm text-[#7a7f86]">Or, Login with</p>
+                <div className="flex-1 border-t border-[#e5e7eb]"></div>
+              </div>
+
+              <button
+                type="button"
+                className="google-btn w-full h-12 rounded-xl font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
+                onClick={handleGoogle}
+                disabled={loading}
+                aria-label="Continue with Google"
+              >
+                <Icon.GoogleG />
+                <span>Sign up with google</span>
+              </button>
+
+              <p className="mt-6 text-[13px] text-[#585c62]">
+                Don’t have an account ?{' '}
+                <button
+                  type="button"
+                  className="text-[#6842ff] hover:underline"
+                  onClick={()=>setMode(mode==='login'?'signup':'login')}
+                >
+                  {mode==='login' ? 'Register here' : 'Back to login'}
+                </button>
+              </p>
             </form>
-
-            <div className="my-4 flex items-center">
-              <div className="flex-1 border-t border-gray-300"></div>
-              <p className="mx-4 text-sm text-gray-500">OR</p>
-              <div className="flex-1 border-t border-gray-300"></div>
-            </div>
-
-            <button
-              className="google-btn w-full h-11 rounded-xl font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
-              onClick={handleGoogle}
-              disabled={loading}
-              aria-label="Continue with Google"
-            >
-              <Icon.GoogleG />
-              <span>{loading ? 'Connecting…' : (mode === 'login' ? 'Continue with Google' : 'Sign Up with Google')}</span>
-            </button>
-
-            <p className="mt-4 text-xs text-slate-500 text-center">
-              {mode === 'login' ? (
-                <>
-                  Don’t have an account?{' '}
-                  <button
-                    type="button"
-                    onClick={() => setMode('signup')}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Sign up
-                  </button>
-                </>
-              ) : (
-                <>
-                  Already have an account?{' '}
-                  <button
-                    type="button"
-                    onClick={() => setMode('login')}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Sign in
-                  </button>
-                </>
-              )}
-            </p>
-          </section>
+          </div>
         </div>
-      </div>
+
+        {/* RIGHT: illustration panel */}
+        <div className="hidden md:block relative">
+          <div className="absolute inset-0"
+               style={{
+                 background:
+                   'linear-gradient(135deg,#6a52ff 0%,#3d2bff 40%,#242a7a 100%)'
+               }} />
+          {/* Optional: drop in your artwork */}
+          <img
+            src="/login-artwork.jpg"
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover mix-blend-multiply opacity-90 pointer-events-none"
+            onError={(e:any)=>{ e.currentTarget.style.display='none'; }}
+          />
+        </div>
+      </section>
 
       <AppFooter />
 
-      {/* Shared global styles (hover color + mega + promo ribbon + Google btn) */}
+      {/* Global styles */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
-        :root { --joyzze-teal: #1CD2C1; }
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        :root { --joyzze-teal:#1CD2C1; }
+        html,body{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
 
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
-        /* Hover highlight (teal text & subtle light panel like reference) */
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
         .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
-
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
@@ -606,71 +589,29 @@ export default function AuthPage() {
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 60;
         }
-        .jz-mega-bg {
-          position:absolute; inset:0;
-          background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%);
-          opacity:.14; pointer-events:none; border-radius:2px;
-        }
-
-        .jz-sec-title {
-          margin-bottom:12px; color:#2f2f2f; font-weight:700;
-          text-transform:uppercase; letter-spacing:.06em; font-size:14px;
-        }
+        .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
+        .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; }
-        .jz-list a:hover { color:#111; text-decoration:none; }
 
-        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-        @media (max-width: 1280px){ .jz-input { width: 480px !important; } }
-        @media (max-width: 1100px){ .jz-input { width: 360px !important; } }
-        @media (max-width: 980px){ .jz-input { display:none; } }
+        .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
+        @media (max-width:1280px){ .jz-input{ width:480px !important; } }
+        @media (max-width:1100px){ .jz-input{ width:360px !important; } }
+        @media (max-width:980px){ .jz-input{ display:none; } }
 
-        /* Promo ribbon — black bar, teal separators, teal bottom rule (exact look) */
-        .promo-wrap{
-          background:#0a0a0a;
-          border-bottom:2px solid var(--joyzze-teal);
-        }
-        .promo-row{
-          max-width:1280px;
-          margin:0 auto;
-          padding:10px 16px;
-          display:grid;
-          grid-template-columns: repeat(4, minmax(0,1fr));
-          gap:0;
-          color:#f5f5f5;
-          font-size:16px;
-          line-height:1.25;
-        }
-        .promo-item{
-          display:flex;
-          align-items:center;
-          gap:12px;
-          padding:8px 18px;
-          border-right:1px solid var(--joyzze-teal);
-        }
-        .promo-ico{
-          color:#e8e8e8;
-          opacity:.95;
-          flex:0 0 auto;
-        }
-        @media (max-width: 900px){
-          .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; }
-          .promo-item{ border-right:0; }
-        }
-        @media (max-width: 560px){
-          .promo-row{ grid-template-columns:1fr; }
-        }
+        /* Promo ribbon */
+        .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
+        .promo-row{ max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
+        .promo-item{ display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
+        .promo-ico{ color:#e8e8e8; opacity:.95; flex:0 0 auto; }
+        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
+        @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
 
-        /* Google button — brand-correct (white background, colored G) */
-        .google-btn{
-          background:#fff;
-          color:#3c4043;
-          border:1px solid #dadce0;
-        }
+        /* Google button */
+        .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
       `}</style>
     </main>
