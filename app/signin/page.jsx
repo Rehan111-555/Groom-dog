@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -452,7 +453,7 @@ function AppFooter() {
 }
 
 /* ================================
-   AUTH PAGE — matches template; teal primary
+   AUTH PAGE — template layout; teal primary; right artwork image
    ================================ */
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -499,7 +500,6 @@ export default function AuthPage() {
         {/* LEFT: template form */}
         <section className="flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-[520px]">
-            {/* small brand chip like the template */}
             <div className="inline-flex items-center justify-center w-11 h-11 rounded-lg bg-[#5a54f9]/10 text-[#5a54f9] mb-6">
               <div className="font-black text-xl leading-none">✦</div>
             </div>
@@ -621,9 +621,18 @@ export default function AuthPage() {
           </div>
         </section>
 
-        {/* RIGHT: geometric illustration closer to template */}
+        {/* RIGHT: exact template artwork via image */}
         <aside className="hidden lg:block relative">
-          <div className="auth-art absolute inset-0" />
+          <Image
+            src="/img/auth-art-template.png"  // <-- put file in /public/img/
+            alt=""
+            fill
+            sizes="50vw"
+            priority
+            className="object-cover"
+          />
+          {/* optional vignette to blend */}
+          <div className="absolute inset-0 pointer-events-none" style={{background: 'radial-gradient(120% 120% at 30% 30%, transparent 0 70%, rgba(0,0,0,.08) 80%, rgba(0,0,0,.18) 100%)'}}/>
         </aside>
       </div>
 
@@ -668,35 +677,6 @@ export default function AuthPage() {
         /* Google button */
         .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
-
-        /* Right illustration — geometric composition closer to template */
-        .auth-art{
-          background:
-            radial-gradient(1100px 900px at 90% 10%, #2f1fb9 0%, #2c1a95 40%, #1a1675 60%, #15124e 100%),
-            linear-gradient(135deg, #2b2cae 0%, #4b40e6 55%, #14124d 100%);
-        }
-        .auth-art::before{
-          content:'';
-          position:absolute; inset:0;
-          background:
-            radial-gradient(120px 120px at 18% 16%, #ffd34d 0 60%, transparent 65%),
-            radial-gradient(110px 90px at 86% 18%, rgba(114,98,255,.6) 0 60%, transparent 65%),
-            radial-gradient(110px 110px at 75% 46%, #00e1c9 0 55%, transparent 60%),
-            radial-gradient(170px 120px at 82% 86%, #2bd3ff 0 55%, transparent 60%),
-            radial-gradient(70px 70px at 62% 78%, rgba(114,98,255,.7) 0 55%, transparent 60%);
-          filter: blur(1px);
-          opacity:.95;
-        }
-        .auth-art::after{
-          /* a few geometric bars / accents */
-          content:'';
-          position:absolute; inset:0;
-          background:
-            linear-gradient(0deg, transparent 60%, rgba(255,255,255,.12) 60%, rgba(255,255,255,.12) 62%, transparent 62%) center/70% 14% no-repeat,
-            linear-gradient(90deg, rgba(255,255,255,.08) 0 2px, transparent 2px) 60% 35%/120px 2px no-repeat,
-            radial-gradient(6px 6px at 58% 58%, rgba(255,255,255,.45) 0 60%, transparent 62%) no-repeat;
-          opacity:.6;
-        }
       `}</style>
     </main>
   );
