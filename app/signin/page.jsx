@@ -219,13 +219,14 @@ function AppHeader() {
 
           {/* Right tools */}
           <div className="justify-self-end flex items-center gap-4">
-            <div className="relative hidden md:block">
+            {/* Added ml-10 to keep a visible gap from centered logo; widened search on large screens */}
+            <div className="relative hidden md:block ml-10">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[240px] max-w-[240px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[540px] max-w-[540px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -988,20 +989,19 @@ export default function AuthPage() {
         .jz-input:focus {
           box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
         }
+
+        /* Search width responsive so it stays clear of the centered logo */
+        @media (max-width: 1450px) {
+          .jz-input { width: 480px !important; max-width: 480px !important; }
+        }
         @media (max-width: 1280px) {
-          .jz-input {
-            width: 420px !important;
-          }
+          .jz-input { width: 420px !important; max-width: 420px !important; }
         }
         @media (max-width: 1100px) {
-          .jz-input {
-            width: 320px !important;
-          }
+          .jz-input { width: 360px !important; max-width: 360px !important; }
         }
         @media (max-width: 980px) {
-          .jz-input {
-            display: none;
-          }
+          .jz-input { display: none; }
         }
 
         /* Promo ribbon */
@@ -1053,7 +1053,7 @@ export default function AuthPage() {
           width: 100%;
           height: 100%;
           min-height: 640px;
-          background: #000; /* only shows while image loads */
+          background: #000;
         }
         .auth-hero img {
           display: block;
