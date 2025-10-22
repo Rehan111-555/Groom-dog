@@ -9,55 +9,49 @@ import { useRouter } from 'next/navigation';
    ================================ */
 const Icon = {
   Phone: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path
-        d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   Search: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9" />
-      <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
+      <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
   Plus: (p) => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
   Shuffle: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{ transform: 'rotate(-8deg)' }}>
-      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}>
+      <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   User: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   CaretDown: (p) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
+      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
   Bag: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
+      <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
   Mail: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
-      <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+      <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   GoogleG: (p) => (
@@ -69,34 +63,34 @@ const Icon = {
     </svg>
   ),
   Truck: (p) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M3 7h10v7H3zM13 11h4l4 4v3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
-      <circle cx="8" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6" />
-      <circle cx="18" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M3 7h10v7H3zM13 11h4l4 4v3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
+      <circle cx="8" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
+      <circle cx="18" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
   Return: (p) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 9v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M4 9v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+      <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   Card: (p) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.6"/>
+      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
   Lock: (p) => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
-      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.6" />
-      <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6" />
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.7"/>
+      <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
     </svg>
   ),
   Sun: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.7"/>
+      <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
   Moon: (p) => (
@@ -119,16 +113,16 @@ function MegaSection({ title, children }) {
 }
 
 function AppHeader() {
-  const [open, setOpen] = useState(null);
-  const [theme, setTheme] = useState('light');
+  const [open, setOpen] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
+    const saved = typeof window !== 'undefined' ? (localStorage.getItem('joyzze-theme') as 'light' | 'dark' | null) : null;
     const initial = saved || 'light';
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
 
-    const onKey = (e) => e.key === 'Escape' && setOpen(null);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(null);
     const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -145,7 +139,7 @@ function AppHeader() {
     document.documentElement.classList.toggle('theme-dark', next === 'dark');
   };
 
-  const NavItem = ({ id, href, children }) => {
+  const NavItem = ({ id, href, children }: { id: string; href: string; children: React.ReactNode }) => {
     const active = open === id;
     return (
       <a
@@ -158,7 +152,7 @@ function AppHeader() {
       >
         <span>{children}</span>
         <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
-          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
         <span className="jz-underline" />
         <span className="jz-pointer" />
@@ -168,15 +162,13 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row: phone | centered logo | tools (search etc.) */}
+      {/* Top row — 3 columns: phone | centered logo | right tools with compact search */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center gap-x-16 md:gap-x-20">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[88px] grid grid-cols-[1fr_auto_1fr] items-center">
           {/* Left: phone */}
-          <div className="flex items-center gap-3 justify-self-start">
-            <a href="tel:(877) 456-9993" className="flex items-center gap-2">
-              <Icon.Phone className="opacity-85" />
-              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-            </a>
+          <div className="justify-self-start flex items-center gap-2">
+            <Icon.Phone />
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
           {/* Center: logo */}
@@ -185,35 +177,34 @@ function AppHeader() {
             className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-2.5 rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-[58px] w-auto align-middle"
+                className="h-[54px] w-auto align-middle"
                 onError={(e) => {
-                  e.currentTarget.outerHTML =
-                    '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                  (e.currentTarget as HTMLImageElement).outerHTML =
+                    '<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* Right: tools (search, icons, theme) */}
-          <div className="justify-self-end flex items-center gap-4">
-            {/* Responsive, self-limiting search width so it never pushes the logo */}
+          {/* Right: tools (compact search 220px) */}
+          <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[42px] w-[220px] max-w-[220px] rounded-md bg-white pl-9 pr-9 text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
               </form>
-              <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-              <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Plus className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
             <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
@@ -257,6 +248,7 @@ function AppHeader() {
             </div>
           </div>
 
+          {/* Mega content */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
@@ -435,7 +427,8 @@ function AppFooter() {
               alt="Joyzze"
               className="h-9 w-auto"
               onError={(e) => {
-                e.currentTarget.outerHTML = '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
+                (e.currentTarget as HTMLImageElement).outerHTML =
+                  '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
               }}
             />
           </div>
@@ -447,10 +440,8 @@ function AppFooter() {
         </div>
 
         <div className="lg:justify-self-end">
-          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">
-            SUBSCRIBE TO<br/>OUR NEWSLETTER
-          </h4>
-          <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e) => e.preventDefault()}>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
+          <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e)=>e.preventDefault()}>
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -479,11 +470,11 @@ function AppFooter() {
 /* ================================
    AUTH PAGE
    ================================ */
-const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
+const BRAND = { teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -500,7 +491,7 @@ export default function AuthPage() {
     }
   }
 
-  async function handleCredentials(e) {
+  async function handleCredentials(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
@@ -526,76 +517,50 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
+      {/* Body: left form / right hero */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
+          {/* LEFT */}
           <section className="px-6 sm:px-10 lg:px-14 pt-14 pb-16">
             <div className="max-w-[580px]">
               <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-6">
-                <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
+                <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain"/>
               </div>
 
               <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
-              <p className="text-[15px] text-[var(--muted-fg)] mb-8">
-                Enter to get unlimited access to data &amp; information.
-              </p>
+              <p className="text-[15px] text-[var(--muted-fg)] mb-8">Enter to get unlimited access to data &amp; information.</p>
 
               <form onSubmit={handleCredentials} className="mb-4">
                 {mode === 'signup' && (
                   <div className="mb-4">
                     <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      required
-                    />
+                    <input type="text" value={name} onChange={(e)=>setName(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" required/>
                   </div>
                 )}
 
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                    placeholder="Enter your mail address"
-                    required
-                  />
+                  <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" placeholder="Enter your mail address" required/>
                 </div>
 
                 <div className="mb-6">
                   <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
                   <div className="relative">
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter password"
-                      required
-                    />
+                    <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" placeholder="Enter password" required/>
                     <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
                     </svg>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <label className="inline-flex items-center gap-2 text-[13px]">
-                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
-                      Remember me
+                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked/> Remember me
                     </label>
                     <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
-                  style={{ backgroundColor: BRAND.teal }}
-                  disabled={loading}
-                >
+                <button type="submit" className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition" style={{backgroundColor: BRAND.teal}} disabled={loading}>
                   {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
                 </button>
               </form>
@@ -606,33 +571,24 @@ export default function AuthPage() {
                 <div className="flex-1 border-t border-gray-300" />
               </div>
 
-              <button
-                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
-                onClick={handleGoogle}
-                disabled={loading}
-                aria-label="Continue with Google"
-              >
-                <Icon.GoogleG />
-                <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
+              <button className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3" onClick={handleGoogle} disabled={loading} aria-label="Continue with Google">
+                <Icon.GoogleG /><span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
               <p className="mt-4 text-xs text-[var(--muted-fg)]">
                 {mode === 'login' ? (
-                  <>Don’t have an account?{' '}
-                    <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline">Register here</button>
-                  </>
+                  <>Don’t have an account? <button type="button" onClick={()=>setMode('signup')} className="text-[#6b6bff] hover:underline">Register here</button></>
                 ) : (
-                  <>Already have an account?{' '}
-                    <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline">Sign in</button>
-                  </>
+                  <>Already have an account? <button type="button" onClick={()=>setMode('login')} className="text-[#6b6bff] hover:underline">Sign in</button></>
                 )}
               </p>
             </div>
           </section>
 
+          {/* RIGHT */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
-              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
+              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover"/>
             </div>
           </section>
         </div>
@@ -644,35 +600,35 @@ export default function AuthPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
-        :root {
-          --joyzze-teal: #1cd2c1;
-          --page-bg: #f4f6f9;
-          --page-fg: #0e0f11;
-          --muted-fg: #6b7280;
-          --header-top-bg: #e9eff5;
-          --header-top-fg: #0e0f11;
+        :root{
+          --joyzze-teal:#1cd2c1;
+          --page-bg:#f4f6f9;
+          --page-fg:#0e0f11;
+          --muted-fg:#6b7280;
+          --header-top-bg:#e9eff5;
+          --header-top-fg:#0e0f11;
         }
-        html.theme-dark {
-          --page-bg: #0f1115;
-          --page-fg: #f4f7fb;
-          --muted-fg: #a3a9b6;
-          --header-top-bg: #151922;
-          --header-top-fg: #f4f7fb;
+        html.theme-dark{
+          --page-bg:#0f1115;
+          --page-fg:#f4f7fb;
+          --muted-fg:#a3a9b6;
+          --header-top-bg:#151922;
+          --header-top-fg:#f4f7fb;
         }
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        html,body{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
 
-        /* NAV + MEGA */
-        .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
-        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5, #eef6f6); }
+        /* Header nav styles */
+        .jz-nav,.jz-item,.jz-mega,.jz-sec-title,.jz-list,.jz-input{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
+        .jz-nav{ font-weight:600; font-size:15px; letter-spacing:.01em; }
+        .jz-item{ padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
+        .jz-item:hover{ color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
         .caret{ margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
-        .jz-item.jz-active .caret, .jz-item:hover .caret{ transform:translateY(1px) rotate(180deg); opacity:1; }
+        .jz-item.jz-active .caret,.jz-item:hover .caret{ transform:translateY(1px) rotate(180deg); opacity:1; }
         .jz-underline{ position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer{ position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline, .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer{ opacity:1; }
+        .jz-item.jz-active .jz-underline,.jz-item:hover .jz-underline,.jz-item.jz-active .jz-pointer,.jz-item:hover .jz-pointer{ opacity:1; }
 
-        .jz-mega{ position:relative; border:1px solid rgba(28,210,193,.85); border-top-width:3px; background:rgba(255,255,255,.96); backdrop-filter:blur(1px);
-          box-shadow:0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12); border-radius:2px; overflow:hidden; z-index:60; }
+        .jz-mega{ position:relative; border:1px solid rgba(28,210,193,.85); border-top-width:3px; background:rgba(255,255,255,.96); backdrop-filter:blur(1px); box-shadow:0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12); border-radius:2px; overflow:hidden; z-index:60; }
         .jz-mega-bg{ position:absolute; inset:0; background-image:radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title{ margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
         .jz-list{ list-style:none; padding:0; margin:0; }
@@ -681,8 +637,9 @@ export default function AuthPage() {
         .jz-list a{ color:#3f3f3f; font-size:15px; }
         .jz-list a:hover{ color:#111; text-decoration:none; }
 
-        /* Search input: flexible width so it never crowds the centered logo */
-        .jz-input{ width: clamp(260px, 32vw, 480px); max-width: 100%; }
+        .jz-input:focus{ box-shadow:0 0 0 3px rgba(0,0,0,.06); }
+        @media (max-width:1280px){ .jz-input{ width:220px !important; } }
+        @media (max-width:980px){ .jz-input{ display:none; } }
 
         /* Promo ribbon */
         .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
@@ -692,7 +649,7 @@ export default function AuthPage() {
         @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
         @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
 
-        /* Auth hero */
+        /* Auth right side hero */
         .auth-hero{ position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .auth-hero img{ display:block; }
 
