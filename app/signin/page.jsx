@@ -291,20 +291,22 @@ function MegaColumn({ title, items }) {
 }
 
 /* ===========================================================
-   HEADER
+   HEADER (logo absolutely centered)
    =========================================================== */
 function AppHeader() {
   const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
 
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState('light'); // default: light
+
   useEffect(() => {
+    // Use stored theme if user has toggled; otherwise force light
     const stored = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
-    const prefersDark = typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initial = stored || (prefersDark ? 'dark' : 'light');
+    const initial = stored || 'light';
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
   }, []);
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
@@ -343,17 +345,21 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row — with extra space between columns */}
+      {/* Top row — absolute centered logo */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center gap-x-12 lg:gap-x-20">
-          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
-            <Icon.Phone className="opacity-85" />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-          </a>
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] relative flex items-center">
+          {/* Left tools */}
+          <div className="flex-1 min-w-0 flex items-center gap-3">
+            <a href="tel:(877) 456-9993" className="flex items-center gap-2">
+              <Icon.Phone className="opacity-85" />
+              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+            </a>
+          </div>
 
+          {/* Centered logo (absolute) */}
           <a
             href="/"
-            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+            className="absolute left-1/2 -translate-x-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
@@ -366,7 +372,8 @@ function AppHeader() {
             </div>
           </a>
 
-          <div className="justify-self-end flex items-center gap-4">
+          {/* Right tools */}
+          <div className="flex-1 min-w-0 flex items-center justify-end gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
@@ -591,7 +598,7 @@ export default function AuthPage() {
                 <div className="relative">
                   <input type={showPw?'text':'password'} value={password} onChange={(e)=>setPassword(e.target.value)} required placeholder="Enter password" className="w-full h-[48px] rounded-lg border border-slate-300 px-3 pr-12 outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"/>
                   <button type="button" onClick={()=>setShowPw(v=>!v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700" aria-label={showPw?'Hide password':'Show password'}>
-                    {showPw ? <Icon.EyeOff/> : <Icon.Eye/>}
+                    <Icon.Eye />
                   </button>
                 </div>
               </div>
@@ -620,15 +627,15 @@ export default function AuthPage() {
           </div>
         </section>
 
-        {/* RIGHT: image panel (object-contain so it doesn’t crop) */}
-        <aside className="hidden lg:flex items-center justify-center bg-[#0b0c2e] relative">
+        {/* RIGHT: image panel — white background, no padding (no dark lines), contain to avoid cropping */}
+        <aside className="hidden lg:flex items-center justify-center bg-white relative">
           <Image
             src="/dog-7.png"
             alt="Promotional artwork"
             fill
             sizes="50vw"
             priority
-            className="object-contain p-6"
+            className="object-contain"
           />
         </aside>
       </div>
