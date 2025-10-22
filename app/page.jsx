@@ -177,7 +177,6 @@ function UploadAndResult(){
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const [urlText, setUrlText] = useState("");
-
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
@@ -317,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg:white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -365,7 +364,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA MENU
+   HEADER + NAV + MEGA MENU (match Sign-in)
    ========================================================= */
 function MegaSection({ title, children }) {
   return (
@@ -391,40 +390,32 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  /* nav item: label navigates, caret toggles mega */
+  // item shows underline/pointer and opens on hover like Sign-in
   const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
-      <div
-        className="relative flex items-stretch"
-        onMouseEnter={() => setOpen(id)}   /* hover anywhere on the item */
+      <a
+        href={href}
+        className={`jz-item ${active ? 'jz-active' : ''}`}
+        onMouseEnter={() => setOpen(id)}
         onFocus={() => setOpen(id)}
+        aria-haspopup="true"
+        aria-expanded={active ? 'true' : 'false'}
       >
-        <a
-          href={href}
-          className="jz-item"
-          aria-haspopup="true"
-          aria-expanded={active ? 'true' : 'false'}
-        >
-          <span>{children}</span>
-        </a>
-        <button
-          className={`jz-caret-btn ${active ? 'open' : ''}`}
-          aria-label={`Open ${children} menu`}
-          aria-expanded={active ? 'true' : 'false'}
-          onClick={(e)=>{ e.preventDefault(); e.stopPropagation(); setOpen(active ? null : id); }}
-          onTouchStart={(e)=>{ e.preventDefault(); e.stopPropagation(); setOpen(active ? null : id); }}
-        >
-          <Icon.CaretDown />
-        </button>
-      </div>
+        <span>{children}</span>
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
+          <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+        </svg>
+        <span className="jz-underline" />
+        <span className="jz-pointer" />
+      </a>
     );
   };
 
   const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
 
   return (
-    <header className="w-full z-[9999] relative">
+    <header className="w-full z-50">
       <div className="sticky top-0">
         {/* Top row */}
         <div style={headerStyle}>
@@ -482,14 +473,14 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* fixed half-inch gap, same color */}
+        {/* gap */}
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Navbar row */}
-        <nav className="nav-dark relative z-[2000]">
+        <nav className="nav-dark">
           <div
             className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
-            onMouseLeave={close}  /* close only when leaving the whole nav + dropdown area */
+            onMouseLeave={close}
           >
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -507,9 +498,9 @@ function SigninHeader({ theme, onToggleTheme }) {
             {open && (
               <div
                 className="absolute left-1/2 -translate-x-1/2 top-full"
-                onMouseEnter={()=>setOpen(open)} /* keep open while hovering dropdown */
+                onMouseEnter={()=>setOpen(open)}
               >
-                <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px] relative z-[3000]">
+                <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
                     {/* All Products */}
@@ -697,23 +688,25 @@ function HowItWorks() {
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary btn-step">Upload now</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Upload now</a>
           </div>
         </Card>
+
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary btn-step">Start grooming</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
         </Card>
+
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary btn-step">Try the slider</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Try the slider</a>
           </div>
         </Card>
       </div>
@@ -893,29 +886,23 @@ export default function Page(){
         body{ background: var(--app-bg); color:#0f1115; }
         .theme-dark body{ color:#e5e7eb; }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; box-sizing:border-box; }
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
-        .btn-step { width:160px; justify-content:center; padding-left:0; padding-right:0; }
-
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* NAV + MEGA (theme aware) */
-        .nav-dark{ background: var(--nav-bg); color: var(--nav-text); border-top:1px solid rgba(0,0,0,.12); }
+        /* NAV + MEGA – visually match Sign-in */
+        .nav-dark{ background: var(--nav-bg); color: var(--nav-text); border-top:1px solid rgba(0,0,0,.12); position:relative; z-index:60; }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; }
-        .jz-item:hover { color: var(--nav-text); }
-        .jz-caret-btn{
-          display:grid; place-items:center;
-          padding:0 6px; margin-left:2px; border:0; background:transparent; color:var(--nav-text);
-          border-radius:6px; cursor:pointer;
-        }
-        .jz-caret-btn:hover{ background:rgba(0,0,0,.06); }
-        .theme-dark .jz-caret-btn:hover{ background:rgba(255,255,255,.06); }
+        .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
+        .caret { opacity:.75; transition:transform .18s ease, opacity .18s ease; }
+        .jz-item:hover .caret,
+        .jz-item.jz-active .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
-        header { position: relative; z-index: 9999; }
-        .nav-dark { position: relative; z-index: 2000; }
-        .jz-mega { z-index: 3000; }
+        .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
+        .jz-item:hover .jz-underline, .jz-item.jz-active .jz-underline,
+        .jz-item:hover .jz-pointer,   .jz-item.jz-active .jz-pointer { opacity:1; }
 
         .jz-mega {
           position: relative;
@@ -926,13 +913,14 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
+          z-index: 2000; /* over hero/sections */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
         .jz-list { list-style:none; padding:0; margin:0; }
         .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
         .jz-list li:last-child { border-bottom:0; }
-        .jz-list a { color:#3f3f3f; font-size:15px; }
+        .jz-list a { color:#3f3f3f; font-size:15px; text-decoration:none; }
 
         /* Search / toggle (theme aware) */
         .jz-input { background:#ffffff; color:#0f0f0f; border:0; }
