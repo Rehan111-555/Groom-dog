@@ -12,10 +12,7 @@ const Icon = {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path
         d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>
   ),
@@ -62,13 +59,7 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path
-        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
   GoogleG: (p) => (
@@ -159,16 +150,16 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row (grid: left phone | centered logo | right search+icons) */}
+      {/* Top row (3-column grid) */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center relative">
-          {/* Phone (left) */}
+          {/* Left: phone */}
           <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
-            <Icon.Phone className="opacity-85" />
+            <svg width="18" height="18" viewBox="0 0 24 24" className="opacity-85"><path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </a>
 
-          {/* Centered logo */}
+          {/* Center: logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
@@ -179,26 +170,19 @@ function AppHeader() {
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
                 className="h-[58px] w-auto align-middle"
-                onError={(e) => {
-                  e.currentTarget.outerHTML =
-                    '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
-                }}
+                onError={(e) => { e.currentTarget.outerHTML = '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'; }}
               />
             </div>
           </a>
 
-          {/* Right controls (search + icons) */}
+          {/* Right: search + icons */}
           <div className="justify-self-end flex items-center gap-4">
-            {/* search compact */}
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
-                  type="text"
-                  name="search_query"
-                  placeholder="Search..."
+                  type="text" name="search_query" placeholder="Search..."
                   className="jz-input h-[44px] w-[240px] max-w-[240px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
-                  aria-label="Search"
-                  autoComplete="off"
+                  autoComplete="off" aria-label="Search"
                 />
               </form>
               <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
@@ -219,7 +203,12 @@ function AppHeader() {
             </a>
 
             <button
-              onClick={toggleTheme}
+              onClick={() => {
+                const next = theme === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+                localStorage.setItem('joyzze-theme', next);
+                document.documentElement.classList.toggle('theme-dark', next === 'dark');
+              }}
               className="ml-1 inline-flex items-center gap-2 h-9 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px]"
               aria-label="Toggle theme"
             >
@@ -230,10 +219,10 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* ABSOLUTE 1-INCH GAP between top row and navbar */}
+      {/* 1-INCH GAP BETWEEN TOP ROW AND NAV */}
       <div style={{ height: '1in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* NAVBAR (unchanged) */}
+      {/* NAVBAR */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
@@ -261,22 +250,10 @@ function FooterPromoRibbon() {
   return (
     <div className="promo-wrap">
       <div className="promo-row">
-        <div className="promo-item">
-          <Icon.Truck className="promo-ico" />
-          <span>Free Shipping on orders over $350</span>
-        </div>
-        <div className="promo-item">
-          <Icon.Return className="promo-ico" />
-          <span>Hassle Free Returns</span>
-        </div>
-        <div className="promo-item">
-          <Icon.Card className="promo-ico" />
-          <span>All Major Cards Accepted</span>
-        </div>
-        <div className="promo-item !border-r-0">
-          <Icon.Lock className="promo-ico" />
-          <span>100% Safe &amp; Secure Checkout</span>
-        </div>
+        <div className="promo-item"><Icon.Truck className="promo-ico" /><span>Free Shipping on orders over $350</span></div>
+        <div className="promo-item"><Icon.Return className="promo-ico" /><span>Hassle Free Returns</span></div>
+        <div className="promo-item"><Icon.Card className="promo-ico" /><span>All Major Cards Accepted</span></div>
+        <div className="promo-item !border-r-0"><Icon.Lock className="promo-ico" /><span>100% Safe &amp; Secure Checkout</span></div>
       </div>
     </div>
   );
@@ -319,9 +296,7 @@ function AppFooter() {
         </div>
 
         <div className="lg:justify-self-end">
-          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">
-            SUBSCRIBE TO<br/>OUR NEWSLETTER
-          </h4>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
           <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e) => e.preventDefault()}>
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
@@ -378,8 +353,7 @@ export default function AuthPage() {
     try {
       if (mode === 'signup') {
         await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password }),
         });
       }
@@ -398,7 +372,7 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Body */}
+      {/* Page body */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
@@ -409,73 +383,46 @@ export default function AuthPage() {
               </div>
 
               <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
-              <p className="text-[15px] text-[var(--muted-fg)] mb-8">
-                Enter to get unlimited access to data &amp; information.
-              </p>
+              <p className="text-[15px] text-[var(--muted-fg)] mb-8">Enter to get unlimited access to data &amp; information.</p>
 
               <form onSubmit={handleCredentials} className="mb-4">
                 {mode === 'signup' && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">
-                      Name <span className="text-[#6b6bff]">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
+                    <input type="text" value={name} onChange={(e) => setName(e.target.value)}
                       className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      required
-                    />
+                      required />
                   </div>
                 )}
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">
-                    Email <span className="text-[#6b6bff]">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                  <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
+                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                     className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                    placeholder="Enter your mail address"
-                    required
-                  />
+                    placeholder="Enter your mail address" required />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-1">
-                    Password <span className="text-[#6b6bff]">*</span>
-                  </label>
+                  <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
                   <div className="relative">
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
                       className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter password"
-                      required
-                    />
+                      placeholder="Enter password" required />
                     <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
                     </svg>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <label className="inline-flex items-center gap-2 text-[13px]">
-                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
-                      Remember me
+                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked /> Remember me
                     </label>
                     <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
-                  style={{ backgroundColor: BRAND.teal }}
-                  disabled={loading}
-                >
+                <button type="submit" className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
+                  style={{ backgroundColor: BRAND.teal }} disabled={loading}>
                   {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
                 </button>
               </form>
@@ -486,37 +433,22 @@ export default function AuthPage() {
                 <div className="flex-1 border-t border-gray-300" />
               </div>
 
-              <button
-                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
-                onClick={handleGoogle}
-                disabled={loading}
-                aria-label="Continue with Google"
-              >
-                <Icon.GoogleG />
-                <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
+              <button className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
+                onClick={handleGoogle} disabled={loading} aria-label="Continue with Google">
+                <Icon.GoogleG /><span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
               <p className="mt-4 text-xs text-[var(--muted-fg)]">
                 {mode === 'login' ? (
-                  <>
-                    Don’t have an account?{' '}
-                    <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline">
-                      Register here
-                    </button>
-                  </>
+                  <>Don’t have an account? <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline">Register here</button></>
                 ) : (
-                  <>
-                    Already have an account?{' '}
-                    <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline">
-                      Sign in
-                    </button>
-                  </>
+                  <>Already have an account? <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline">Sign in</button></>
                 )}
               </p>
             </div>
           </section>
 
-          {/* RIGHT: hero image full-bleed */}
+          {/* RIGHT: hero image */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -530,67 +462,37 @@ export default function AuthPage() {
       {/* GLOBAL STYLES */}
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
+        :root{
+          --joyzze-teal:#1cd2c1; --page-bg:#f4f6f9; --page-fg:#0e0f11; --muted-fg:#6b7280;
+          --header-top-bg:#e9eff5; --header-top-fg:#0e0f11;
+        }
+        html.theme-dark{
+          --page-bg:#0f1115; --page-fg:#f4f7fb; --muted-fg:#a3a9b6;
+          --header-top-bg:#151922; --header-top-fg:#f4f7fb;
+        }
+        html,body{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
 
-        :root {
-          --joyzze-teal: #1cd2c1;
-          --page-bg: #f4f6f9;
-          --page-fg: #0e0f11;
-          --muted-fg: #6b7280;
-          --header-top-bg: #e9eff5;
-          --header-top-fg: #0e0f11;
-        }
-        html.theme-dark {
-          --page-bg: #0f1115;
-          --page-fg: #f4f7fb;
-          --muted-fg: #a3a9b6;
-          --header-top-bg: #151922;
-          --header-top-fg: #f4f7fb;
-        }
-        html, body {
-          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-        }
+        .jz-nav,.jz-item,.jz-input{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
+        .jz-nav{ font-weight:600; font-size:15px; letter-spacing:.01em; }
+        .jz-item{ padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0;}
+        .jz-item:hover{ color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
+        .caret{ margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
+        .jz-item.jz-active .caret,.jz-item:hover .caret{ transform:translateY(1px) rotate(180deg); opacity:1; }
+        .jz-underline{ position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease;}
+        .jz-pointer{ position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease;}
+        .jz-item.jz-active .jz-underline,.jz-item:hover .jz-underline,.jz-item.jz-active .jz-pointer,.jz-item:hover .jz-pointer{ opacity:1; }
 
-        /* Header nav styles */
-        .jz-nav, .jz-item, .jz-input {
-          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-        }
-        .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item {
-          padding:14px 20px; position:relative; line-height:1; color:#d7d7d7;
-          text-decoration:none; border-radius:6px 6px 0 0;
-        }
-        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
-        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
-        .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
-        .jz-underline {
-          position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal);
-          opacity:0; transition:opacity .18s ease;
-        }
-        .jz-pointer {
-          position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0;
-          border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal);
-          opacity:0; transition:opacity .18s ease;
-        }
-        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
-        .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
-
-        .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
+        .jz-input:focus{ box-shadow:0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width:1280px){ .jz-input{ width:240px !important; } }
         @media (max-width:980px){ .jz-input{ display:none; } }
 
-        /* Promo ribbon */
         .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
-        .promo-row{
-          max-width:1280px; margin:0 auto; padding:10px 16px;
-          display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0;
-          color:#f5f5f5; font-size:16px; line-height:1.25;
-        }
+        .promo-row{ max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25;}
         .promo-item{ display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
         .promo-ico{ color:#e8e8e8; opacity:.95; flex:0 0 auto; }
-        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px;} .promo-item{ border-right:0; } }
+        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
         @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
 
-        /* Right hero */
         .auth-hero{ position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
