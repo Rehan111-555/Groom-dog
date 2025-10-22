@@ -162,11 +162,36 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row — LEFT: search & tools | CENTER: logo | RIGHT: phone */}
+      {/* Top row — LEFT: phone | CENTER: logo | RIGHT: search & tools */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[88px] grid grid-cols-[auto_1fr_auto] items-center gap-x-6">
-          {/* LEFT: search + icons + theme toggle */}
-          <div className="flex items-center gap-3 sm:gap-4">
+          {/* LEFT: phone */}
+          <div className="flex items-center gap-2 justify-self-start">
+            <Icon.Phone />
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+          </div>
+
+          {/* CENTER: logo */}
+          <a
+            href="/"
+            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+            aria-label="Joyzze"
+          >
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-2.5 rounded-[12px]">
+              <img
+                src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
+                alt="Joyzze"
+                className="h-[54px] w-auto align-middle"
+                onError={(e) => {
+                  e.currentTarget.outerHTML =
+                    '<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                }}
+              />
+            </div>
+          </a>
+
+          {/* RIGHT: search + icons + theme toggle */}
+          <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
@@ -203,31 +228,6 @@ function AppHeader() {
               {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
               <span className="hidden md:inline">{theme === 'dark' ? 'Dark' : 'Light'}</span>
             </button>
-          </div>
-
-          {/* CENTER: logo */}
-          <a
-            href="/"
-            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
-            aria-label="Joyzze"
-          >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-2.5 rounded-[12px]">
-              <img
-                src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
-                alt="Joyzze"
-                className="h-[54px] w-auto align-middle"
-                onError={(e) => {
-                  e.currentTarget.outerHTML =
-                    '<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
-                }}
-              />
-            </div>
-          </a>
-
-          {/* RIGHT: phone */}
-          <div className="justify-self-end flex items-center gap-2">
-            <Icon.Phone />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
         </div>
       </div>
@@ -538,7 +538,6 @@ export default function AuthPage() {
           {/* LEFT: form */}
           <section className="px-6 sm:px-10 lg:px-14 pt-14 pb-16">
             <div className="max-w-[580px]">
-              {/* small logo badge (replaced star with dog icon) */}
               <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-6">
                 <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
@@ -591,7 +590,6 @@ export default function AuthPage() {
                       placeholder="Enter password"
                       required
                     />
-                    {/* eye icon placeholder (static) */}
                     <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
                       <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
@@ -654,7 +652,7 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image full-bleed (no dark borders) */}
+          {/* RIGHT: hero image */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -686,23 +684,17 @@ export default function AuthPage() {
         }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
-        /* Header nav styles */
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input {
           font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
         }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item {
-          padding: 14px 20px; position: relative; line-height: 1; color: #d7d7d7; text-decoration: none;
-          border-radius: 6px 6px 0 0;
-        }
+        .jz-item { padding: 14px 20px; position: relative; line-height: 1; color: #d7d7d7; text-decoration: none; border-radius: 6px 6px 0 0; }
         .jz-item:hover { color: #00e1c9; background: linear-gradient(#f2f5f5, #eef6f6); }
         .caret { margin-left: 6px; opacity: .75; transition: transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform: translateY(1px) rotate(180deg); opacity: 1; }
         .jz-underline { position: absolute; left:0; right:0; bottom:-1px; height:2px; background: var(--joyzze-teal); opacity:0; transition: opacity .18s; }
-        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0;
-          border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition: opacity .18s; }
-        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
-        .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
+        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition: opacity .18s; }
+        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline, .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
 
         .jz-mega {
           position: relative;
@@ -726,23 +718,16 @@ export default function AuthPage() {
         @media (max-width: 1100px){ .jz-input { width: 320px !important; } }
         @media (max-width: 980px){ .jz-input { display: none; } }
 
-        /* Promo ribbon */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
-        .promo-row {
-          max-width:1280px; margin:0 auto; padding:10px 16px;
-          display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-          gap:0; color:#f5f5f5; font-size:16px; line-height:1.25;
-        }
+        .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
         .promo-ico { color:#e8e8e8; opacity:.95; flex:0 0 auto; }
         @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
         @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
 
-        /* Auth right side hero */
         .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .auth-hero img { display:block; }
 
-        /* Google button */
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
       `}</style>
