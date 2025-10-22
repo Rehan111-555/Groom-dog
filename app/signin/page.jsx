@@ -189,7 +189,7 @@ function AppHeader() {
     <header className="w-full sticky top-0 z-50">
       {/* Top row (grid: left tools | centered logo | right tools) */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center relative">
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center gap-x-24 md:gap-x-28 relative">
           {/* Left tools */}
           <div className="flex items-center gap-3">
             <a href="tel:(877) 456-9993" className="flex items-center gap-2">
