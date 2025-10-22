@@ -113,16 +113,16 @@ function MegaSection({ title, children }) {
 }
 
 function AppHeader() {
-  const [open, setOpen] = useState<string | null>(null);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [open, setOpen] = useState(null);
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    const saved = typeof window !== 'undefined' ? (localStorage.getItem('joyzze-theme') as 'light' | 'dark' | null) : null;
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
 
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(null);
+    const onKey = (e) => e.key === 'Escape' && setOpen(null);
     const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -139,7 +139,7 @@ function AppHeader() {
     document.documentElement.classList.toggle('theme-dark', next === 'dark');
   };
 
-  const NavItem = ({ id, href, children }: { id: string; href: string; children: React.ReactNode }) => {
+  const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
       <a
@@ -162,16 +162,14 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row — 3 columns: phone | centered logo | right tools with compact search */}
+      {/* Top row — phone | centered logo | right tools with compact search */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
         <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[88px] grid grid-cols-[1fr_auto_1fr] items-center">
-          {/* Left: phone */}
           <div className="justify-self-start flex items-center gap-2">
             <Icon.Phone />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
-          {/* Center: logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
@@ -183,14 +181,13 @@ function AppHeader() {
                 alt="Joyzze"
                 className="h-[54px] w-auto align-middle"
                 onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).outerHTML =
+                  e.currentTarget.outerHTML =
                     '<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* Right: tools (compact search 220px) */}
           <div className="justify-self-end flex items-center gap-3 sm:gap-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
@@ -233,7 +230,7 @@ function AppHeader() {
       </div>
 
       {/* NAVBAR */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-top border-black/10" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -248,7 +245,6 @@ function AppHeader() {
             </div>
           </div>
 
-          {/* Mega content */}
           {open && (
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
@@ -427,8 +423,7 @@ function AppFooter() {
               alt="Joyzze"
               className="h-9 w-auto"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).outerHTML =
-                  '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
+                e.currentTarget.outerHTML = '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
               }}
             />
           </div>
@@ -474,7 +469,7 @@ const BRAND = { teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -491,7 +486,7 @@ export default function AuthPage() {
     }
   }
 
-  async function handleCredentials(e: React.FormEvent) {
+  async function handleCredentials(e) {
     e.preventDefault();
     setLoading(true);
     try {
@@ -517,50 +512,95 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Body: left form / right hero */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
-          {/* LEFT */}
+          {/* LEFT: form */}
           <section className="px-6 sm:px-10 lg:px-14 pt-14 pb-16">
             <div className="max-w-[580px]">
               <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-6">
-                <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain"/>
+                <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
 
               <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
-              <p className="text-[15px] text-[var(--muted-fg)] mb-8">Enter to get unlimited access to data &amp; information.</p>
+              <p className="text-[15px] text-[var(--muted-fg)] mb-8">
+                Enter to get unlimited access to data &amp; information.
+              </p>
 
               <form onSubmit={handleCredentials} className="mb-4">
                 {mode === 'signup' && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
-                    <input type="text" value={name} onChange={(e)=>setName(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" required/>
+                    <label className="block text-sm font-medium mb-1">
+                      Name <span className="text-[#6b6bff]">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      required
+                    />
                   </div>
                 )}
 
                 <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
-                  <input type="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" placeholder="Enter your mail address" required/>
+                  <label className="block text-sm font-medium mb-1">
+                    Email <span className="text-[#6b6bff]">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    placeholder="Enter your mail address"
+                    required
+                  />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
+                  <label className="block text-sm font-medium mb-1">
+                    Password <span className="text-[#6b6bff]">*</span>
+                  </label>
                   <div className="relative">
-                    <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none" placeholder="Enter password" required/>
-                    <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      placeholder="Enter password"
+                      required
+                    />
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                    >
+                      <path
+                        d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                      />
+                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
                     </svg>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <label className="inline-flex items-center gap-2 text-[13px]">
-                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked/> Remember me
+                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
+                      Remember me
                     </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">
+                      Forgot your password ?
+                    </a>
                   </div>
                 </div>
 
-                <button type="submit" className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition" style={{backgroundColor: BRAND.teal}} disabled={loading}>
+                <button
+                  type="submit"
+                  className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
+                  style={{ backgroundColor: BRAND.teal }}
+                  disabled={loading}
+                >
                   {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
                 </button>
               </form>
@@ -571,24 +611,40 @@ export default function AuthPage() {
                 <div className="flex-1 border-t border-gray-300" />
               </div>
 
-              <button className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3" onClick={handleGoogle} disabled={loading} aria-label="Continue with Google">
-                <Icon.GoogleG /><span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
+              <button
+                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
+                onClick={handleGoogle}
+                disabled={loading}
+                aria-label="Continue with Google"
+              >
+                <Icon.GoogleG />
+                <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
               <p className="mt-4 text-xs text-[var(--muted-fg)]">
                 {mode === 'login' ? (
-                  <>Don’t have an account? <button type="button" onClick={()=>setMode('signup')} className="text-[#6b6bff] hover:underline">Register here</button></>
+                  <>
+                    Don’t have an account?{' '}
+                    <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline">
+                      Register here
+                    </button>
+                  </>
                 ) : (
-                  <>Already have an account? <button type="button" onClick={()=>setMode('login')} className="text-[#6b6bff] hover:underline">Sign in</button></>
+                  <>
+                    Already have an account?{' '}
+                    <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline">
+                      Sign in
+                    </button>
+                  </>
                 )}
               </p>
             </div>
           </section>
 
-          {/* RIGHT */}
+          {/* RIGHT: hero */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
-              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover"/>
+              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
             </div>
           </section>
         </div>
@@ -600,62 +656,172 @@ export default function AuthPage() {
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&display=swap');
 
-        :root{
-          --joyzze-teal:#1cd2c1;
-          --page-bg:#f4f6f9;
-          --page-fg:#0e0f11;
-          --muted-fg:#6b7280;
-          --header-top-bg:#e9eff5;
-          --header-top-fg:#0e0f11;
+        :root {
+          --joyzze-teal: #1cd2c1;
+          --page-bg: #f4f6f9;
+          --page-fg: #0e0f11;
+          --muted-fg: #6b7280;
+          --header-top-bg: #e9eff5;
+          --header-top-fg: #0e0f11;
         }
-        html.theme-dark{
-          --page-bg:#0f1115;
-          --page-fg:#f4f7fb;
-          --muted-fg:#a3a9b6;
-          --header-top-bg:#151922;
-          --header-top-fg:#f4f7fb;
+        html.theme-dark {
+          --page-bg: #0f1115;
+          --page-fg: #f4f7fb;
+          --muted-fg: #a3a9b6;
+          --header-top-bg: #151922;
+          --header-top-fg: #f4f7fb;
         }
-        html,body{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
+        html,
+        body {
+          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+        }
 
         /* Header nav styles */
-        .jz-nav,.jz-item,.jz-mega,.jz-sec-title,.jz-list,.jz-input{ font-family:'Josefin Sans',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
-        .jz-nav{ font-weight:600; font-size:15px; letter-spacing:.01em; }
-        .jz-item{ padding:14px 20px; position:relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
-        .jz-item:hover{ color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
-        .caret{ margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
-        .jz-item.jz-active .caret,.jz-item:hover .caret{ transform:translateY(1px) rotate(180deg); opacity:1; }
-        .jz-underline{ position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .jz-pointer{ position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .jz-item.jz-active .jz-underline,.jz-item:hover .jz-underline,.jz-item.jz-active .jz-pointer,.jz-item:hover .jz-pointer{ opacity:1; }
-
-        .jz-mega{ position:relative; border:1px solid rgba(28,210,193,.85); border-top-width:3px; background:rgba(255,255,255,.96); backdrop-filter:blur(1px); box-shadow:0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12); border-radius:2px; overflow:hidden; z-index:60; }
-        .jz-mega-bg{ position:absolute; inset:0; background-image:radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
-        .jz-sec-title{ margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
-        .jz-list{ list-style:none; padding:0; margin:0; }
-        .jz-list li{ padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
-        .jz-list li:last-child{ border-bottom:0; }
-        .jz-list a{ color:#3f3f3f; font-size:15px; }
-        .jz-list a:hover{ color:#111; text-decoration:none; }
-
-        .jz-input:focus{ box-shadow:0 0 0 3px rgba(0,0,0,.06); }
-        @media (max-width:1280px){ .jz-input{ width:220px !important; } }
-        @media (max-width:980px){ .jz-input{ display:none; } }
+        .jz-nav,
+        .jz-item,
+        .jz-mega,
+        .jz-sec-title,
+        .jz-list,
+        .jz-input {
+          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+        }
+        .jz-nav {
+          font-weight: 600;
+          font-size: 15px;
+          letter-spacing: 0.01em;
+        }
+        .jz-item {
+          padding: 14px 20px;
+          position: relative;
+          line-height: 1;
+          color: #d7d7d7;
+          text-decoration: none;
+          border-radius: 6px 6px 0 0;
+        }
+        .jz-item:hover {
+          color: #00e1c9;
+          background: linear-gradient(#f2f5f5, #eef6f6);
+        }
+        .caret {
+          margin-left: 6px;
+          opacity: 0.75;
+          transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+        .jz-item.jz-active .caret,
+        .jz-item:hover .caret {
+          transform: translateY(1px) rotate(180deg);
+          opacity: 1;
+        }
+        .jz-underline {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -1px;
+          height: 2px;
+          background: var(--joyzze-teal);
+          opacity: 0;
+          transition: opacity 0.18s ease;
+        }
+        .jz-pointer {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          bottom: -6px;
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 6px solid var(--joyzze-teal);
+          opacity: 0;
+          transition: opacity 0.18s ease;
+        }
+        .jz-item.jz-active .jz-underline,
+        .jz-item:hover .jz-underline,
+        .jz-item.jz-active .jz-pointer,
+        .jz-item:hover .jz-pointer {
+          opacity: 1;
+        }
+        .jz-mega {
+          position: relative;
+          border: 1px solid rgba(28, 210, 193, 0.85);
+          border-top-width: 3px;
+          background: rgba(255, 255, 255, 0.96);
+          backdrop-filter: blur(1px);
+          box-shadow: 0 32px 64px -20px rgba(0, 0, 0, 0.35), 0 12px 24px rgba(0, 0, 0, 0.12);
+          border-radius: 2px;
+          overflow: hidden;
+          z-index: 60;
+        }
+        .jz-mega-bg {
+          position: absolute;
+          inset: 0;
+          background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0, 0, 0, 0.08), transparent 60%);
+          opacity: 0.14;
+          pointer-events: none;
+          border-radius: 2px;
+        }
+        .jz-sec-title {
+          margin-bottom: 12px;
+          color: #2f2f2f;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.06em;
+          font-size: 14px;
+        }
+        .jz-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .jz-list li {
+          padding: 9px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .jz-list li:last-child {
+          border-bottom: 0;
+        }
+        .jz-list a {
+          color: #3f3f3f;
+          font-size: 15px;
+        }
+        .jz-list a:hover {
+          color: #111;
+          text-decoration: none;
+        }
+        .jz-input:focus {
+          box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+        }
+        @media (max-width: 1280px) {
+          .jz-input { width: 220px !important; }
+        }
+        @media (max-width: 980px) {
+          .jz-input { display: none; }
+        }
 
         /* Promo ribbon */
-        .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
-        .promo-row{ max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
-        .promo-item{ display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
-        .promo-ico{ color:#e8e8e8; opacity:.95; flex:0 0 auto; }
-        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
-        @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
+        .promo-wrap { background: #0a0a0a; border-bottom: 2px solid var(--joyzze-teal); }
+        .promo-row {
+          max-width: 1280px; margin: 0 auto; padding: 10px 16px;
+          display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 0; color: #f5f5f5; font-size: 16px; line-height: 1.25;
+        }
+        .promo-item { display: flex; align-items: center; gap: 12px; padding: 8px 18px; border-right: 1px solid var(--joyzze-teal); }
+        .promo-ico { color: #e8e8e8; opacity: .95; flex: 0 0 auto; }
+        @media (max-width: 900px) {
+          .promo-row { grid-template-columns: 1fr 1fr; row-gap: 8px; }
+          .promo-item { border-right: 0; }
+        }
+        @media (max-width: 560px) {
+          .promo-row { grid-template-columns: 1fr; }
+        }
 
         /* Auth right side hero */
-        .auth-hero{ position:relative; width:100%; height:100%; min-height:640px; background:#000; }
-        .auth-hero img{ display:block; }
+        .auth-hero { position: relative; width: 100%; height: 100%; min-height: 640px; background: #000; }
+        .auth-hero img { display: block; }
 
         /* Google button */
-        .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
-        .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
+        .google-btn { background: #fff; color: #3c4043; border: 1px solid #dadce0; }
+        .google-btn:disabled { opacity: .7; cursor: not-allowed; }
       `}</style>
     </main>
   );
