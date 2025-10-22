@@ -177,6 +177,7 @@ function UploadAndResult(){
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const [urlText, setUrlText] = useState("");
+
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
@@ -316,7 +317,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg:white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -423,7 +424,7 @@ function SigninHeader({ theme, onToggleTheme }) {
   const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
 
   return (
-    <header className="w-full z-50">
+    <header className="w-full z-[9999] relative">
       <div className="sticky top-0">
         {/* Top row */}
         <div style={headerStyle}>
@@ -485,7 +486,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Navbar row */}
-        <nav className="nav-dark">
+        <nav className="nav-dark relative z-[2000]">
           <div
             className="max-w-[1280px] mx-auto px-2 lg:px-4 relative"
             onMouseLeave={close}  /* close only when leaving the whole nav + dropdown area */
@@ -508,7 +509,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 className="absolute left-1/2 -translate-x-1/2 top-full"
                 onMouseEnter={()=>setOpen(open)} /* keep open while hovering dropdown */
               >
-                <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
+                <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px] relative z-[3000]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
                     {/* All Products */}
@@ -695,19 +696,25 @@ function HowItWorks() {
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Upload now</a></div>
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary btn-step">Upload now</a>
+          </div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Start grooming</a></div>
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary btn-step">Start grooming</a>
+          </div>
         </Card>
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
-          <div className="mt-auto pt-4"><a href="#app" className="btn btn-primary inline-flex w-[140px] justify-center">Try the slider</a></div>
+          <div className="mt-auto pt-4">
+            <a href="#app" className="btn btn-primary btn-step">Try the slider</a>
+          </div>
         </Card>
       </div>
     </section>
@@ -886,9 +893,11 @@ export default function Page(){
         body{ background: var(--app-bg); color:#0f1115; }
         .theme-dark body{ color:#e5e7eb; }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; }
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; box-sizing:border-box; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
+        .btn-step { width:160px; justify-content:center; padding-left:0; padding-right:0; }
+
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
         /* NAV + MEGA (theme aware) */
@@ -904,6 +913,10 @@ export default function Page(){
         .jz-caret-btn:hover{ background:rgba(0,0,0,.06); }
         .theme-dark .jz-caret-btn:hover{ background:rgba(255,255,255,.06); }
 
+        header { position: relative; z-index: 9999; }
+        .nav-dark { position: relative; z-index: 2000; }
+        .jz-mega { z-index: 3000; }
+
         .jz-mega {
           position: relative;
           border: 1px solid rgba(28,210,193,.85);
@@ -913,7 +926,6 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000; /* ensure over page sections */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
