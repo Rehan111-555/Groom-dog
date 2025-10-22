@@ -54,12 +54,29 @@ const Icon = {
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
+  Sun: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
+      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  ),
+  Moon: (p) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
+      <path
+        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
   GoogleG: (p) => (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" {...p}>
-      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.18-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.25h2.9c1.7-1.57 2.7-3.88 2.7-6.6z" />
-      <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.2l-2.9-2.25c-.8.54-1.82.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H1.9v2.33C3.38 15.98 6 18 9 18z" />
-      <path fill="#FBBC05" d="M3.95 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V4.97H1.9A8.96 8.96 0 0 0 0 9c0 1.45.35 2.82 1.9 4.03l2.05-2.33z" />
-      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z" />
+      <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.18-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.25h2.9c1.7-1.57 2.7-3.88 2.7-6.6z"/>
+      <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.2l-2.9-2.25c-.8.54-1.82.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H1.9v2.33C3.38 15.98 6 18 9 18z"/>
+      <path fill="#FBBC05" d="M3.95 10.7c-.18-.54-.28-1.12-.28-1.7s.1-1.16.28-1.7V4.97H1.9A8.96 8.96 0 0 0 0 9c0 1.45.35 2.82 1.9 4.03l2.05-2.33z"/>
+      <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
     </svg>
   ),
   Truck: (p) => (
@@ -87,31 +104,11 @@ const Icon = {
       <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   ),
-  Sun: (p) => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-    </svg>
-  ),
-  Moon: (p) => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  ),
 };
 
 /* ================================
-   HEADER + MEGA MENU
+   HEADER + NAV
    ================================ */
-function MegaSection({ title, children }) {
-  return (
-    <div>
-      <p className="jz-sec-title">{title}</p>
-      <ul className="jz-list">{children}</ul>
-    </div>
-  );
-}
-
 function AppHeader() {
   const [open, setOpen] = useState(null);
   const [theme, setTheme] = useState('light');
@@ -162,49 +159,50 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row — LEFT: phone | CENTER: logo | RIGHT: search & tools */}
+      {/* Top row (grid: left phone | centered logo | right search+icons) */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[88px] grid grid-cols-[auto_1fr_auto] items-center gap-x-6">
-          {/* LEFT: phone */}
-          <div className="flex items-center gap-2 justify-self-start">
-            <Icon.Phone />
+        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center relative">
+          {/* Phone (left) */}
+          <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2">
+            <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-          </div>
+          </a>
 
-          {/* CENTER: logo */}
+          {/* Centered logo */}
           <a
             href="/"
             className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-2.5 rounded-[12px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-[54px] w-auto align-middle"
+                className="h-[58px] w-auto align-middle"
                 onError={(e) => {
                   e.currentTarget.outerHTML =
-                    '<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                    '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* RIGHT: search + icons + theme toggle */}
-          <div className="justify-self-end flex items-center gap-3 sm:gap-4">
+          {/* Right controls (search + icons) */}
+          <div className="justify-self-end flex items-center gap-4">
+            {/* search compact */}
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[42px] w-[220px] max-w-[220px] rounded-md bg-white pl-9 pr-9 text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[240px] max-w-[240px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
               </form>
-              <Icon.Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-              <Icon.Plus className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
             <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
@@ -232,154 +230,24 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* NAVBAR */}
+      {/* ABSOLUTE 1-INCH GAP between top row and navbar */}
+      <div style={{ height: '1in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
+
+      {/* NAVBAR (unchanged) */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
-              <NavItem id="all" href="https://joyzze.com/all-products/">
-                All Products
-              </NavItem>
-              <NavItem id="clippers" href="https://joyzze.com/clippers/">
-                Clippers
-              </NavItem>
-              <NavItem id="blades" href="https://joyzze.com/blades/">
-                Blades
-              </NavItem>
-              <NavItem id="combs" href="https://joyzze.com/combs-accessories/">
-                Combs &amp; Accessories
-              </NavItem>
-              <NavItem id="info" href="https://joyzze.com/information/">
-                Information
-              </NavItem>
-              <a href="https://joyzze.com/recycling-sharpening/" className="jz-item">
-                Recycling &amp; Sharpening
-              </a>
-              <a href="https://joyzze.com/distributor/" className="jz-item">
-                Distributor
-              </a>
+              <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
+              <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
+              <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
+              <NavItem id="combs" href="https://joyzze.com/combs-accessories/">Combs &amp; Accessories</NavItem>
+              <NavItem id="info" href="https://joyzze.com/information/">Information</NavItem>
+              <a href="https://joyzze.com/recycling-sharpening/" className="jz-item">Recycling &amp; Sharpening</a>
+              <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
             </div>
           </div>
-
-          {/* Mega content */}
-          {open && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
-              <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
-                <div className="jz-mega-bg" />
-                <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {open === 'all' && (
-                    <>
-                      <MegaSection title="CLIPPERS">
-                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
-                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
-                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
-                      </MegaSection>
-                      <MegaSection title="BLADES">
-                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
-                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
-                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
-                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
-                      </MegaSection>
-                      <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
-                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
-                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'clippers' && (
-                    <>
-                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
-                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
-                      </MegaSection>
-                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
-                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
-                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="D-SERIES CLIPPERS">
-                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
-                        <li className="mt-2" />
-                        <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
-                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="MINI TRIMMERS | M-SERIES">
-                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'blades' && (
-                    <>
-                      <MegaSection title="A-SERIES | A5 STYLE">
-                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
-                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS">
-                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'combs' && (
-                    <>
-                      <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
-                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
-                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
-                      </MegaSection>
-                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | STINGER & HORNET">
-                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="CASES">
-                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
-                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'info' && (
-                    <>
-                      <MegaSection title="ABOUT JOYZZE™">
-                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
-                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
-                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
-                      </MegaSection>
-                      <MegaSection title="SUPPORT">
-                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
-                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
-                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
-                      </MegaSection>
-                      <MegaSection title="DOCS">
-                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
-                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
-                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
-                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
-                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
     </header>
@@ -440,9 +308,7 @@ function AppFooter() {
               src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
               alt="Joyzze"
               className="h-9 w-auto"
-              onError={(e) => {
-                e.currentTarget.outerHTML = '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
-              }}
+              onError={(e) => { e.currentTarget.outerHTML = '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'; }}
             />
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
@@ -532,7 +398,7 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Page body: two columns like the template */}
+      {/* Body */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
@@ -591,8 +457,8 @@ export default function AuthPage() {
                       required
                     />
                     <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6" />
-                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
                     </svg>
                   </div>
                   <div className="flex items-center justify-between mt-2">
@@ -600,9 +466,7 @@ export default function AuthPage() {
                       <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
                       Remember me
                     </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">
-                      Forgot your password ?
-                    </a>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
 
@@ -652,7 +516,7 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image */}
+          {/* RIGHT: hero image full-bleed */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -682,54 +546,54 @@ export default function AuthPage() {
           --header-top-bg: #151922;
           --header-top-fg: #f4f7fb;
         }
-        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
-
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input {
+        html, body {
           font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
         }
-        .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item { padding: 14px 20px; position: relative; line-height: 1; color: #d7d7d7; text-decoration: none; border-radius: 6px 6px 0 0; }
-        .jz-item:hover { color: #00e1c9; background: linear-gradient(#f2f5f5, #eef6f6); }
-        .caret { margin-left: 6px; opacity: .75; transition: transform .18s ease, opacity .18s ease; }
-        .jz-item.jz-active .caret, .jz-item:hover .caret { transform: translateY(1px) rotate(180deg); opacity: 1; }
-        .jz-underline { position: absolute; left:0; right:0; bottom:-1px; height:2px; background: var(--joyzze-teal); opacity:0; transition: opacity .18s; }
-        .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition: opacity .18s; }
-        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline, .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
 
-        .jz-mega {
-          position: relative;
-          border: 1px solid rgba(28, 210, 193, .85);
-          border-top-width: 3px;
-          background: rgba(255,255,255,.96);
-          backdrop-filter: blur(1px);
-          box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
-          border-radius: 2px; overflow: hidden; z-index: 60;
+        /* Header nav styles */
+        .jz-nav, .jz-item, .jz-input {
+          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
         }
-        .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
-        .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
-        .jz-list { list-style:none; padding:0; margin:0; }
-        .jz-list li { padding:9px 0; border-bottom:1px solid rgba(0,0,0,.06); }
-        .jz-list li:last-child { border-bottom:0; }
-        .jz-list a { color:#3f3f3f; font-size:15px; }
-        .jz-list a:hover { color:#111; text-decoration:none; }
+        .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
+        .jz-item {
+          padding:14px 20px; position:relative; line-height:1; color:#d7d7d7;
+          text-decoration:none; border-radius:6px 6px 0 0;
+        }
+        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
+        .caret { margin-left:6px; opacity:.75; transition:transform .18s ease, opacity .18s ease; }
+        .jz-item.jz-active .caret, .jz-item:hover .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
+        .jz-underline {
+          position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal);
+          opacity:0; transition:opacity .18s ease;
+        }
+        .jz-pointer {
+          position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0;
+          border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal);
+          opacity:0; transition:opacity .18s ease;
+        }
+        .jz-item.jz-active .jz-underline, .jz-item:hover .jz-underline,
+        .jz-item.jz-active .jz-pointer, .jz-item:hover .jz-pointer { opacity:1; }
 
-        .jz-input:focus { box-shadow: 0 0 0 3px rgba(0,0,0,.06); }
-        @media (max-width: 1280px){ .jz-input { width: 420px !important; } }
-        @media (max-width: 1100px){ .jz-input { width: 320px !important; } }
-        @media (max-width: 980px){ .jz-input { display: none; } }
+        .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
+        @media (max-width:1280px){ .jz-input{ width:240px !important; } }
+        @media (max-width:980px){ .jz-input{ display:none; } }
 
-        .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
-        .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
-        .promo-item { display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
-        .promo-ico { color:#e8e8e8; opacity:.95; flex:0 0 auto; }
-        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item{ border-right:0; } }
+        /* Promo ribbon */
+        .promo-wrap{ background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
+        .promo-row{
+          max-width:1280px; margin:0 auto; padding:10px 16px;
+          display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0;
+          color:#f5f5f5; font-size:16px; line-height:1.25;
+        }
+        .promo-item{ display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
+        .promo-ico{ color:#e8e8e8; opacity:.95; flex:0 0 auto; }
+        @media (max-width:900px){ .promo-row{ grid-template-columns:1fr 1fr; row-gap:8px;} .promo-item{ border-right:0; } }
         @media (max-width:560px){ .promo-row{ grid-template-columns:1fr; } }
 
-        .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
-        .auth-hero img { display:block; }
-
-        .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
-        .google-btn:disabled { opacity:.7; cursor:not-allowed; }
+        /* Right hero */
+        .auth-hero{ position:relative; width:100%; height:100%; min-height:640px; background:#000; }
+        .google-btn{ background:#fff; color:#3c4043; border:1px solid #dadce0; }
+        .google-btn:disabled{ opacity:.7; cursor:not-allowed; }
       `}</style>
     </main>
   );
