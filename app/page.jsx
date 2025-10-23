@@ -316,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -364,7 +364,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA MENU (match Sign-in)
+   HEADER + NAV + MEGA MENU
    ========================================================= */
 function MegaSection({ title, children }) {
   return (
@@ -390,13 +390,20 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
+  // Single place to “delegate” hover based on data-nav
+  const onNavOver = (e) => {
+    const el = e.target.closest('[data-nav]');
+    if (el) setOpen(el.getAttribute('data-nav'));
+  };
+
   const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
       <a
         href={href}
+        data-nav={id}
         className={`jz-item ${active ? 'jz-active' : ''}`}
-        onMouseEnter={() => setOpen(id)}
+        onMouseOver={onNavOver}
         onFocus={() => setOpen(id)}
         aria-haspopup="true"
         aria-expanded={active ? 'true' : 'false'}
@@ -416,9 +423,9 @@ function SigninHeader({ theme, onToggleTheme }) {
   return (
     <header className="w-full z-50">
       <div className="sticky top-0">
-        {/* Top row */}
+        {/* Top row: FULL-WIDTH so right block sits near scrollbar */}
         <div style={headerStyle}>
-          <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+          <div className="w-full px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
             {/* Phone top-left */}
             <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
@@ -441,7 +448,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
             </a>
 
-            {/* Search + icons top-right */}
+            {/* Search + icons top-right, flush to edge */}
             <div className="justify-self-end flex items-center gap-4">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
@@ -474,7 +481,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* ~½ inch gap between logo row and navbar */}
+        {/* ½-inch gap */}
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Navbar row */}
@@ -482,7 +489,9 @@ function SigninHeader({ theme, onToggleTheme }) {
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
-              <div className="jz-nav flex items-stretch gap-[2px]">
+
+              {/* DELEGATED HOVER: parent listens, items set data-nav */}
+              <div className="jz-nav flex items-stretch gap-[2px]" onMouseOver={onNavOver}>
                 <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
                 <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
                 <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
@@ -497,7 +506,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               <div
                 className="absolute left-1/2 -translate-x-1/2 top-full"
                 onMouseEnter={()=>setOpen(open)}
-                onMouseLeave={close}   /* keep open while pointer is over the panel */
+                onMouseLeave={close}
               >
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
@@ -781,7 +790,7 @@ function SigninFooter() {
 
           <div className="mt-6 flex items-center justify-center gap-4">
             <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
+            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg.white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
@@ -811,7 +820,7 @@ function SigninFooter() {
           <span className="px-2 py-1 rounded bg-white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
-          <span className="px-2 py-1 rounded bg.white/10">MasterCard</span>
+          <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
         </div>
       </div>
 
@@ -854,10 +863,9 @@ export default function Page(){
 
         :root {
           --joyzze-teal: #1CD2C1;
-
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-          --nav-bg: #2f2f2f;              /* dark bar */
+          --nav-bg: #2f2f2f;     /* dark navbar */
           --nav-text: #d7d7d7;
         }
         .theme-dark {
@@ -897,7 +905,7 @@ export default function Page(){
           border-top:1px solid rgba(0,0,0,.12);
           position:relative;
           z-index:60;
-          overflow:visible;  /* allow mega panel below the bar */
+          overflow:visible;  /* allow mega panel to render below */
         }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
@@ -920,7 +928,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000; /* above page content */
+          z-index: 2000;
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
