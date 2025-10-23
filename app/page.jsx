@@ -316,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -364,7 +364,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA MENU
+   HEADER + NAV + MEGA MENU (match Sign-in)
    ========================================================= */
 function MegaSection({ title, children }) {
   return (
@@ -411,48 +411,52 @@ function SigninHeader({ theme, onToggleTheme }) {
     );
   };
 
+  const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
+
   return (
     <header className="w-full z-50">
       <div className="sticky top-0">
-        {/* TOP ROW (absolute groups so right can hug scrollbar) */}
-        <div style={{ background: 'var(--header-bg)', color: 'var(--header-text)' }}>
-          <div className="relative h-[92px] w-full px-0">
-            {/* Left (phone) */}
-            <a href="tel:(877) 456-9993" className="absolute inset-y-0 left-3 flex items-center gap-2" style={{color:'var(--header-text)'}}>
+        {/* Top row */}
+        <div style={headerStyle}>
+          <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+            {/* Phone top-left */}
+            <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
               <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
             </a>
 
-            {/* Center logo */}
+            {/* Centered logo */}
             <a
               href="https://joyzze.com/"
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+              className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
               aria-label="Joyzze"
             >
-              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
+              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
                 <img
                   src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                   alt="Joyzze"
-                  className="h-[58px] w-auto align-middle"
-                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
+                  className="h-[52px] w-auto align-middle"
+                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
                 />
               </div>
             </a>
 
-            {/* Right (search + icons + theme) – flush to right */}
-            <div className="absolute inset-y-0 right-0 flex items-center gap-4 pr-3 sm:pr-4">
+            {/* Search + icons top-right */}
+            <div className="justify-self-end flex items-center gap-4">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
                     type="text"
                     name="search_query"
                     placeholder="Search..."
-                    className="jz-input h-[44px] w-[260px] max-w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                    className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
                     autoComplete="off"
                   />
                 </form>
-                <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
-                <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+                <Icon.Plus className="search-plus absolute right-[56px] top-1/2 -translate-y-1/2 pointer-events-none" />
+                <button className="search-btn absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full" aria-label="Search">
+                  <Icon.Search />
+                </button>
               </div>
 
               <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
@@ -462,19 +466,19 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px] flex items-center gap-2" aria-label="Toggle theme">
+              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
-                <span className="hidden md:inline">{theme === 'light' ? 'Light' : 'Dark'}</span>
+                <span className="text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* 1/2 inch spacer */}
+        {/* ~½ inch gap between logo row and navbar */}
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
-        {/* NAVBAR (dark bar + high z) */}
-        <nav className="nav-dark" onMouseLeave={close}>
+        {/* Navbar row */}
+        <nav className="nav-dark">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -490,10 +494,15 @@ function SigninHeader({ theme, onToggleTheme }) {
             </div>
 
             {open && (
-              <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2" onMouseEnter={()=>setOpen(open)}>
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-full"
+                onMouseEnter={()=>setOpen(open)}
+                onMouseLeave={close}   /* keep open while pointer is over the panel */
+              >
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
+                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -519,6 +528,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Clippers */}
                     {open === 'clippers' && (
                       <>
                         <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -542,6 +552,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Blades */}
                     {open === 'blades' && (
                       <>
                         <MegaSection title="A-SERIES | A5 STYLE">
@@ -561,6 +572,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Combs & Accessories */}
                     {open === 'combs' && (
                       <>
                         <MegaSection title="A-SERIES | WIDE COMBS">
@@ -581,6 +593,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Information */}
                     {open === 'info' && (
                       <>
                         <MegaSection title="ABOUT JOYZZE™">
@@ -603,6 +616,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Recycling */}
                     {open === 'recycling' && (
                       <>
                         <MegaSection title="RECYCLING & SHARPENING">
@@ -613,6 +627,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Distributor */}
                     {open === 'dist' && (
                       <>
                         <MegaSection title="DISTRIBUTOR">
@@ -796,7 +811,7 @@ function SigninFooter() {
           <span className="px-2 py-1 rounded bg-white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
-          <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
+          <span className="px-2 py-1 rounded bg.white/10">MasterCard</span>
         </div>
       </div>
 
@@ -842,15 +857,13 @@ export default function Page(){
 
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-
-          --nav-bg: #2f2f2f;       /* dark navbar for contrast */
+          --nav-bg: #2f2f2f;              /* dark bar */
           --nav-text: #d7d7d7;
         }
         .theme-dark {
           --header-bg: #1c1f26;
           --header-text: #ffffff;
-
-          --nav-bg: #22262c;
+          --nav-bg: #111318;
           --nav-text: #d7d7d7;
         }
 
@@ -877,13 +890,21 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* NAV + MEGA – reliable hover visibility */
-        .nav-dark{ background: var(--nav-bg); color: var(--nav-text); border-top:1px solid rgba(0,0,0,.12); position:relative; z-index:60; }
+        /* NAV + MEGA */
+        .nav-dark{
+          background: var(--nav-bg);
+          color: var(--nav-text);
+          border-top:1px solid rgba(0,0,0,.12);
+          position:relative;
+          z-index:60;
+          overflow:visible;  /* allow mega panel below the bar */
+        }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
-        .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
+        .jz-item:hover { color:#00e1c9; background: linear-gradient(#f2f5f5,#eef6f6); }
         .caret { opacity:.75; transition:transform .18s ease, opacity .18s ease; }
-        .jz-item:hover .caret, .jz-item.jz-active .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
+        .jz-item:hover .caret,
+        .jz-item.jz-active .caret { transform:translateY(1px) rotate(180deg); opacity:1; }
 
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
@@ -899,7 +920,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000; /* sits above hero/sections */
+          z-index: 2000; /* above page content */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -910,7 +931,12 @@ export default function Page(){
 
         /* Search / toggle (theme aware) */
         .jz-input { background:#ffffff; color:#0f0f0f; border:0; }
+        .search-btn { background:#ffffff; border:1px solid rgba(0,0,0,.15); }
+        .search-plus { color:#0f0f0f; opacity:.85; }
         .theme-dark .jz-input { background: var(--app-surface); color:#e5e7eb; border:1px solid var(--app-border); }
+        .theme-dark .search-btn { background: var(--app-surface); border:1px solid var(--app-border); color:#e5e7eb; }
+        .theme-dark .search-plus { color:#e5e7eb; opacity:.8; }
+        .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
         /* Dark consistency for inner app */
