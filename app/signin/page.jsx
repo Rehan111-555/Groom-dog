@@ -556,7 +556,7 @@ export default function AuthPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       required
                     />
                   </div>
@@ -568,7 +568,7 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                     placeholder="Enter your mail address"
                     required
                   />
@@ -581,7 +581,7 @@ export default function AuthPage() {
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       placeholder="Enter password"
                       required
                     />
@@ -667,6 +667,12 @@ export default function AuthPage() {
           --muted-fg: #6b7280;
           --header-top-bg: #e9eff5;
           --header-top-fg: #0e0f11;
+
+          /* form field (light) */
+          --field-bg: #ffffff;
+          --field-fg: #0e0f11;
+          --field-placeholder: #6b7280;
+          --field-border: #d1d5db;
         }
         html.theme-dark {
           --page-bg: #0f1115;
@@ -674,8 +680,25 @@ export default function AuthPage() {
           --muted-fg: #a3a9b6;
           --header-top-bg: #151922;
           --header-top-fg: #f4f7fb;
+
+          /* form field (dark) */
+          --field-bg: #161a22;
+          --field-fg: #f4f7fb;
+          --field-placeholder: #9aa3b2;
+          --field-border: rgba(255,255,255,.18);
         }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+
+        /* Input theming */
+        .jz-field {
+          background: var(--field-bg) !important;
+          color: var(--field-fg) !important;
+          caret-color: var(--field-fg);
+          border-color: var(--field-border);
+        }
+        .jz-field::placeholder { color: var(--field-placeholder); }
+        .jz-field.ring-1 { box-shadow: inset 0 0 0 1px var(--field-border); }
+        .jz-field:focus { box-shadow: inset 0 0 0 1px transparent; }
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
