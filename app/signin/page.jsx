@@ -101,7 +101,13 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      <path
+        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };
@@ -124,7 +130,7 @@ function AppHeader() {
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
-    const initial = saved || 'light'; // default light
+    const initial = saved || 'light';
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
 
@@ -168,19 +174,20 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top row: left phone | centered logo | right tools */}
+      {/* Top bar anchored groups */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="max-w-[1280px] mx-auto px-4 lg:px-6 h-[92px] grid grid-cols-[1fr_auto_1fr] items-center gap-x-[1.05in] relative">
-          {/* Left: phone */}
-          <div className="flex items-center gap-2 justify-self-start">
+        {/* no horizontal padding so right group can hug the scrollbar */}
+        <div className="relative h-[92px] w-full px-0">
+          {/* Left (phone) */}
+          <div className="absolute inset-y-0 left-3 flex items-center gap-2">
             <Icon.Phone className="opacity-85" />
             <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
-          {/* Center: Logo */}
+          {/* Center (logo) */}
           <a
             href="/"
-            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
             <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
@@ -196,9 +203,9 @@ function AppHeader() {
             </div>
           </a>
 
-          {/* Right: search + icons (top-right) */}
-          <div className="justify-self-end flex items-center gap-4">
-            <div className="relative hidden md:block ml-[0.35in]">
+          {/* Right (search + icons + theme) – flush to right */}
+          <div className="absolute inset-y-0 right-0 flex items-center gap-4 pr-3 sm:pr-4">
+            <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
@@ -241,7 +248,7 @@ function AppHeader() {
       {/* 1/2 inch spacer between logo row and navbar */}
       <div style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* NAVBAR (hover → mega menu) */}
+      {/* NAVBAR */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
@@ -526,6 +533,7 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
+      {/* Page body */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
@@ -637,7 +645,7 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: full-bleed hero image */}
+          {/* RIGHT: hero image */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -667,18 +675,11 @@ export default function AuthPage() {
           --header-top-bg: #151922;
           --header-top-fg: #f4f7fb;
         }
-        html, body {
-          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-        }
+        html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
-        /* Header nav styles */
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input {
-          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-        }
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item {
-          padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0;
-        }
+        .jz-item { padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
         .caret { margin-left:6px; opacity:.75; transition: transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform: translateY(1px) rotate(180deg); opacity:1; }
@@ -711,18 +712,13 @@ export default function AuthPage() {
         @media (max-width: 1100px){ .jz-input { width: 320px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
-        /* Promo ribbon */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
         .promo-ico { color:#e8e8e8; opacity:.95; flex:0 0 auto; }
-        @media (max-width:900px){
-          .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; }
-          .promo-item { border-right:0; }
-        }
+        @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        /* Auth hero (full cover) */
         .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
