@@ -316,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -421,8 +421,9 @@ function SigninHeader({ theme, onToggleTheme }) {
   const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
 
   return (
-    <header className="w-full z-50">
-      <div className="sticky top-0">
+    <header className="w-full">
+      {/* sticky container isolated to create a clear stacking context */}
+      <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
         {/* Top row: FULL-WIDTH so right block sits near scrollbar */}
         <div style={headerStyle}>
           <div className="w-full px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
@@ -491,7 +492,11 @@ function SigninHeader({ theme, onToggleTheme }) {
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
               {/* DELEGATED HOVER: parent listens, items set data-nav */}
-              <div className="jz-nav flex items-stretch gap-[2px]" onMouseOver={onNavOver}>
+              <div
+                className="jz-nav flex items-stretch gap-[2px]"
+                onMouseOver={onNavOver}
+                onMouseLeave={() => setOpen(null)}
+              >
                 <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
                 <NavItem id="clippers" href="https://joyzze.com/clippers/">Clippers</NavItem>
                 <NavItem id="blades" href="https://joyzze.com/blades/">Blades</NavItem>
@@ -709,7 +714,7 @@ function HowItWorks() {
           </div>
         </Card>
 
-        <Card className="p-6 flex flex-col min-h-[220px]">
+        <Card className="p-6 flex flex-col min-h/[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
@@ -817,7 +822,7 @@ function SigninFooter() {
         </div>
         <div className="mt-6 flex items-center justify-end gap-4 opacity-90 text-xs">
           <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg.white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
           <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
@@ -904,8 +909,8 @@ export default function Page(){
           color: var(--nav-text);
           border-top:1px solid rgba(0,0,0,.12);
           position:relative;
-          z-index:60;
-          overflow:visible;  /* allow mega panel to render below */
+          z-index: 1500;      /* keep nav above page content */
+          overflow:visible;   /* allow mega panel to render below */
         }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
@@ -928,7 +933,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 2000;
+          z-index: 3000;     /* higher than nav & hero */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -959,6 +964,9 @@ export default function Page(){
         .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
+
+        /* Ensure content below can't cover header area */
+        header + * { position: relative; z-index: 1; }
 
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
