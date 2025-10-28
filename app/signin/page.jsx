@@ -10,13 +10,7 @@ import { useRouter } from 'next/navigation';
 const Icon = {
   Phone: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path
-        d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
   Search: (p) => (
@@ -101,19 +95,23 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path
-        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  Menu: (p) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  Close: (p) => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
 };
 
 /* ================================
-   HEADER + MEGA MENU
+   HEADER + NAV (with mobile drawer)
    ================================ */
 function MegaSection({ title, children }) {
   return (
@@ -127,6 +125,7 @@ function MegaSection({ title, children }) {
 function AppHeader() {
   const [open, setOpen] = useState(null);
   const [theme, setTheme] = useState('light');
+  const [drawer, setDrawer] = useState(false);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
@@ -134,7 +133,7 @@ function AppHeader() {
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
 
-    const onKey = (e) => e.key === 'Escape' && setOpen(null);
+    const onKey = (e) => e.key === 'Escape' && (setOpen(null), setDrawer(false));
     const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -173,45 +172,45 @@ function AppHeader() {
   };
 
   return (
-    <header className="w-full sticky top-0 z-50">
-      {/* Top bar anchored groups */}
+    <header className="w-full sticky top-0 z-[1100]">
+      {/* Top bar */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        {/* no horizontal padding so right group can hug the scrollbar */}
-        <div className="relative h-[92px] w-full px-0">
+        <div className="relative h-[76px] sm:h-[88px] w-full">
           {/* Left (phone) */}
-          <div className="absolute inset-y-0 left-3 flex items-center gap-2">
+          <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
             <Icon.Phone className="opacity-85" />
-            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+            <span className="text-[14px] sm:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
           {/* Center (logo) */}
           <a
             href="/"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] sm:rounded-[12px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-5 sm:px-7 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-[10px] sm:rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-[58px] w-auto align-middle"
+                className="h-[44px] sm:h-[54px] w-auto align-middle"
                 onError={(e) => {
                   e.currentTarget.outerHTML =
-                    '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                    '<span class="text-white text-[24px] sm:text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* Right (search + icons + theme) – flush to right */}
-          <div className="absolute inset-y-0 right-0 flex items-center gap-4 pr-3 sm:pr-4">
+          {/* Right group (mobile: hamburger; desktop: actions) */}
+          <div className="absolute inset-y-0 right-0 pr-2 sm:pr-3 flex items-center gap-2 sm:gap-3">
+            {/* Desktop search */}
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[260px] max-w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[42px] sm:h-[44px] w-[220px] lg:w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -220,36 +219,40 @@ function AppHeader() {
               <Icon.Plus className="absolute right-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
-              <Icon.Shuffle />
-            </a>
-            <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
-                <Icon.User />
-              </a>
-              <Icon.CaretDown className="ml-[2px] opacity-80" />
+            {/* Desktop quick icons */}
+            <div className="hidden sm:flex items-center gap-1">
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account"><Icon.User /></a>
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
             </div>
-            <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
-              <Icon.Bag />
-            </a>
 
+            {/* Theme toggle (all screens) */}
             <button
               onClick={toggleTheme}
-              className="ml-1 inline-flex items-center gap-2 h-9 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px]"
+              className="inline-flex items-center gap-2 h-9 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px]"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
               <span className="hidden md:inline">{theme === 'dark' ? 'Dark' : 'Light'}</span>
             </button>
+
+            {/* Mobile hamburger */}
+            <button
+              className="md:hidden grid place-items-center w-10 h-10 rounded-md hover:bg-black/5"
+              aria-label="Open menu"
+              onClick={() => setDrawer(true)}
+            >
+              <Icon.Menu />
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 1/2 inch spacer between logo row and navbar */}
-      <div style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
+      {/* Spacer between top and nav (desktop only) */}
+      <div className="hidden md:block" style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* NAVBAR */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
+      {/* NAVBAR (desktop) */}
+      <nav className="hidden md:block bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -268,7 +271,7 @@ function AppHeader() {
             <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
-                <div className="relative grid grid-cols-3 gap-14 p-8">
+                <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-14 p-6 lg:p-8">
                   {open === 'all' && (
                     <>
                       <MegaSection title="CLIPPERS">
@@ -336,26 +339,6 @@ function AppHeader() {
                     </>
                   )}
 
-                  {open === 'combs' && (
-                    <>
-                      <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
-                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
-                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
-                      </MegaSection>
-                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | STINGER & HORNET">
-                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="CASES">
-                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
-                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
                   {open === 'info' && (
                     <>
                       <MegaSection title="ABOUT JOYZZE™">
@@ -383,6 +366,53 @@ function AppHeader() {
           )}
         </div>
       </nav>
+
+      {/* MOBILE DRAWER */}
+      {drawer && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/40 z-[1200]"
+            onClick={() => setDrawer(false)}
+            aria-hidden="true"
+          />
+          <aside className="fixed top-0 right-0 h-full w-[84vw] max-w-[360px] bg-[#1a1a1a] text-white z-[1300] p-4 overflow-y-auto">
+            <div className="flex items-center justify-between mb-2">
+              <span className="font-semibold tracking-wide">Menu</span>
+              <button className="grid place-items-center w-9 h-9 rounded-md hover:bg-white/10" onClick={() => setDrawer(false)} aria-label="Close menu">
+                <Icon.Close />
+              </button>
+            </div>
+            <div className="space-y-1 text-[15px]">
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/all-products/">All Products</a>
+              <a className="block px-3 py-2 rounded hover:bg.white/10" href="https://joyzze.com/clippers/">Clippers</a>
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/blades/">Blades</a>
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/combs-accessories/">Combs & Accessories</a>
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/information/">Information</a>
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/recycling-sharpening/">Recycling & Sharpening</a>
+              <a className="block px-3 py-2 rounded hover:bg-white/10" href="https://joyzze.com/distributor/">Distributor</a>
+            </div>
+
+            <div className="mt-5">
+              <form action="/search.php" method="get" className="relative">
+                <input
+                  type="text"
+                  name="search_query"
+                  placeholder="Search..."
+                  className="w-full h-[44px] rounded-md bg-white pl-10 pr-3 text-[#0f0f0f] outline-none"
+                  autoComplete="off"
+                />
+                <Icon.Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
+              </form>
+            </div>
+
+            <div className="mt-4 grid grid-cols-3 gap-2">
+              <a className="grid place-items-center h-10 rounded-md bg-white/10" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
+              <a className="grid place-items-center h-10 rounded-md bg-white/10" href="/account.php" aria-label="Account"><Icon.User /></a>
+              <a className="grid place-items-center h-10 rounded-md bg-white/10" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
+            </div>
+          </aside>
+        </>
+      )}
     </header>
   );
 }
@@ -420,7 +450,7 @@ function AppFooter() {
     <footer className="bg-[#4a4a4a] text-slate-100 mt-auto">
       <FooterPromoRibbon />
 
-      <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid gap-10 lg:grid-cols-3">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -467,7 +497,7 @@ function AppFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
-          <div className="flex items-center gap-6 text-[15px]">
+          <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
             <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
@@ -486,7 +516,7 @@ function AppFooter() {
 /* ================================
    AUTH PAGE
    ================================ */
-const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
+const BRAND = { teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -533,18 +563,18 @@ export default function AuthPage() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Page body */}
+      {/* BODY */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
-          <section className="px-6 sm:px-10 lg:px-14 pt-14 pb-16">
-            <div className="max-w-[580px]">
-              <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-6">
+          <section className="px-4 sm:px-6 md:px-8 lg:px-12 pt-10 sm:pt-14 pb-12 sm:pb-16">
+            <div className="max-w-[640px]">
+              <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-5 sm:mb-6">
                 <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
 
-              <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
-              <p className="text-[15px] text-[var(--muted-fg)] mb-8">
+              <h1 className="text-[28px] sm:text-[34px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back!</h1>
+              <p className="text-[14px] sm:text-[15px] text-[var(--muted-fg)] mb-7 sm:mb-8">
                 Enter to get unlimited access to data &amp; information.
               </p>
 
@@ -556,7 +586,7 @@ export default function AuthPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[48px] sm:h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       required
                     />
                   </div>
@@ -568,20 +598,20 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    className="jz-field w-full h-[48px] sm:h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                     placeholder="Enter your mail address"
                     required
                   />
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-5 sm:mb-6">
                   <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
                   <div className="relative">
                     <input
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[48px] sm:h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       placeholder="Enter password"
                       required
                     />
@@ -595,13 +625,13 @@ export default function AuthPage() {
                       <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
                       Remember me
                     </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password?</a>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
+                  className="w-full h-11 sm:h-12 rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
                   style={{ backgroundColor: BRAND.teal }}
                   disabled={loading}
                 >
@@ -616,7 +646,7 @@ export default function AuthPage() {
               </div>
 
               <button
-                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
+                className="google-btn w-full h-11 sm:h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
                 onClick={handleGoogle}
                 disabled={loading}
                 aria-label="Continue with Google"
@@ -625,7 +655,7 @@ export default function AuthPage() {
                 <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
-              <p className="mt-4 text-xs text-[var(--muted-fg)]">
+              <p className="mt-4 text-xs sm:text-[13px] text-[var(--muted-fg)]">
                 {mode === 'login' ? (
                   <>
                     Don’t have an account?{' '}
@@ -645,7 +675,7 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image */}
+          {/* RIGHT: hero image (hidden on small screens) */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -662,13 +692,12 @@ export default function AuthPage() {
 
         :root {
           --joyzze-teal: #1cd2c1;
-          --page-bg: #f4f6f9;
+          --page-bg: #f6f7fb;
           --page-fg: #0e0f11;
           --muted-fg: #6b7280;
           --header-top-bg: #e9eff5;
           --header-top-fg: #0e0f11;
 
-          /* form field (light) */
           --field-bg: #ffffff;
           --field-fg: #0e0f11;
           --field-placeholder: #6b7280;
@@ -681,7 +710,6 @@ export default function AuthPage() {
           --header-top-bg: #151922;
           --header-top-fg: #f4f7fb;
 
-          /* form field (dark) */
           --field-bg: #161a22;
           --field-fg: #f4f7fb;
           --field-placeholder: #9aa3b2;
@@ -689,7 +717,6 @@ export default function AuthPage() {
         }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
-        /* Input theming */
         .jz-field {
           background: var(--field-bg) !important;
           color: var(--field-fg) !important;
@@ -700,7 +727,9 @@ export default function AuthPage() {
         .jz-field.ring-1 { box-shadow: inset 0 0 0 1px var(--field-border); }
         .jz-field:focus { box-shadow: inset 0 0 0 1px transparent; }
 
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input {
+          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+        }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
         .jz-item { padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
@@ -735,6 +764,7 @@ export default function AuthPage() {
         @media (max-width: 1100px){ .jz-input { width: 320px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
+        /* PROMO */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
@@ -742,7 +772,7 @@ export default function AuthPage() {
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
+        .auth-hero { position:relative; width:100%; height:100%; min-height:580px; background:#000; }
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
       `}</style>
