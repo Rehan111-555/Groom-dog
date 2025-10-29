@@ -5,55 +5,69 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 /* ================================
-   SMALL HOOKS
+   SMALL HOOKS (JS — no TS types)
    ================================ */
-function useLockBodyScroll(locked: boolean) {
+function useDisclosure(initial = false) {
+  const [open, setOpen] = useState(initial);
+  const toggle = () => setOpen((v) => !v);
+  const close = () => setOpen(false);
+  const openFn = () => setOpen(true);
+  return { open, toggle, close, openFn, setOpen };
+}
+
+function useLockBodyScroll(locked) {
   useEffect(() => {
     if (!locked) return;
-    const { overflow } = document.body.style;
+    const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = overflow;
+      document.body.style.overflow = prev;
     };
   }, [locked]);
 }
 
-function useFocusTrap(active: boolean, containerRef: React.RefObject<HTMLElement>) {
+function useFocusTrap(enabled, containerRef) {
   useEffect(() => {
-    if (!active || !containerRef.current) return;
-    const focusableSelectors =
-      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-    const container = containerRef.current;
-    const focusables = Array.from(container.querySelectorAll<HTMLElement>(focusableSelectors));
-    const first = focusables[0];
-    const last = focusables[focusables.length - 1];
+    if (!enabled || !containerRef.current) return;
+    const el = containerRef.current;
+    const selectors =
+      'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]';
+    const nodes = () => Array.from(el.querySelectorAll(selectors));
+    const first = () => nodes()[0];
+    const last = () => nodes()[nodes().length - 1];
 
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
-      if (focusables.length === 0) return;
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
+    const onKeyDown = (e) => {
+      if (e.key === 'Tab') {
+        const focusables = nodes();
+        if (!focusables.length) return;
+        const firstEl = focusables[0];
+        const lastEl = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === firstEl) {
           e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
+          lastEl.focus();
+        } else if (!e.shiftKey && document.activeElement === lastEl) {
           e.preventDefault();
-          first.focus();
+          firstEl.focus();
         }
+      } else if (e.key === 'Escape') {
+        el.dispatchEvent(new CustomEvent('close-request'));
       }
     };
-    first?.focus();
-    container.addEventListener('keydown', onKeyDown);
-    return () => container.removeEventListener('keydown', onKeyDown);
-  }, [active, containerRef]);
+
+    el.addEventListener('keydown', onKeyDown);
+    // focus first interactive
+    setTimeout(() => first()?.focus(), 0);
+    return () => {
+      el.removeEventListener('keydown', onKeyDown);
+    };
+  }, [enabled, containerRef]);
 }
 
 /* ================================
    ICONS
    ================================ */
 const Icon = {
-  Phone: (p: any) => (
+  Phone: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path
         d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
@@ -64,48 +78,48 @@ const Icon = {
       />
     </svg>
   ),
-  Search: (p: any) => (
+  Search: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9" />
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
     </svg>
   ),
-  Plus: (p: any) => (
+  Plus: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
     </svg>
   ),
-  Shuffle: (p: any) => (
+  Shuffle: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{ transform: 'rotate(-8deg)' }}>
       <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
       <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
-  User: (p: any) => (
+  User: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8" />
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
-  CaretDown: (p: any) => (
+  CaretDown: (p) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
     </svg>
   ),
-  Bag: (p: any) => (
+  Bag: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" />
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
-  Mail: (p: any) => (
+  Mail: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="2.5" y="5.5" width="19" height="13" rx="2" stroke="currentColor" strokeWidth="1.8" />
       <path d="M3.5 7 12 12.5 20.5 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
-  GoogleG: (p: any) => (
+  GoogleG: (p) => (
     <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true" {...p}>
       <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.18-1.84H9v3.48h4.84c-.21 1.12-.84 2.07-1.8 2.71v2.25h2.9c1.7-1.57 2.7-3.88 2.7-6.6z"/>
       <path fill="#34A853" d="M9 18c2.43 0 4.47-.81 5.96-2.2l-2.9-2.25c-.8.54-1.82.86-3.06.86-2.35 0-4.34-1.58-5.05-3.71H1.9v2.33C3.38 15.98 6 18 9 18z"/>
@@ -113,38 +127,38 @@ const Icon = {
       <path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.33l2.56-2.56C13.47.89 11.43 0 9 0 6 0 3.38 2.02 1.9 4.97l2.05 2.33C4.66 5.16 6.65 3.58 9 3.58z"/>
     </svg>
   ),
-  Truck: (p: any) => (
+  Truck: (p) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M3 7h10v7H3zM13 11h4l4 4v3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
       <circle cx="8" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="18" cy="18" r="1.9" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   ),
-  Return: (p: any) => (
+  Return: (p) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 9v5h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
       <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   ),
-  Card: (p: any) => (
+  Card: (p) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.6" />
       <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   ),
-  Lock: (p: any) => (
+  Lock: (p) => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="5" y="11" width="14" height="9" rx="2" stroke="currentColor" strokeWidth="1.6" />
       <path d="M8 11V9a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6" />
     </svg>
   ),
-  Sun: (p: any) => (
+  Sun: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.7" />
       <path d="M12 2v2M12 20v2M4 12H2M22 12h-2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
     </svg>
   ),
-  Moon: (p: any) => (
+  Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path
         d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
@@ -155,22 +169,25 @@ const Icon = {
       />
     </svg>
   ),
-  Menu: (p: any) => (
+  Bars: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   ),
-  Close: (p: any) => (
+  X: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
+  ),
+  ChevronDown: (p) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
   ),
 };
 
 /* ================================
-   HEADER + MEGA MENU (+ MOBILE)
+   HEADER + MEGA MENU (desktop) + MOBILE DRAWER
    ================================ */
-function MegaSection({ title, children }: any) {
+function MegaSection({ title, children }) {
   return (
     <div>
       <p className="jz-sec-title">{title}</p>
@@ -179,125 +196,23 @@ function MegaSection({ title, children }: any) {
   );
 }
 
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useFocusTrap(open, ref);
-  useLockBodyScroll(open);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    if (open) window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
+function MobileAccordion({ label, children, id }) {
+  const [open, setOpen] = useState(false);
+  const panelId = `${id}-panel`;
   return (
-    <div className="fixed inset-0 z-[2000] lg:hidden">
+    <div className="border-b border-white/10">
       <button
-        className="absolute inset-0 bg-black/40"
-        aria-label="Close menu backdrop"
-        onClick={onClose}
-      />
-      <div
-        ref={ref}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Main navigation"
-        className="absolute inset-y-0 left-0 w-[85vw] max-w-[360px] bg-white dark:bg-[#12141a] shadow-xl outline-none flex flex-col"
+        className="w-full flex items-center justify-between py-3 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls={panelId}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10">
-          <span className="text-sm font-semibold">Menu</span>
-          <button
-            className="w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-            onClick={onClose}
-            aria-label="Close menu"
-          >
-            <Icon.Close />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-2">
-          {/* Accordion sections that mirror desktop groups */}
-          <details className="group border-b border-black/10 dark:border-white/10" open>
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold focus:outline-none">
-              All Products
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a>
-              <a className="block" href="https://joyzze.com/hornet/">Hornet | C-Series</a>
-              <a className="block" href="https://joyzze.com/stinger/">Stinger | C-Series</a>
-              <a className="block" href="https://joyzze.com/piranha/">Piranha | D-Series</a>
-              <a className="block" href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a>
-            </nav>
-          </details>
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Clippers
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet (5-in-1)</a>
-              <a className="block" href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger (5-in-1)</a>
-              <a className="block" href="https://joyzze.com/falcon/">Falcon (A5)</a>
-              <a className="block" href="https://joyzze.com/raptor-clippers/">Raptor (A5)</a>
-              <a className="block" href="https://joyzze.com/piranha-clippers/">Piranha (D)</a>
-              <a className="block" href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini (M)</a>
-            </nav>
-          </details>
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Blades
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/a5-blades/">A5 Blades</a>
-              <a className="block" href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a>
-              <a className="block" href="https://joyzze.com/c-max-blades/">C-MAX Blades</a>
-              <a className="block" href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a>
-            </nav>
-          </details>
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Combs &amp; Accessories
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a>
-              <a className="block" href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set (A & D)</a>
-              <a className="block" href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set (C)</a>
-              <a className="block" href="https://joyzze.com/12-slot/">12-Slot Case</a>
-              <a className="block" href="https://joyzze.com/22-slot/">22-Slot Case</a>
-            </nav>
-          </details>
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Info
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a>
-              <a className="block" href="https://joyzze.com/information/faqs/">FAQs</a>
-              <a className="block" href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a>
-              <a className="block" href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a>
-              <a className="block" href="https://joyzze.com/accessibility-statement/">Accessibility</a>
-            </nav>
-          </details>
-
-          <div className="py-3 px-2 space-y-2">
-            <a className="block" href="https://joyzze.com/recycling-sharpening/">Recycling &amp; Sharpening</a>
-            <a className="block" href="https://joyzze.com/distributor/">Distributor</a>
-          </div>
+        <span className="font-semibold">{label}</span>
+        <Icon.ChevronDown className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <div id={panelId} className={`grid overflow-hidden transition-all ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-90'}`}>
+        <div className="min-h-0">
+          <ul className="py-2 space-y-2 text-sm">{children}</ul>
         </div>
       </div>
     </div>
@@ -305,18 +220,22 @@ function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void })
 }
 
 function AppHeader() {
-  const [open, setOpen] = useState<string | null>(null);
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [open, setOpen] = useState(null); // desktop hover id
+  const [theme, setTheme] = useState('light');
+  const search = useDisclosure(false);
+  const drawer = useDisclosure(false);
+  const drawerRef = useRef(null);
+
+  useLockBodyScroll(drawer.open);
+  useFocusTrap(drawer.open, drawerRef);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
-    const initial = (saved as 'light' | 'dark') || 'light';
+    const initial = saved || 'light';
     setTheme(initial);
     document.documentElement.classList.toggle('theme-dark', initial === 'dark');
 
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && (setOpen(null), setMobileSearchOpen(false), setDrawerOpen(false));
+    const onKey = (e) => e.key === 'Escape' && setOpen(null);
     const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -333,7 +252,7 @@ function AppHeader() {
     document.documentElement.classList.toggle('theme-dark', next === 'dark');
   };
 
-  const NavItem = ({ id, href, children }: any) => {
+  const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
       <a
@@ -345,7 +264,7 @@ function AppHeader() {
         aria-expanded={active ? 'true' : 'false'}
       >
         <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
           <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </svg>
         <span className="jz-underline" />
@@ -358,63 +277,63 @@ function AppHeader() {
     <header className="w-full sticky top-0 z-50">
       {/* Top bar */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
-        <div className="relative h-[64px] md:h-[84px] w-full px-0">
-          {/* Left (phone) + hamburger on mobile */}
-          <div className="absolute inset-y-0 left-3 flex items-center gap-2">
-            <button
-              className="lg:hidden w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-              aria-label="Open menu"
-              aria-expanded={drawerOpen}
-              aria-controls="mobile-drawer"
-              onClick={() => setDrawerOpen(true)}
-            >
-              <Icon.Menu />
-            </button>
-            <a href="tel:(877) 456-9993" className="hidden xs:flex items-center gap-2">
-              <Icon.Phone className="opacity-85" />
-              <span className="text-[14px] md:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-            </a>
+        <div className="relative h-[64px] md:h-[84px] w-full px-2 md:px-0">
+          {/* Left (phone) */}
+          <div className="absolute inset-y-0 left-3 flex items-center gap-2 pr-12">
+            <Icon.Phone className="opacity-85" />
+            <span className="text-[14px] sm:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
           {/* Center (logo) */}
           <a
             href="/"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_30px_rgba(0,0,0,.35)]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 py-2 rounded-[10px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-5 py-2.5 md:px-8 md:py-3 rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-[44px] md:h-[56px] w-auto align-middle"
-                onError={(e: any) => {
+                className="h-[44px] md:h-[58px] w-auto align-middle"
+                onError={(e) => {
                   e.currentTarget.outerHTML =
-                    '<span class="text.white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                    '<span class="text.white text-[24px] md:text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* Right (search + icons + theme) */}
-          <div className="absolute inset-y-0 right-0 flex items-center gap-2 sm:gap-3 pr-2 sm:pr-3">
-            {/* Mobile search icon */}
+          {/* Right controls */}
+          <div className="absolute inset-y-0 right-2 md:right-0 flex items-center gap-2 sm:gap-3 md:gap-4">
+            {/* Mobile: hamburger + search icon */}
             <button
-              className="md:hidden w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+              className="lg:hidden grid place-items-center w-10 h-10 rounded-md hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+              onClick={drawer.openFn}
+              aria-label="Open menu"
+              aria-expanded={drawer.open}
+              aria-controls="mobile-drawer"
+            >
+              <Icon.Bars />
+            </button>
+
+            <button
+              className="md:hidden grid place-items-center w-10 h-10 rounded-md hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+              onClick={search.toggle}
               aria-label="Toggle search"
-              aria-expanded={mobileSearchOpen}
+              aria-expanded={search.open}
               aria-controls="mobile-search"
-              onClick={() => setMobileSearchOpen((v) => !v)}
             >
               <Icon.Search />
             </button>
 
+            {/* Desktop search */}
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[44px] w-[240px] max-w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[220px] md:w-[260px] max-w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -438,7 +357,7 @@ function AppHeader() {
 
             <button
               onClick={toggleTheme}
-              className="ml-0 sm:ml-1 inline-flex items-center gap-2 h-10 px-3 rounded-full border border-black/10 bg-white/70 hover:bg-white/90 backdrop-blur text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+              className="ml-1 inline-flex items-center gap-2 h-10 px-3 rounded-full border border-black/10 bg-white/70 hover:bg.white/90 backdrop-blur text-[13px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
               aria-label="Toggle theme"
             >
               {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
@@ -447,26 +366,31 @@ function AppHeader() {
           </div>
         </div>
 
-        {/* Collapsible mobile search */}
-        <div id="mobile-search" className={`md:hidden px-3 pb-3 ${mobileSearchOpen ? 'block' : 'hidden'}`}>
-          <form action="/search.php" method="get" className="w-full">
-            <input
-              type="text"
-              name="search_query"
-              placeholder="Search..."
-              className="jz-input h-11 w-full rounded-md bg-white pl-3 pr-3 text-[15px] outline-none ring-1 ring-black/10"
-              aria-label="Search input"
-              autoComplete="off"
-            />
-          </form>
+        {/* Mobile collapsible search */}
+        <div
+          id="mobile-search"
+          className={`md:hidden overflow-hidden transition-[grid-template-rows] grid ${search.open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} bg-[var(--header-top-bg)] px-3 pb-2`}
+        >
+          <div className="min-h-0">
+            <form action="/search.php" method="get" className="pt-1">
+              <input
+                type="text"
+                name="search_query"
+                placeholder="Search..."
+                className="jz-input h-11 w-full rounded-md bg-white px-3 text-[14px] italic placeholder:italic outline-none ring-1 ring-black/10"
+                aria-label="Search"
+                autoComplete="off"
+              />
+            </form>
+          </div>
         </div>
       </div>
 
-      {/* 1/2 inch spacer ONLY on lg+ */}
-      <div className="hidden lg:block" style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
+      {/* Spacer: only on lg+ */}
+      <div className="hidden lg:block h-6" style={{ background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* NAVBAR: hide entirely on <lg> to avoid hover panels on touch */}
-      <nav className="hidden lg:block bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
+      {/* NAVBAR (desktop only) */}
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10 hidden lg:block" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
@@ -482,7 +406,7 @@ function AppHeader() {
           </div>
 
           {open && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
+            <div className="absolute left-1/2 -translate-x-1/2 top.full pt-[8px]" onMouseEnter={() => setOpen(open)}>
               <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                 <div className="jz-mega-bg" />
                 <div className="relative grid grid-cols-3 gap-14 p-8">
@@ -601,8 +525,93 @@ function AppHeader() {
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+      {/* MOBILE DRAWER */}
+      {drawer.open && (
+        <div
+          className="fixed inset-0 z-[60] lg:hidden"
+          aria-hidden={!drawer.open}
+        >
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={drawer.close}
+            aria-label="Close menu"
+          />
+          <aside
+            id="mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            ref={drawerRef}
+            className="absolute inset-y-0 left-0 w-[85vw] max-w-[360px] bg-[#1c1f26] text-white p-4 focus:outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') drawer.close();
+            }}
+            onCloseRequest={drawer.close}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-lg font-semibold">Menu</span>
+              <button
+                onClick={drawer.close}
+                aria-label="Close menu"
+                className="w-10 h-10 grid place-items-center rounded-md hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+              >
+                <Icon.X />
+              </button>
+            </div>
+
+            <div className="mt-3 text-sm opacity-90">(877) 456-9993</div>
+
+            <div className="mt-4 space-y-1">
+              <a href="https://joyzze.com/recycling-sharpening/" className="block py-2">Recycling &amp; Sharpening</a>
+              <a href="https://joyzze.com/distributor/" className="block py-2">Distributor</a>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/10">
+              <MobileAccordion id="sec-all" label="All Products">
+                <li><a href="https://joyzze.com/all-products/" className="block py-1.5">Browse All</a></li>
+              </MobileAccordion>
+              <MobileAccordion id="sec-clippers" label="Clippers">
+                <li><a href="https://joyzze.com/hornet-clippers-5-in-1/" className="block">Hornet</a></li>
+                <li><a href="https://joyzze.com/stinger-clippers-5-in-1/" className="block">Stinger</a></li>
+                <li><a href="https://joyzze.com/falcon/" className="block">Falcon</a></li>
+                <li><a href="https://joyzze.com/raptor-clippers/" className="block">Raptor</a></li>
+                <li><a href="https://joyzze.com/piranha-clippers/" className="block">Piranha</a></li>
+                <li><a href="https://joyzze.com/hornet-mini-clippers/" className="block">Hornet Mini</a></li>
+              </MobileAccordion>
+              <MobileAccordion id="sec-blades" label="Blades">
+                <li><a href="https://joyzze.com/a5-blades/" className="block">A5 Blades</a></li>
+                <li><a href="https://joyzze.com/wide-blades-a-series/" className="block">Wide Blades</a></li>
+                <li><a href="https://joyzze.com/c-max-blades/" className="block">C-MAX Blades</a></li>
+                <li><a href="https://joyzze.com/mini-trimmer-blades/" className="block">Mini Trimmer Blades</a></li>
+              </MobileAccordion>
+              <MobileAccordion id="sec-combs" label="Combs & Accessories">
+                <li><a href="https://joyzze.com/a-series-wide-metal-combs/" className="block">Wide Metal Combs</a></li>
+                <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/" className="block">A & D Series Set</a></li>
+                <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/" className="block">C Series Set</a></li>
+                <li><a href="https://joyzze.com/12-slot/" className="block">12-Slot Case</a></li>
+                <li><a href="https://joyzze.com/22-slot/" className="block">22-Slot Case</a></li>
+              </MobileAccordion>
+              <MobileAccordion id="sec-info" label="Information">
+                <li><a href="https://joyzze.com/information/about-joyzze/" className="block">About</a></li>
+                <li><a href="https://joyzze.com/information/faqs/" className="block">FAQs</a></li>
+                <li><a href="https://joyzze.com/information/shipping-returns/" className="block">Shipping & Returns</a></li>
+                <li><a href="https://joyzze.com/accessibility-statement/" className="block">Accessibility</a></li>
+              </MobileAccordion>
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              <a className="flex-1 h-11 grid place-items-center rounded-md bg-white text-black" href="/account.php">Account</a>
+              <a className="flex-1 h-11 grid place-items-center rounded-md bg-white text-black" href="/cart.php">Cart</a>
+              <button
+                onClick={toggleTheme}
+                className="h-11 px-3 rounded-md ring-1 ring-white/20 bg-white/10"
+                aria-label="Toggle theme"
+              >
+                {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
+              </button>
+            </div>
+          </aside>
+        </div>
+      )}
     </header>
   );
 }
@@ -661,7 +670,7 @@ function AppFooter() {
               src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
               alt="Joyzze"
               className="h-9 w-auto"
-              onError={(e: any) => {
+              onError={(e) => {
                 e.currentTarget.outerHTML = '<span class="text.white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
               }}
             />
@@ -710,7 +719,7 @@ const BRAND = { teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [mode, setMode] = useState('login');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -727,7 +736,7 @@ export default function AuthPage() {
     }
   }
 
-  async function handleCredentials(e: React.FormEvent) {
+  async function handleCredentials(e) {
     e.preventDefault();
     setLoading(true);
     try {
@@ -757,13 +766,13 @@ export default function AuthPage() {
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
-          <section className="px-5 sm:px-8 lg:px-14 pt-10 md:pt-12 pb-14">
+          <section className="px-4 sm:px-6 md:px-10 lg:px-14 pt-10 md:pt-14 pb-14">
             <div className="max-w-[620px]">
               <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#f1f1ff] shadow mb-6">
                 <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
 
-              <h1 className="font-semibold tracking-[.015em] mb-2 text-[clamp(1.6rem,5.5vw,2.5rem)]">Welcome back!</h1>
+              <h1 className="text-[clamp(1.6rem,5.5vw,2.75rem)] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
               <p className="text-[15px] text-[var(--muted-fg)] mb-8">
                 Enter to get unlimited access to data &amp; information.
               </p>
@@ -776,7 +785,7 @@ export default function AuthPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="jz-field w-full h-[48px] sm:h-[52px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-12 rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       required
                     />
                   </div>
@@ -788,7 +797,7 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="jz-field w-full h-[48px] sm:h-[52px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    className="jz-field w-full h-12 rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                     placeholder="Enter your mail address"
                     required
                   />
@@ -801,27 +810,27 @@ export default function AuthPage() {
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="jz-field w-full h-[48px] sm:h-[52px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-12 rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       placeholder="Enter password"
                       required
                     />
-                    <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
                       <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
                       <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
                     </svg>
                   </div>
-                  <div className="flex flex-wrap items-center justify-between gap-3 mt-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mt-2">
                     <label className="inline-flex items-center gap-2 text-[13px]">
-                      <input aria-label="Remember me" type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
+                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
                       Remember me
                     </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password?</a>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full h-12 sm:h-[52px] rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+                  className="w-full h-12 rounded-[10px] text-white font.medium shadow-md hover:shadow-lg transition"
                   style={{ backgroundColor: BRAND.teal }}
                   disabled={loading}
                 >
@@ -831,12 +840,12 @@ export default function AuthPage() {
 
               <div className="my-4 flex items-center">
                 <div className="flex-1 border-t border-gray-300" />
-                <p className="mx-4 text-sm text-gray-500">Or</p>
+                <p className="mx-4 text-sm text-gray-500">Or, Login with</p>
                 <div className="flex-1 border-t border-gray-300" />
               </div>
 
               <button
-                className="google-btn w-full h-12 sm:h-[52px] rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
                 onClick={handleGoogle}
                 disabled={loading}
                 aria-label="Continue with Google"
@@ -845,18 +854,18 @@ export default function AuthPage() {
                 <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
-              <p className="mt-4 text-sm text-[var(--muted-fg)]">
+              <p className="mt-4 text-xs text-[var(--muted-fg)]">
                 {mode === 'login' ? (
                   <>
                     Don’t have an account?{' '}
-                    <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)] rounded">
+                    <button type="button" onClick={() => setMode('signup')} className="text-[#6b6bff] hover:underline">
                       Register here
                     </button>
                   </>
                 ) : (
                   <>
                     Already have an account?{' '}
-                    <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)] rounded">
+                    <button type="button" onClick={() => setMode('login')} className="text-[#6b6bff] hover:underline">
                       Sign in
                     </button>
                   </>
@@ -865,10 +874,10 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image */}
+          {/* RIGHT: hero image (hidden on small) */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
-              <img src="/dog-7.png" alt="Dogs hero" className="w-full h-full object-cover" />
+              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
             </div>
           </section>
         </div>
@@ -920,13 +929,11 @@ export default function AuthPage() {
         .jz-field.ring-1 { box-shadow: inset 0 0 0 1px var(--field-border); }
         .jz-field:focus { box-shadow: inset 0 0 0 1px transparent; }
 
-        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input {
-          font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
-        }
+        .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
         .jz-item { padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
-        .caret { margin-left:2px; opacity:.75; transition: transform .18s ease, opacity .18s ease; }
+        .caret { margin-left:6px; opacity:.75; transition: transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform: translateY(1px) rotate(180deg); opacity:1; }
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0;height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s; }
@@ -958,18 +965,15 @@ export default function AuthPage() {
         @media (max-width: 980px){ .jz-input { display:none; } }
 
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
-        .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:15px; line-height:1.25; }
+        .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 18px; border-right:1px solid var(--joyzze-teal); }
         .promo-ico { color:#e8e8e8; opacity:.95; flex:0 0 auto; }
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        .auth-hero { position:relative; width:100%; height:100%; min-height:560px; background:#000; }
+        .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
-
-        /* Fluid headings */
-        h1, .hero-title { font-size: clamp(1.6rem, 5.5vw, 2.75rem); line-height: 1.15; }
       `}</style>
     </main>
   );
