@@ -2,167 +2,126 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ─────────────────── Small hooks ─────────────────── */
-function useLockBodyScroll(locked: boolean) {
-  useEffect(() => {
-    if (!locked) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [locked]);
-}
-
-function useFocusTrap(active: boolean, containerRef: React.RefObject<HTMLElement>) {
-  useEffect(() => {
-    if (!active || !containerRef.current) return;
-    const container = containerRef.current;
-    const selectors =
-      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-    const nodes = Array.from(container.querySelectorAll<HTMLElement>(selectors));
-    const first = nodes[0];
-    const last = nodes[nodes.length - 1];
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab' || nodes.length === 0) return;
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last?.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first?.focus();
-        }
-      }
-    };
-    first?.focus();
-    container.addEventListener('keydown', onKey);
-    return () => container.removeEventListener('keydown', onKey);
-  }, [active, containerRef]);
-}
-
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
-  Upload: (p: any) => (
+  Upload: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 12V3m0 0L9 6m3-3 3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 16.5a3.5 3.5 0 0 0-2.5-3.36A5.5 5.5 0 0 0 7 11a4 4 0 0 0-1 7.87" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Wand: (p: any) => (
+  Wand: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M6 18 18 6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M14 6h4v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Reset: (p: any) => (
+  Reset: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 4v6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 20v-6h-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M20 10a8 8 0 0 0-14.73-3.5M4 14a8 8 0 0 0 14.73 3.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Download: (p: any) => (
+  Download: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 3v12m0 0 4-4m-4 4-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Phone: (p: any)=>(
+  Phone: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0  0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Search: (p: any)=>(
+  Search: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Plus: (p: any)=>(
+  Plus: (p)=>(
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Shuffle: (p: any)=>(
+  Shuffle: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}>
       <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  User: (p: any)=>(
+  User: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  CaretDown: (p: any)=>(
+  CaretDown: (p)=>(
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Bag: (p: any)=>(
+  Bag: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Truck: (p: any)=>(
+  Truck: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
     </svg>
   ),
-  Return: (p: any)=>(
+  Return: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
       <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
     </svg>
   ),
-  Card: (p: any)=>(
+  Card: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
-  Lock: (p: any)=>(
+  Lock: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/>
       <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
     </svg>
   ),
-  Sun: (p: any)=>(
+  Sun: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
-  Moon: (p: any)=>(
+  Moon: (p)=>(
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Menu: (p: any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
-  Close: (p: any)=>(<svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>),
+  Bars: (p)=>(
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+  ),
+  X: (p)=>(
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/></svg>
+  ),
+  ChevronDown: (p)=>(
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}><path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></svg>
+  ),
 };
 
 /* ─────────────────── Small UI helpers ─────────────────── */
-const Button = ({ className = "", disabled, onClick, children, type = "button" }: any) => (
-  <button
-    type={type}
-    disabled={disabled}
-    onClick={onClick}
-    className={`btn ${className}`}
-  >
-    {children}
-  </button>
+const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
+  <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
-const Card = ({ className="", children }: any) => <div className={`card ${className}`}>{children}</div>;
+const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
 /* ─────────────────── Utility ─────────────────── */
-function pickResultUrl(data: any){
+function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
       return data.image.indexOf("data:")===0 ? data.image : `data:image/png;base64,${data.image}`;
@@ -171,7 +130,7 @@ function pickResultUrl(data: any){
   }
   return null;
 }
-function validateImageFile(f: File, maxMB=12){
+function validateImageFile(f,maxMB=12){
   if (!f || typeof f!=="object") return "Invalid file.";
   const type = String(f.type||"");
   const size = Number(f.size||0);
@@ -179,9 +138,9 @@ function validateImageFile(f: File, maxMB=12){
   if (size > maxMB*1024*1024) return `Image too large. Please keep it under ${maxMB}MB.`;
   return null;
 }
-async function safeReadText(res: Response){ try{return await res.text();}catch{ return ""; } }
-function readImageSize(url: string){
-  return new Promise<{w:number;h:number}>((resolve,reject)=>{
+async function safeReadText(res){ try{return await res.text();}catch{ return ""; } }
+function readImageSize(url){
+  return new Promise((resolve,reject)=>{
     const img=new Image();
     img.crossOrigin='anonymous';
     img.onload=()=>resolve({w: img.naturalWidth, h: img.naturalHeight});
@@ -189,10 +148,10 @@ function readImageSize(url: string){
     img.src=url;
   });
 }
-async function padToSize(dataUrl: string, targetW: number, targetH: number) {
+async function padToSize(dataUrl, targetW, targetH) {
   const img = new Image(); img.src = dataUrl; await new Promise(r => (img.onload = r));
   const canvas = document.createElement("canvas"); canvas.width = targetW; canvas.height = targetH;
-  const ctx = canvas.getContext("2d")!; ctx.clearRect(0,0,targetW,targetH);
+  const ctx = canvas.getContext("2d"); ctx.clearRect(0,0,targetW,targetH);
   const scale = Math.min(targetW / img.naturalWidth, targetH / img.naturalHeight);
   const nw = Math.round(img.naturalWidth * scale); const nh = Math.round(img.naturalHeight * scale);
   const dx = Math.floor((targetW - nw) / 2); const dy = Math.floor((targetH - nh) / 2);
@@ -200,23 +159,15 @@ async function padToSize(dataUrl: string, targetW: number, targetH: number) {
 }
 
 /* ─────────────────── Compare slider ─────────────────── */
-function CompareSlider({ beforeSrc, afterSrc }: { beforeSrc: string; afterSrc: string }) {
+function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
-    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'pan-y' }}>
+    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
       <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
       <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
-      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} aria-hidden="true" />
+      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
       <div className="absolute bottom-2 left-3 right-3">
-        <input
-          aria-label="Compare before and after"
-          type="range"
-          min={0}
-          max={100}
-          value={pos}
-          onChange={(e)=>setPos(Number(e.target.value)||55)}
-          className="w-full"
-        />
+        <input aria-label="Compare before/after" type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
       </div>
     </div>
   );
@@ -226,28 +177,46 @@ function CompareSlider({ beforeSrc, afterSrc }: { beforeSrc: string; afterSrc: s
    Upload + Result
    ========================================================= */
 function UploadAndResult(){
-  const [file,setFile]=useState<File|null>(null);
-  const [previewUrl,setPreviewUrl]=useState<string|null>(null);
-  const [resultUrl,setResultUrl]=useState<string|null>(null);
+  const [file,setFile]=useState(null);
+  const [previewUrl,setPreviewUrl]=useState(null);
+  const [resultUrl,setResultUrl]=useState(null);
   const [loading,setLoading]=useState(false);
-  const [error,setError]=useState<string|null>(null);
+  const [error,setError]=useState(null);
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
   const [urlText, setUrlText] = useState("");
-  const controllerRef=useRef<AbortController|null>(null);
+  const controllerRef=useRef(null);
 
-  // Replaced JS heights with responsive CSS min-heights.
-  const ACTION_H = 56;
+  const leftTopRef = useRef(null);
+  const rightTitleRef = useRef(null);
+  const [spacerH, setSpacerH] = useState(0);
+
+  useEffect(() => {
+    const measure = () => {
+      const L = leftTopRef.current?.getBoundingClientRect()?.height || 0;
+      const R = rightTitleRef.current?.getBoundingClientRect()?.height || 0;
+      setSpacerH(Math.max(0, Math.round(L - R)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (leftTopRef.current) ro.observe(leftTopRef.current);
+    if (rightTitleRef.current) ro.observe(rightTitleRef.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro.disconnect();
+    };
+  }, [urlText, previewUrl]);
 
   useEffect(() => {
     return () => {
-      if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
-      if (resultUrl && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
+      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
     };
   }, [previewUrl, resultUrl]);
 
-  const handleFile = async (f: File) => {
+  const handleFile = async (f) => {
     setError(null);
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
@@ -255,7 +224,7 @@ function UploadAndResult(){
     setFile(f); setResultUrl(null); setPreviewUrl(url);
     try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
   };
-  const selectFile=(e: React.ChangeEvent<HTMLInputElement>)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
+  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const handleUrlLoad = async () => {
     const u = urlText.trim();
@@ -275,7 +244,7 @@ function UploadAndResult(){
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
-      if (file) form.append("image",file); else form.append("image_url", String(previewUrl));
+      if (file) form.append("image",file); else form.append("image_url", previewUrl);
       form.append("dog_only","true");
       if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
 
@@ -291,7 +260,7 @@ function UploadAndResult(){
         else setResultUrl(url);
       } catch { setResultUrl(url); }
       setProgress(100);
-    }catch(e: any){ setError(e?.message||"Something went wrong."); }
+    }catch(e){ setError(e?.message||"Something went wrong."); }
     finally{ setLoading(false); }
   };
 
@@ -299,47 +268,44 @@ function UploadAndResult(){
 
   const hasInput = !!previewUrl;
 
+  // Panel target height: responsive (no JS height on small)
+  const panelStyle = { height: 'min(70vh, 560px)' };
+
   return (
-    <section id="app" className="container mx-auto px-5 sm:px-6 py-12 md:py-16">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div className="flex items-center gap-3 min-w-0">
+    <section id="app" className="container mx-auto px-4 sm:px-6 py-10 md:py-16">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
-          <div className="min-w-0">
-            <h1 className="hero-title font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
+          <div>
+            <h1 className="text-[clamp(1.3rem,4.5vw,1.9rem)] font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
             <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary w-full sm:w-auto justify-center" href={resultUrl} download aria-label="Download result">
-            <Icon.Download /> Download
-          </a>
+          <a className="btn btn-primary w-full sm:w-auto justify-center" href={resultUrl} download aria-label="Download result"><Icon.Download /> Download</a>
         ) : <div className="h-9" aria-hidden="true" />}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6 md:gap-8 items-stretch">
         <Card className="p-4">
-          <div className="mb-3">
+          <div ref={leftTopRef}>
             <div className="mb-2 text-sm font-semibold invisible">Upload</div>
-            <div className="flex items-stretch gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch gap-2 mb-3">
               <input
                 type="url"
                 value={urlText}
                 onChange={(e)=>setUrlText(e.target.value)}
                 placeholder="Paste image URL…"
-                className="flex-1 min-w-0 px-3 py-2 h-11 rounded-md ring-1 ring-[var(--app-border)] bg-[var(--app-surface)] text-inherit outline-none"
+                className="flex-1 min-w-0 px-3 py-3 rounded-md ring-1 ring-[var(--app-border)] bg-[var(--app-surface)] text-inherit outline-none"
               />
-              <button className="btn btn-ghost h-11" onClick={handleUrlLoad} aria-label="Load from URL">Load</button>
+              <button className="btn btn-ghost w-full sm:w-auto justify-center" onClick={handleUrlLoad}>Load</button>
             </div>
           </div>
 
-          <div
-            className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)] overflow-hidden"
-            style={{ height: 'min(70vh, 560px)' }}
-          >
-            <label className="relative block h-full cursor-pointer">
-              <input aria-label="Choose image" type="file" accept="image/*" className="hidden" onChange={selectFile}/>
+          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)] min-h-[320px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[620px]" style={panelStyle}>
+            <label className="relative block w-full h-full">
               {!hasInput && (
-                <div className="absolute inset-0 grid place-items-center text-center">
+                <div className="absolute inset-0 grid place-items-center text-center cursor-pointer px-4">
                   <div className="grid place-items-center gap-3 text-[var(--app-muted)]">
                     <div className="mx-auto w-16 h-16 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]"><Icon.Upload /></div>
                     <div className="font-medium">Drag &amp; drop or tap to upload</div>
@@ -347,49 +313,50 @@ function UploadAndResult(){
                   </div>
                 </div>
               )}
-              {hasInput && (
-                <div className="absolute top-3 left-3 right-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
-                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 flex-shrink-0">
-                    <img src={previewUrl!} alt="Selected preview" className="w-full h-full object-cover"/>
-                  </div>
-                  <div className="min-w-0 text-xs leading-5">
-                    <div className="truncate font-medium">Selected image</div>
-                    <div className="opacity-70 truncate">{file?.name || previewUrl}</div>
-                  </div>
-                </div>
-              )}
+              <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={selectFile} aria-label="Upload image"/>
             </label>
+
+            {hasInput && (
+              <div className="absolute mt-3 ml-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)]">
+                <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
+                  <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
+                </div>
+                <div className="max-w-[220px] text-xs leading-5">
+                  <div className="truncate">Selected image</div>
+                  <div className="opacity-70 truncate">{file?.name || previewUrl}</div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="mt-3 min-h-[56px] flex flex-wrap items-center gap-3">
+          <div className="mt-3 h-auto min-h-[56px] flex flex-wrap items-center gap-3">
             {!loading ? (
               <>
-                <Button className="btn-primary w-full sm:w-auto h-11" onClick={groom}><Icon.Wand /> Groom</Button>
-                <Button className="btn-ghost w-full sm:w-auto h-11" onClick={resetAll}><Icon.Reset /> Reset</Button>
-                {error && <span className="text-red-500 text-sm ml-auto">{String(error)}</span>}
+                <Button className="btn-primary w-full sm:w-auto justify-center" onClick={groom}><Icon.Wand /> Groom</Button>
+                <Button className="btn-ghost w-full sm:w-auto justify-center" onClick={resetAll}><Icon.Reset /> Reset</Button>
+                {error && <span className="text-red-500 text-sm sm:ml-auto">{String(error)}</span>}
               </>
             ) : (
               <>
-                <Button className="btn-primary w-full sm:w-auto h-11" disabled><Icon.Wand /> Working… {progress}%</Button>
-                <Button className="btn-ghost w-full sm:w-auto h-11" onClick={cancel}><Icon.Reset /> Cancel</Button>
+                <Button className="btn-primary w-full sm:w-auto justify-center" disabled><Icon.Wand /> Working… {progress}%</Button>
+                <Button className="btn-ghost w-full sm:w-auto justify-center" onClick={cancel}><Icon.Reset /> Cancel</Button>
               </>
             )}
           </div>
         </Card>
 
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
-          <div className="rounded-2xl overflow-hidden border border-dashed border-slate-300 dark:border-[var(--app-border)]"
-               style={{ height: 'min(70vh, 560px)' }}>
+          <div style={{ height: spacerH }} aria-hidden="true" />
+          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
+          <div className="rounded-2xl overflow-hidden min-h-[320px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[620px]" style={panelStyle}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center text-center text-sm text-slate-600 dark:text-[var(--app-muted)]">
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)] p-4">
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
-              <CompareSlider beforeSrc={previewUrl!} afterSrc={resultUrl} />
+              <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
@@ -397,9 +364,52 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA MENU (desktop) + MOBILE DRAWER
+   SMALL HOOKS for header (JS only)
    ========================================================= */
-function MegaSection({ title, children }: any) {
+function useDisclosure(initial=false){
+  const [open,setOpen]=useState(initial);
+  const toggle=()=>setOpen(v=>!v);
+  const close=()=>setOpen(false);
+  const openFn=()=>setOpen(true);
+  return { open, toggle, close, openFn, setOpen };
+}
+function useLockBodyScroll(locked){
+  useEffect(()=>{
+    if(!locked) return;
+    const prev=document.body.style.overflow;
+    document.body.style.overflow='hidden';
+    return ()=>{ document.body.style.overflow=prev; };
+  },[locked]);
+}
+function useFocusTrap(enabled, ref){
+  useEffect(()=>{
+    if(!enabled || !ref.current) return;
+    const el = ref.current;
+    const query='a[href],area[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),button:not([disabled]),[tabindex="0"]';
+    const getNodes=()=>Array.from(el.querySelectorAll(query));
+    const first=()=>getNodes()[0];
+    const last=()=>getNodes()[getNodes().length-1];
+    const onKey=(e)=>{
+      if(e.key==='Tab'){
+        const nodes=getNodes();
+        if(!nodes.length) return;
+        const firstEl=nodes[0], lastEl=nodes[nodes.length-1];
+        if(e.shiftKey && document.activeElement===firstEl){ e.preventDefault(); lastEl.focus(); }
+        else if(!e.shiftKey && document.activeElement===lastEl){ e.preventDefault(); firstEl.focus(); }
+      } else if(e.key==='Escape'){
+        el.dispatchEvent(new CustomEvent('close-request'));
+      }
+    };
+    el.addEventListener('keydown', onKey);
+    setTimeout(()=>first()?.focus(),0);
+    return ()=>{ el.removeEventListener('keydown', onKey); };
+  },[enabled, ref]);
+}
+
+/* =========================================================
+   HEADER + NAV + MOBILE DRAWER
+   ========================================================= */
+function MegaSection({ title, children }) {
   return (
     <div>
       <p className="jz-sec-title">{title}</p>
@@ -407,144 +417,41 @@ function MegaSection({ title, children }: any) {
     </div>
   );
 }
-
-function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useFocusTrap(open, ref);
-  useLockBodyScroll(open);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
-    if (open) window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
+function MobileAccordion({ label, children, id }) {
+  const [open, setOpen] = useState(false);
+  const pid = `${id}-panel`;
   return (
-    <div className="fixed inset-0 z-[2000] lg:hidden">
+    <div className="border-b border-white/10">
       <button
-        className="absolute inset-0 bg-black/40"
-        aria-label="Close menu backdrop"
-        onClick={onClose}
-      />
-      <div
-        ref={ref}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Main navigation"
-        className="absolute inset-y-0 left-0 w-[85vw] max-w-[360px] bg-white dark:bg-[#12141a] shadow-xl outline-none flex flex-col"
+        className="w-full flex items-center justify-between py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded"
+        onClick={()=>setOpen(v=>!v)}
+        aria-expanded={open}
+        aria-controls={pid}
       >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10">
-          <span className="text-sm font-semibold">Menu</span>
-          <button
-            className="w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 dark:hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-            onClick={onClose}
-            aria-label="Close menu"
-          >
-            <Icon.Close />
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-2">
-          <details className="group border-b border-black/10 dark:border-white/10" open>
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              All Products
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a>
-              <a className="block" href="https://joyzze.com/hornet/">Hornet | C-Series</a>
-              <a className="block" href="https://joyzze.com/stinger/">Stinger | C-Series</a>
-              <a className="block" href="https://joyzze.com/piranha/">Piranha | D-Series</a>
-              <a className="block" href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a>
-            </nav>
-          </details>
-
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Clippers
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet (5-in-1)</a>
-              <a className="block" href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger (5-in-1)</a>
-              <a className="block" href="https://joyzze.com/falcon/">Falcon (A5)</a>
-              <a className="block" href="https://joyzze.com/raptor-clippers/">Raptor (A5)</a>
-              <a className="block" href="https://joyzze.com/piranha-clippers/">Piranha (D)</a>
-              <a className="block" href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini (M)</a>
-            </nav>
-          </details>
-
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Blades
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/a5-blades/">A5 Blades</a>
-              <a className="block" href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a>
-              <a className="block" href="https://joyzze.com/c-max-blades/">C-MAX Blades</a>
-              <a className="block" href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a>
-            </nav>
-          </details>
-
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Combs &amp; Accessories
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a>
-              <a className="block" href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set (A & D)</a>
-              <a className="block" href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set (C)</a>
-              <a className="block" href="https://joyzze.com/12-slot/">12-Slot Case</a>
-              <a className="block" href="https://joyzze.com/22-slot/">22-Slot Case</a>
-            </nav>
-          </details>
-
-          <details className="group border-b border-black/10 dark:border-white/10">
-            <summary className="flex items-center justify-between py-3 px-2 cursor-pointer text-[15px] font-semibold">
-              Info
-              <span className="ml-2 rotate-0 group-open:-rotate-180 transition">
-                <Icon.CaretDown />
-              </span>
-            </summary>
-            <nav className="pl-3 pb-3 space-y-2 text-[15px]">
-              <a className="block" href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a>
-              <a className="block" href="https://joyzze.com/information/faqs/">FAQs</a>
-              <a className="block" href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a>
-              <a className="block" href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a>
-              <a className="block" href="https://joyzze.com/accessibility-statement/">Accessibility</a>
-            </nav>
-          </details>
-
-          <div className="py-3 px-2 space-y-2">
-            <a className="block" href="https://joyzze.com/recycling-sharpening/">Recycling &amp; Sharpening</a>
-            <a className="block" href="https://joyzze.com/distributor/">Distributor</a>
-          </div>
+        <span className="font-semibold">{label}</span>
+        <Icon.ChevronDown className={`transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <div id={pid} className={`grid overflow-hidden transition-all ${open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-90'}`}>
+        <div className="min-h-0">
+          <ul className="py-2 space-y-2 text-sm">{children}</ul>
         </div>
       </div>
     </div>
   );
 }
 
-function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onToggleTheme: () => void }) {
-  const [open, setOpen] = useState<string | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-  const close = () => setOpen(null);
+function SigninHeader({ theme, onToggleTheme }) {
+  const [open, setOpen] = useState(null); // desktop mega id
+  const search = useDisclosure(false);
+  const drawer = useDisclosure(false);
+  const drawerRef = useRef(null);
+
+  useLockBodyScroll(drawer.open);
+  useFocusTrap(drawer.open, drawerRef);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent)=>{ if(e.key==='Escape'){ close(); setMobileSearchOpen(false); setDrawerOpen(false); } };
-    const onScroll = () => close();
+    const onKey = (e)=>{ if(e.key==='Escape') setOpen(null); };
+    const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
@@ -553,13 +460,12 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
     };
   }, []);
 
-  // desktop hover delegation
-  const onNavOver = (e: React.MouseEvent) => {
-    const el = (e.target as HTMLElement).closest('[data-nav]') as HTMLElement | null;
+  const onNavOver = (e) => {
+    const el = e.target.closest('[data-nav]');
     if (el) setOpen(el.getAttribute('data-nav'));
   };
 
-  const NavItem = ({ id, href, children }: any) => {
+  const NavItem = ({ id, href, children }) => {
     const active = open === id;
     return (
       <a
@@ -572,7 +478,7 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
         aria-expanded={active ? 'true' : 'false'}
       >
         <span>{children}</span>
-        <svg className="caret" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <svg className="caret" width="14" height="14" viewBox="0 0 24 24">
           <path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
         <span className="jz-underline" />
@@ -586,23 +492,22 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
   return (
     <header className="w-full">
       <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
-        {/* Top row */}
         <div style={headerStyle}>
-          <div className="w-full px-3 md:px-4 h-[64px] md:h-[72px] grid grid-cols-[auto_1fr_auto] items-center gap-2">
-            {/* Left: hamburger + phone */}
+          <div className="w-full px-3 md:px-4 lg:px-6 h-[60px] md:h-[72px] grid grid-cols-[auto_1fr_auto] items-center gap-2">
+            {/* Left: hamburger + phone (mobile) */}
             <div className="flex items-center gap-2">
               <button
-                className="lg:hidden w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+                className="lg:hidden grid place-items-center w-10 h-10 rounded-md hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+                onClick={drawer.openFn}
                 aria-label="Open menu"
-                aria-controls="mobile-nav"
-                aria-expanded={drawerOpen}
-                onClick={() => setDrawerOpen(true)}
+                aria-expanded={drawer.open}
+                aria-controls="mobile-drawer"
               >
-                <Icon.Menu />
+                <Icon.Bars />
               </button>
-              <a href="tel:(877) 456-9993" className="hidden xs:flex items-center gap-2" style={{color:'var(--header-text)'}}>
+              <a href="tel:(877) 456-9993" className="hidden sm:flex items-center gap-2" style={{color:'var(--header-text)'}}>
                 <Icon.Phone className="opacity-85" />
-                <span className="text-[14px] md:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+                <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
               </a>
             </div>
 
@@ -612,42 +517,43 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
               className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
               aria-label="Joyzze"
             >
-              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-5 md:px-7 py-2.5 rounded-[10px]">
+              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-5 py-2.5 md:px-7 md:py-2.5 rounded-[10px]">
                 <img
                   src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                   alt="Joyzze"
-                  className="h-[40px] md:h-[52px] w-auto align-middle"
-                  onError={(e: any)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em]">JOYZZE</span>'}}
+                  className="h-[44px] md:h-[52px] w-auto align-middle"
+                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[24px] md:text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
                 />
               </div>
             </a>
 
-            {/* Right */}
+            {/* Right controls */}
             <div className="justify-self-end flex items-center gap-2 sm:gap-3">
               {/* Mobile search toggle */}
               <button
-                className="md:hidden w-10 h-10 grid place-items-center rounded-md hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
+                className="md:hidden grid place-items-center w-10 h-10 rounded-md hover:bg-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black/30"
+                onClick={search.toggle}
                 aria-label="Toggle search"
+                aria-expanded={search.open}
                 aria-controls="mobile-search"
-                aria-expanded={mobileSearchOpen}
-                onClick={()=>setMobileSearchOpen(v=>!v)}
               >
                 <Icon.Search />
               </button>
 
+              {/* Desktop search */}
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
                     type="text"
                     name="search_query"
                     placeholder="Search..."
-                    className="jz-input h-[44px] w-[200px] max-w-[220px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
+                    className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
                     autoComplete="off"
                     aria-label="Search"
                   />
                 </form>
                 <Icon.Plus className="search-plus absolute right-[56px] top-1/2 -translate-y-1/2 pointer-events-none" />
-                <button className="search-btn absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full" aria-label="Submit search">
+                <button className="search-btn absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full" aria-label="Search">
                   <Icon.Search />
                 </button>
               </div>
@@ -659,32 +565,37 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
               </div>
               <a className="icon-btn w-10 h-10 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-10 px-2 rounded-md flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]" aria-label="Toggle theme">
+              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-10 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
-                <span className="hidden md:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
+                <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Collapsible mobile search row */}
-        <div id="mobile-search" className={`md:hidden px-3 pb-3 ${mobileSearchOpen ? 'block' : 'hidden'}`} style={headerStyle as any}>
-          <form action="/search.php" method="get" className="w-full">
-            <input
-              type="text"
-              name="search_query"
-              placeholder="Search..."
-              className="jz-input h-11 w-full rounded-md bg-white pl-3 pr-3 text-[15px] outline-none ring-1"
-              autoComplete="off"
-              aria-label="Search input"
-            />
-          </form>
+        {/* Mobile collapsible search */}
+        <div
+          id="mobile-search"
+          className={`md:hidden overflow-hidden transition-[grid-template-rows] grid ${search.open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'} bg-[var(--header-bg)] px-3 pb-2`}
+        >
+          <div className="min-h-0">
+            <form action="/search.php" method="get" className="pt-1">
+              <input
+                type="text"
+                name="search_query"
+                placeholder="Search..."
+                className="jz-input h-11 w-full rounded-md bg-white px-3 text-[14px] italic placeholder:italic outline-none ring-1"
+                aria-label="Search"
+                autoComplete="off"
+              />
+            </form>
+          </div>
         </div>
 
-        {/* Spacer only on lg+ */}
-        <div className="hidden lg:block" style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
+        {/* Spacer: lg+ only */}
+        <div className="hidden lg:block" style={{ background: 'var(--header-bg)', height: '1.5rem' }} aria-hidden="true" />
 
-        {/* Navbar row (desktop only) */}
+        {/* Navbar row: hidden on mobile */}
         <nav className="nav-dark hidden lg:block">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
@@ -692,7 +603,7 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
 
               <div
                 className="jz-nav flex items-stretch gap-[2px]"
-                onMouseOver={onNavOver}
+                onMouseOver={(e)=>{ const el=e.target.closest('[data-nav]'); if(el) setOpen(el.getAttribute('data-nav')); }}
                 onMouseLeave={() => setOpen(null)}
               >
                 <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
@@ -709,7 +620,7 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
               <div
                 className="absolute left-1/2 -translate-x-1/2 top-full"
                 onMouseEnter={()=>setOpen(open)}
-                onMouseLeave={close}
+                onMouseLeave={()=>setOpen(null)}
               >
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
@@ -824,18 +735,22 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
                     )}
 
                     {open === 'recycling' && (
-                      <MegaSection title="RECYCLING & SHARPENING">
-                        <li><a href="https://joyzze.com/recycling-sharpening/">Program Overview</a></li>
-                        <li><a href="https://joyzze.com/recycling-sharpening/#shipping">Shipping</a></li>
-                        <li><a href="https://joyzze.com/recycling-sharpening/#faq">FAQ</a></li>
-                      </MegaSection>
+                      <>
+                        <MegaSection title="RECYCLING & SHARPENING">
+                          <li><a href="https://joyzze.com/recycling-sharpening/">Program Overview</a></li>
+                          <li><a href="https://joyzze.com/recycling-sharpening/#shipping">Shipping</a></li>
+                          <li><a href="https://joyzze.com/recycling-sharpening/#faq">FAQ</a></li>
+                        </MegaSection>
+                      </>
                     )}
 
                     {open === 'dist' && (
-                      <MegaSection title="DISTRIBUTOR">
-                        <li><a href="https://joyzze.com/distributor/">Find a Distributor</a></li>
-                        <li><a href="https://joyzze.com/distributor/#become">Become a Distributor</a></li>
-                      </MegaSection>
+                      <>
+                        <MegaSection title="DISTRIBUTOR">
+                          <li><a href="https://joyzze.com/distributor/">Find a Distributor</a></li>
+                          <li><a href="https://joyzze.com/distributor/#become">Become a Distributor</a></li>
+                        </MegaSection>
+                      </>
                     )}
                   </div>
                 </div>
@@ -844,8 +759,84 @@ function SigninHeader({ theme, onToggleTheme }: { theme: 'light' | 'dark'; onTog
           </div>
         </nav>
 
-        {/* Mobile drawer */}
-        <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
+        {/* MOBILE DRAWER */}
+        {drawer.open && (
+          <div className="fixed inset-0 z-[1300] lg:hidden">
+            <div className="absolute inset-0 bg-black/50" onClick={drawer.close} aria-label="Close menu" />
+            <aside
+              id="mobile-drawer"
+              role="dialog"
+              aria-modal="true"
+              ref={drawerRef}
+              className="absolute inset-y-0 left-0 w-[85vw] max-w-[360px] bg-[#1c1f26] text-white p-4 focus:outline-none"
+              onKeyDown={(e)=>{ if(e.key==='Escape') drawer.close(); }}
+              onCloseRequest={drawer.close}
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-semibold">Menu</span>
+                <button
+                  onClick={drawer.close}
+                  aria-label="Close menu"
+                  className="w-10 h-10 grid place-items-center rounded-md hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+                >
+                  <Icon.X />
+                </button>
+              </div>
+
+              <div className="mt-3 text-sm opacity-90">(877) 456-9993</div>
+
+              <div className="mt-4 space-y-1">
+                <a href="https://joyzze.com/recycling-sharpening/" className="block py-2">Recycling &amp; Sharpening</a>
+                <a href="https://joyzze.com/distributor/" className="block py-2">Distributor</a>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-white/10">
+                <MobileAccordion id="m-all" label="All Products">
+                  <li><a href="https://joyzze.com/all-products/" className="block py-1.5">Browse All</a></li>
+                </MobileAccordion>
+                <MobileAccordion id="m-clippers" label="Clippers">
+                  <li><a href="https://joyzze.com/hornet-clippers-5-in-1/" className="block">Hornet</a></li>
+                  <li><a href="https://joyzze.com/stinger-clippers-5-in-1/" className="block">Stinger</a></li>
+                  <li><a href="https://joyzze.com/falcon/" className="block">Falcon</a></li>
+                  <li><a href="https://joyzze.com/raptor-clippers/" className="block">Raptor</a></li>
+                  <li><a href="https://joyzze.com/piranha-clippers/" className="block">Piranha</a></li>
+                  <li><a href="https://joyzze.com/hornet-mini-clippers/" className="block">Hornet Mini</a></li>
+                </MobileAccordion>
+                <MobileAccordion id="m-blades" label="Blades">
+                  <li><a href="https://joyzze.com/a5-blades/" className="block">A5 Blades</a></li>
+                  <li><a href="https://joyzze.com/wide-blades-a-series/" className="block">Wide Blades</a></li>
+                  <li><a href="https://joyzze.com/c-max-blades/" className="block">C-MAX Blades</a></li>
+                  <li><a href="https://joyzze.com/mini-trimmer-blades/" className="block">Mini Trimmer Blades</a></li>
+                </MobileAccordion>
+                <MobileAccordion id="m-combs" label="Combs & Accessories">
+                  <li><a href="https://joyzze.com/a-series-wide-metal-combs/" className="block">Wide Metal Combs</a></li>
+                  <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/" className="block">A & D Series Set</a></li>
+                  <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/" className="block">C Series Set</a></li>
+                  <li><a href="https://joyzze.com/12-slot/" className="block">12-Slot Case</a></li>
+                  <li><a href="https://joyzze.com/22-slot/" className="block">22-Slot Case</a></li>
+                </MobileAccordion>
+                <MobileAccordion id="m-info" label="Information">
+                  <li><a href="https://joyzze.com/information/about-joyzze/" className="block">About</a></li>
+                  <li><a href="https://joyzze.com/information/faqs/" className="block">FAQs</a></li>
+                  <li><a href="https://joyzze.com/information/shipping-returns/" className="block">Shipping & Returns</a></li>
+                  <li><a href="https://joyzze.com/accessibility-statement/" className="block">Accessibility</a></li>
+                </MobileAccordion>
+              </div>
+
+              <div className="mt-4 flex gap-2">
+                <a className="flex-1 h-11 grid place-items-center rounded-md bg-white text-black" href="/account.php">Account</a>
+                <a className="flex-1 h-11 grid place-items-center rounded-md bg-white text-black" href="/cart.php">Cart</a>
+                <button
+                  onClick={onToggleTheme}
+                  className="h-11 px-3 rounded-md ring-1 ring-white/20 bg-white/10"
+                  aria-label="Toggle theme"
+                >
+                  {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
+                </button>
+              </div>
+            </aside>
+          </div>
+        )}
       </div>
     </header>
   );
@@ -858,18 +849,18 @@ function Hero(){
   return (
     <header className="relative overflow-hidden text-white"
       style={{background: 'linear-gradient(135deg,#2a2f36 0%, #22262c 45%, #1a1e24 100%)'}}>
-      <div className="container mx-auto px-5 sm:px-6 py-12 md:py-20 grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
+      <div className="container mx-auto px-4 sm:px-6 py-14 md:py-20 grid lg:grid-cols-2 gap-8 md:gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-4 md:mb-6">Joyzze</div>
-          <h1 className="hero-title font-extrabold leading-tight">
+          <h1 className="text-[clamp(1.6rem,5.5vw,2.75rem)] font-extrabold leading-tight">
             Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span>
           </h1>
           <p className="mt-3 md:mt-4 text-slate-200/90 max-w-xl">
             Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
           </p>
-          <div className="mt-5 md:mt-6 flex flex-wrap items-center gap-3">
-            <a href="#app" className="btn btn-primary w-full sm:w-auto justify-center h-11">Try it free</a>
-            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] w-full sm:w-auto justify-center h-11">See how it works</a>
+          <div className="mt-5 md:mt-6 flex flex-col sm:flex-row items-center gap-3">
+            <a href="#app" className="btn btn-primary w-full sm:w-auto justify-center">Try it free</a>
+            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] w-full sm:w-auto justify-center">See how it works</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -882,7 +873,7 @@ function Hero(){
 
 function HowItWorks() {
   return (
-    <section id="how" className="container mx-auto px-5 sm:px-6 py-12 md:py-16">
+    <section id="how" className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
       <h2 className="text-center text-xl md:text-2xl font-semibold mb-2">Three simple steps</h2>
       <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-8 md:mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
@@ -891,7 +882,7 @@ function HowItWorks() {
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center h-11">Upload now</a>
+            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Upload now</a>
           </div>
         </Card>
 
@@ -900,7 +891,7 @@ function HowItWorks() {
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center h-11">Start grooming</a>
+            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Start grooming</a>
           </div>
         </Card>
 
@@ -909,7 +900,7 @@ function HowItWorks() {
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center h-11">Try the slider</a>
+            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Try the slider</a>
           </div>
         </Card>
       </div>
@@ -919,7 +910,7 @@ function HowItWorks() {
 
 function Samples(){
   return (
-    <section id="examples" className="container mx-auto px-5 sm:px-6 py-12 md:py-16">
+    <section id="examples" className="container mx-auto px-4 sm:px-6 py-12 md:py-16">
       <h2 className="text-center text-xl md:text-2xl font-semibold mb-2">Sample results</h2>
       <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-8 md:mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
       <div className="grid md:grid-cols-3 gap-6">
@@ -937,7 +928,7 @@ function Samples(){
 function FooterPromoRibbon(){
   return (
     <div className="bg-[#0e0e0e] text-[#d9d9d9]">
-      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-[13px]">
+      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-[13px]">
         <div className="flex items-center gap-3"><Icon.Truck className="text-[var(--joyzze-teal)]" /><span>Free Shipping on orders over $350</span></div>
         <div className="flex items-center gap-3"><Icon.Return className="text-[var(--joyzze-teal)]" /><span>Hassle Free Returns</span></div>
         <div className="flex items-center gap-3"><Icon.Card className="text-[var(--joyzze-teal)]" /><span>All Major Cards Accepted</span></div>
@@ -973,7 +964,7 @@ function SigninFooter() {
               src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
               alt="Joyzze"
               className="h-9 w-auto"
-              onError={(e: any)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}
+              onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>'}}
             />
           </div>
           <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
@@ -983,9 +974,9 @@ function SigninFooter() {
             <div><a href="mailto:info@joyzze.com" className="hover:underline">info@joyzze.com</a></div>
           </div>
 
-          <div className="mt-6 flex items-center justify-center gap-4">
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <a className="w-10 h-10 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
+            <a className="w-10 h-10 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
@@ -1028,11 +1019,11 @@ function SigninFooter() {
    PAGE
    ========================================================= */
 export default function Page(){
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
-    const initial = (saved as 'light' | 'dark') || 'light';
+    const initial = saved || 'light';
     setTheme(initial);
     if (initial === 'dark') document.documentElement.classList.add('theme-dark');
   }, []);
@@ -1060,7 +1051,7 @@ export default function Page(){
           --joyzze-teal: #1CD2C1;
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-          --nav-bg: #2f2f2f;     /* dark navbar */
+          --nav-bg: #2f2f2f;
           --nav-text: #d7d7d7;
         }
         .theme-dark {
@@ -1088,7 +1079,7 @@ export default function Page(){
         body{ background: var(--app-bg); color:#0f1115; }
         .theme-dark body{ color:#e5e7eb; }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.6rem .9rem; border-radius:.6rem; border:1px solid transparent; min-height:44px; }
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.8rem 1rem; min-height:44px; border-radius:.6rem; border:1px solid transparent; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
@@ -1154,37 +1145,19 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
+        /* Range input thumbs for touch */
+        input[type="range"]{
+          -webkit-appearance:none; appearance:none; height: 6px; background: rgba(0,0,0,.15); border-radius:999px;
+        }
+        input[type="range"]::-webkit-slider-thumb{
+          -webkit-appearance:none; appearance:none; width:28px; height:28px; border-radius:999px; background:#4f46e5; border:2px solid white;
+        }
+        input[type="range"]::-moz-range-thumb{
+          width:28px; height:28px; border:0; border-radius:999px; background:#4f46e5;
+        }
+
         /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
-
-        /* Fluid hero title */
-        .hero-title { font-size: clamp(1.6rem, 5.5vw, 2.75rem); }
-
-        /* Accessible range thumb for touch (24px+) */
-        input[type=range] {
-          -webkit-appearance: none;
-          appearance: none;
-          height: 4px;
-          background: rgba(0,0,0,.2);
-          border-radius: 999px;
-        }
-        input[type=range]::-webkit-slider-thumb {
-          -webkit-appearance: none;
-          appearance: none;
-          width: 28px; height: 28px; border-radius: 999px;
-          background: #4f46e5;
-          border: 2px solid white;
-          box-shadow: 0 1px 2px rgba(0,0,0,.25);
-          cursor: pointer;
-        }
-        input[type=range]::-moz-range-thumb {
-          width: 28px; height: 28px; border-radius: 999px;
-          background: #4f46e5; border: 2px solid white;
-          box-shadow: 0 1px 2px rgba(0,0,0,.25);
-          cursor: pointer;
-        }
-        input[type=range]::-webkit-slider-runnable-track { height: 4px; }
-        input[type=range]::-moz-range-track { height: 4px; }
 
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
