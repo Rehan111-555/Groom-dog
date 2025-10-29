@@ -404,7 +404,6 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // Single place to "delegate" hover based on data-nav
   const onNavOver = (e) => {
     const el = e.target.closest('[data-nav]');
     if (el) setOpen(el.getAttribute('data-nav'));
@@ -432,7 +431,7 @@ function SigninHeader({ theme, onToggleTheme }) {
     );
   };
 
-  const MobileNavItem = ({ id, href, children, onClick }) => {
+  const MobileNavItem = ({ href, children, onClick }) => {
     return (
       <a
         href={href}
@@ -448,12 +447,9 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full">
-      {/* sticky container isolated to create a clear stacking context */}
       <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
-        {/* Top row: FULL-WIDTH so right block sits near scrollbar */}
         <div style={headerStyle}>
           <div className="w-full px-3 sm:px-4 lg:px-6 h-16 sm:h-[72px] grid grid-cols-[auto_1fr_auto] sm:grid-cols-[1fr_auto_1fr] items-center gap-4">
-            {/* Mobile menu button */}
             <button 
               className="sm:hidden icon-btn w-9 h-9 rounded-md"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -462,13 +458,11 @@ function SigninHeader({ theme, onToggleTheme }) {
               {mobileMenuOpen ? <Icon.Close /> : <Icon.Menu />}
             </button>
 
-            {/* Phone top-left - hidden on mobile */}
             <a href="tel:(877) 456-9993" className="hidden sm:flex justify-self-start items-center gap-2" style={{color:'var(--header-text)'}}>
               <Icon.Phone className="opacity-85" />
               <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
             </a>
 
-            {/* Centered logo */}
             <a
               href="https://joyzze.com/"
               className="justify-self-center sm:justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -484,7 +478,6 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
             </a>
 
-            {/* Search + icons top-right, flush to edge */}
             <div className="justify-self-end flex items-center gap-2 sm:gap-4">
               <div className="relative hidden sm:block">
                 <form action="/search.php" method="get">
@@ -517,7 +510,6 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="sm:hidden fixed inset-0 z-[1300] bg-white dark:bg-gray-900 pt-16">
             <div className="p-4 overflow-y-auto h-full">
@@ -563,16 +555,13 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         )}
 
-        {/* ½-inch gap - hidden on mobile */}
         <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" className="hidden sm:block" />
 
-        {/* Navbar row - hidden on mobile */}
         <nav className="nav-dark hidden sm:block">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
-              {/* DELEGATED HOVER: parent listens, items set data-nav */}
               <div
                 className="jz-nav flex items-stretch gap-[2px]"
                 onMouseOver={onNavOver}
@@ -597,7 +586,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-14 p-4 md:p-6 lg:p-8">
-                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -623,7 +611,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Clippers */}
                     {open === 'clippers' && (
                       <>
                         <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -647,7 +634,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Blades */}
                     {open === 'blades' && (
                       <>
                         <MegaSection title="A-SERIES | A5 STYLE">
@@ -667,7 +653,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Combs & Accessories */}
                     {open === 'combs' && (
                       <>
                         <MegaSection title="A-SERIES | WIDE COMBS">
@@ -688,7 +673,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Information */}
                     {open === 'info' && (
                       <>
                         <MegaSection title="ABOUT JOYZZE™">
@@ -711,7 +695,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Recycling */}
                     {open === 'recycling' && (
                       <>
                         <MegaSection title="RECYCLING & SHARPENING">
@@ -722,7 +705,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* Distributor */}
                     {open === 'dist' && (
                       <>
                         <MegaSection title="DISTRIBUTOR">
@@ -951,7 +933,7 @@ export default function Page(){
           --joyzze-teal: #1CD2C1;
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-          --nav-bg: #2f2f2f;     /* dark navbar */
+          --nav-bg: #2f2f2f;
           --nav-text: #d7d7d7;
         }
         .theme-dark {
@@ -1021,7 +1003,6 @@ export default function Page(){
           box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* NAV + MEGA */
         .nav-dark{
           background: var(--nav-bg);
           color: var(--nav-text);
@@ -1141,7 +1122,6 @@ export default function Page(){
           color: var(--joyzze-teal);
         }
 
-        /* Mobile Navigation */
         .mobile-nav-item {
           display: block;
           padding: 12px 16px;
@@ -1161,7 +1141,6 @@ export default function Page(){
           background-color: rgba(255,255,255,0.05);
         }
 
-        /* Search / toggle (theme aware) */
         .jz-input { 
           background:#ffffff; 
           color:#0f0f0f; 
@@ -1208,7 +1187,6 @@ export default function Page(){
           background: rgba(255,255,255,0.05);
         }
 
-        /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { 
@@ -1232,13 +1210,11 @@ export default function Page(){
           background: var(--app-surface) !important; 
         }
 
-        /* Ensure content below can't cover header area */
         header + * { 
           position: relative; 
           z-index: 1; 
         }
 
-        /* Responsive adjustments */
         @media (max-width: 640px) {
           .container {
             padding-left: 1rem;
@@ -1285,7 +1261,6 @@ export default function Page(){
           } 
         }
 
-        /* Print styles */
         @media print {
           .no-print {
             display: none !important;
