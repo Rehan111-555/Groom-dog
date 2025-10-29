@@ -29,76 +29,76 @@ const Icon = {
       <path d="M5 21h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Phone: (p)=>(
+  Phone: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0  0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  Search: (p)=>(
+  Search: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Plus: (p)=>(
+  Plus: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M12 5v14M5 12h14" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Shuffle: (p)=>(
+  Shuffle: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p} style={{transform:'rotate(-8deg)'}}>
       <path d="M3 6h4l4 6 4 6h6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M17 6h4l-2-2m2 2-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M11 12H9" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  User: (p)=>(
+  User: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  CaretDown: (p)=>(
+  CaretDown: (p) => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
     </svg>
   ),
-  Bag: (p)=>(
+  Bag: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
       <path d="M9 7V6a3 3 0 1 1 6 0v1" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  Truck: (p)=>(
+  Truck: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M3 6h10v8H3zM13 10h4l4 4v4h-4M7 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm10 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
     </svg>
   ),
-  Return: (p)=>(
+  Return: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M4 8v5h5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
       <path d="M20 18a8 8 0 1 0-3.1-15.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
     </svg>
   ),
-  Card: (p)=>(
+  Card: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M3 10h18" stroke="currentColor" strokeWidth="1.6"/>
     </svg>
   ),
-  Lock: (p)=>(
+  Lock: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.7"/>
       <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.7"/>
     </svg>
   ),
-  Sun: (p)=>(
+  Sun: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="12" cy="12" r="4.5" stroke="currentColor" strokeWidth="1.6"/>
       <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M19.4 4.6l-2.1 2.1M6.7 17.3l-2.1 2.1" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
     </svg>
   ),
-  Moon: (p)=>(
+  Moon: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <path d="M21 12.3A8.5 8.5 0 1 1 11.7 3 7 7 0 0 0 21 12.3Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
