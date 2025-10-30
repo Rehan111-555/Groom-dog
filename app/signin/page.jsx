@@ -10,7 +10,13 @@ import { useRouter } from 'next/navigation';
 const Icon = {
   Phone: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path
+        d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
   Search: (p) => (
@@ -95,7 +101,13 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+      <path
+        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };
@@ -388,7 +400,7 @@ function AppHeader() {
         </div>
       </nav>
 
-      {/* Mobile Drawer Nav (unchanged) */}
+      {/* Mobile Drawer Nav */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
@@ -433,7 +445,12 @@ function AppHeader() {
 
               <div className="p-4">
                 <form action="/search.php" method="get" className="flex">
-                  <input type="text" name="search_query" placeholder="Search products..." className="flex-1 h-11 rounded-l-md bg-white text-black px-3 outline-none"/>
+                  <input
+                    type="text"
+                    name="search_query"
+                    placeholder="Search products..."
+                    className="flex-1 h-11 rounded-l-md bg-white text-black px-3 outline-none"
+                  />
                   <button className="h-11 px-3 rounded-r-md bg-[var(--joyzze-teal)] text-black font-semibold">Go</button>
                 </form>
               </div>
@@ -446,7 +463,7 @@ function AppHeader() {
 }
 
 /* ================================
-   FOOTER (unchanged)
+   FOOTER
    ================================ */
 function FooterPromoRibbon() {
   return (
@@ -541,15 +558,14 @@ function AppFooter() {
   );
 }
 
-
 /* ================================
-   AUTH PAGE (form spacing kept)
+   AUTH PAGE
    ================================ */
 const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -578,8 +594,11 @@ export default function AuthPage() {
         });
       }
       const result = await signIn('credentials', { redirect: false, email, password });
-      if (result?.error) alert('Authentication failed. Please check your credentials.');
-      else router.push(result?.url || '/');
+      if (result?.error) {
+        alert('Authentication failed. Please check your credentials.');
+      } else {
+        router.push(result?.url || '/');
+      }
     } finally {
       setLoading(false);
     }
@@ -588,7 +607,7 @@ export default function AuthPage() {
   return (
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
-       
+
       {/* Page body */}
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
@@ -723,6 +742,8 @@ export default function AuthPage() {
           --muted-fg: #6b7280;
           --header-top-bg: #e9eff5;
           --header-top-fg: #0e0f11;
+
+          /* form field (light) */
           --field-bg: #ffffff;
           --field-fg: #0e0f11;
           --field-placeholder: #6b7280;
@@ -734,6 +755,8 @@ export default function AuthPage() {
           --muted-fg: #a3a9b6;
           --header-top-bg: #151922;
           --header-top-fg: #f4f7fb;
+
+          /* form field (dark) */
           --field-bg: #161a22;
           --field-fg: #f4f7fb;
           --field-placeholder: #9aa3b2;
@@ -741,6 +764,7 @@ export default function AuthPage() {
         }
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
 
+        /* Input theming */
         .jz-field {
           background: var(--field-bg) !important;
           color: var(--field-fg) !important;
@@ -782,11 +806,13 @@ export default function AuthPage() {
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
+        /* Header input sizing tweaks for breakpoints */
         .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width: 1280px){ .jz-input { width: 360px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 280px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
+        /* Promo ribbon grid */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 12px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 14px; border-right:1px solid var(--joyzze-teal); }
@@ -794,14 +820,17 @@ export default function AuthPage() {
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        @media (max-width: 768px){
-          .jz-item:hover .caret { transform:none; }
-        }
+        /* Kill desktop hover caret motion on small screens (defensive) */
+        @media (max-width: 768px){ .jz-item:hover .caret { transform:none; } }
 
+        /* Auth hero minimum height (large-only area) */
         .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
+
+        /* Google btn */
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
 
+        /* Respect safe areas for iOS when drawer is open */
         :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
       `}</style>
     </main>
