@@ -1,30 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-
-/* ================================
-   SMALL HOOKS (JS only for .jsx)
-   ================================ */
-function useDisclosure(initial = false) {
-  const [open, setOpen] = useState(!!initial);
-  const onOpen = () => setOpen(true);
-  const onClose = () => setOpen(false);
-  const onToggle = () => setOpen((v) => !v);
-  return { open, onOpen, onClose, onToggle, setOpen };
-}
-
-function useLockBodyScroll(locked) {
-  useEffect(() => {
-    if (!locked) return;
-    const { overflow } = document.body.style;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = overflow || '';
-    };
-  }, [locked]);
-}
 
 /* ================================
    ICONS
@@ -45,16 +23,6 @@ const Icon = {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9" />
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" />
-    </svg>
-  ),
-  Hamburger: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  ),
-  Close: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
   Plus: (p) => (
@@ -145,145 +113,8 @@ const Icon = {
 };
 
 /* ================================
-   HEADER + MEGA (mobile drawer)
+   HEADER + MEGA MENU
    ================================ */
-function MobileDrawer({ open, onClose, theme, toggleTheme }) {
-  useLockBodyScroll(open);
-  const firstBtnRef = useRef(null);
-
-  useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && onClose();
-    if (open) {
-      document.addEventListener('keydown', onKey);
-      setTimeout(() => firstBtnRef.current?.focus(), 0);
-    }
-    return () => document.removeEventListener('keydown', onKey);
-  }, [open, onClose]);
-
-  if (!open) return null;
-
-  return (
-    <>
-      <div
-        className="fixed inset-0 bg-black/50 z-[1000]"
-        onClick={onClose}
-        aria-hidden="true"
-      />
-      <aside
-        role="dialog"
-        aria-modal="true"
-        className="fixed inset-y-0 left-0 w-[85vw] max-w-[360px] bg-white dark:bg-[#121418] z-[1001] shadow-xl outline-none"
-      >
-        <div className="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10">
-          <span className="font-semibold">Menu</span>
-          <button
-            ref={firstBtnRef}
-            onClick={onClose}
-            className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-            aria-label="Close menu"
-          >
-            <Icon.Close />
-          </button>
-        </div>
-
-        {/* Disclosure list (accordion) */}
-        <nav className="px-2 py-2 text-sm">
-          {[
-            {
-              title: 'All Products',
-              links: [
-                ['Raptor & Falcon | A-Series', 'https://joyzze.com/raptor-falcon-a5-clippers/'],
-                ['Hornet | C-Series', 'https://joyzze.com/hornet/'],
-                ['Stinger | C-Series', 'https://joyzze.com/stinger/'],
-                ['Piranha | D-Series', 'https://joyzze.com/piranha/'],
-                ['Hornet Mini | M-Series', 'https://joyzze.com/hornet-mini/'],
-              ],
-            },
-            {
-              title: 'Clippers',
-              links: [
-                ['Hornet', 'https://joyzze.com/hornet-clippers-5-in-1/'],
-                ['Stinger', 'https://joyzze.com/stinger-clippers-5-in-1/'],
-                ['Falcon', 'https://joyzze.com/falcon/'],
-                ['Raptor', 'https://joyzze.com/raptor-clippers/'],
-                ['Piranha', 'https://joyzze.com/piranha-clippers/'],
-              ],
-            },
-            {
-              title: 'Blades',
-              links: [
-                ['A5 Blades', 'https://joyzze.com/a5-blades/'],
-                ['Wide Blades', 'https://joyzze.com/wide-blades-a-series/'],
-                ['C-MAX Blades', 'https://joyzze.com/c-max-blades/'],
-                ['Mini Trimmer Blades', 'https://joyzze.com/mini-trimmer-blades/'],
-              ],
-            },
-            {
-              title: 'Combs & Accessories',
-              links: [
-                ['Wide Metal Combs', 'https://joyzze.com/a-series-wide-metal-combs/'],
-                ['8 Piece Set (A & D)', 'https://joyzze.com/a-d-series-8-piece-metal-comb-set/'],
-                ['8 Piece Set (C)', 'https://joyzze.com/c-series-8-piece-metal-comb-set/'],
-                ['12-Slot Case', 'https://joyzze.com/12-slot/'],
-                ['22-Slot Case', 'https://joyzze.com/22-slot/'],
-              ],
-            },
-            {
-              title: 'Information',
-              links: [
-                ['About JOYZZE™', 'https://joyzze.com/information/about-joyzze/'],
-                ['FAQ', 'https://joyzze.com/information/faqs/'],
-                ['Contact', 'https://joyzze.com/information/contact/'],
-                ['Shipping & Returns', 'https://joyzze.com/information/shipping-returns/'],
-              ],
-            },
-            {
-              title: 'Recycling & Sharpening',
-              links: [['Program Overview', 'https://joyzze.com/recycling-sharpening/']],
-            },
-            {
-              title: 'Distributor',
-              links: [
-                ['Find a Distributor', 'https://joyzze.com/distributor/'],
-                ['Become a Distributor', 'https://joyzze.com/distributor/#become'],
-              ],
-            },
-          ].map((sec, i) => (
-            <details key={i} className="group border-b last:border-b-0 border-black/10 dark:border-white/10 py-2">
-              <summary className="flex items-center justify-between cursor-pointer list-none py-1 px-1 focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)] rounded">
-                <span className="font-semibold">{sec.title}</span>
-                <span className="transition group-open:rotate-180">
-                  <Icon.CaretDown />
-                </span>
-              </summary>
-              <ul className="pl-3 pb-2 space-y-1">
-                {sec.links.map(([label, href]) => (
-                  <li key={label}>
-                    <a className="block px-2 py-2 rounded hover:bg-black/[.04] dark:hover:bg-white/[.06]" href={href}>
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </details>
-          ))}
-        </nav>
-
-        <div className="mt-3 px-4 pb-6">
-          <button
-            onClick={toggleTheme}
-            className="w-full h-11 rounded-md border border-black/10 dark:border-white/15 bg-white/70 dark:bg-white/5 backdrop-blur text-sm flex items-center justify-center gap-2"
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? <Icon.Moon /> : <Icon.Sun />}
-            {theme === 'dark' ? 'Dark' : 'Light'} mode
-          </button>
-        </div>
-      </aside>
-    </>
-  );
-}
-
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -296,8 +127,6 @@ function MegaSection({ title, children }) {
 function AppHeader() {
   const [open, setOpen] = useState(null);
   const [theme, setTheme] = useState('light');
-  const mobileMenu = useDisclosure(false);
-  const searchDisclosure = useDisclosure(false);
 
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
@@ -344,66 +173,45 @@ function AppHeader() {
   };
 
   return (
-    <header className="w-full sticky top-0 z-50 bg-[var(--header-top-bg)] text-[var(--header-top-fg)]">
-      {/* Top row */}
-      <div className="px-3 sm:px-4">
-        <div className="h-[64px] md:h-[84px] grid grid-cols-[auto_1fr_auto] items-center gap-3">
-          {/* Left: hamburger + phone */}
-          <div className="flex items-center gap-2">
-            <button
-              className="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-              aria-label="Open menu"
-              aria-expanded={mobileMenu.open ? 'true' : 'false'}
-              aria-controls="mobile-drawer"
-              onClick={mobileMenu.onOpen}
-            >
-              <Icon.Hamburger />
-            </button>
-            <a href="tel:(877) 456-9993" className="hidden xs:flex items-center gap-2">
-              <Icon.Phone className="opacity-85" />
-              <span className="text-[14px] sm:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-            </a>
+    <header className="w-full sticky top-0 z-50">
+      {/* Top bar anchored groups */}
+      <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
+        {/* no horizontal padding so right group can hug the scrollbar */}
+        <div className="relative h-[92px] w-full px-0">
+          {/* Left (phone) */}
+          <div className="absolute inset-y-0 left-3 flex items-center gap-2">
+            <Icon.Phone className="opacity-85" />
+            <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
           </div>
 
-          {/* Center: logo truly centered */}
+          {/* Center (logo) */}
           <a
             href="/"
-            className="justify-self-center block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[12px] overflow-hidden shadow-[0_16px_34px_rgba(0,0,0,.35)]"
             aria-label="Joyzze"
           >
-            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 sm:px-8 py-2 sm:py-3 rounded-[12px]">
+            <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-8 py-3 rounded-[12px]">
               <img
                 src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                 alt="Joyzze"
-                className="h-10 sm:h-[58px] w-auto align-middle"
+                className="h-[58px] w-auto align-middle"
                 onError={(e) => {
                   e.currentTarget.outerHTML =
-                    '<span class="text-white text-[28px] sm:text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
+                    '<span class="text-white text-[30px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>';
                 }}
               />
             </div>
           </a>
 
-          {/* Right: icons / theme / search trigger */}
-          <div className="justify-self-end flex items-center gap-1 sm:gap-2">
-            {/* Mobile search icon */}
-            <button
-              className="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-              aria-label="Toggle search"
-              aria-expanded={searchDisclosure.open ? 'true' : 'false'}
-              onClick={searchDisclosure.onToggle}
-            >
-              <Icon.Search />
-            </button>
-
-            {/* Desktop search */}
+          {/* Right (search + icons + theme) – flush to right */}
+          <div className="absolute inset-y-0 right-0 flex items-center gap-4 pr-3 sm:pr-4">
             <div className="relative hidden md:block">
               <form action="/search.php" method="get">
                 <input
                   type="text"
                   name="search_query"
                   placeholder="Search..."
-                  className="jz-input h-[42px] w-[240px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
+                  className="jz-input h-[44px] w-[260px] max-w-[260px] rounded-md bg-white pl-10 pr-[44px] text-[13px] italic placeholder:italic placeholder:text-[#6b6b6b] outline-none ring-1 ring-black/10"
                   aria-label="Search"
                   autoComplete="off"
                 />
@@ -435,29 +243,14 @@ function AppHeader() {
             </button>
           </div>
         </div>
-
-        {/* Collapsible search row on mobile */}
-        {searchDisclosure.open && (
-          <div className="md:hidden pb-3">
-            <form action="/search.php" method="get" className="px-1">
-              <input
-                type="text"
-                name="search_query"
-                placeholder="Search products…"
-                className="w-full h-11 rounded-md bg-white px-3 pr-10 text-[14px] outline-none ring-1 ring-black/10"
-                aria-label="Search"
-              />
-            </form>
-          </div>
-        )}
       </div>
 
-      {/* 1/2-inch spacer only on lg+ */}
-      <div className="hidden lg:block" style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
+      {/* 1/2 inch spacer between logo row and navbar */}
+      <div style={{ height: '0.5in', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* NAVBAR (hover mega only on lg+) */}
-      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10 hidden lg:block" onMouseLeave={() => setOpen(null)}>
-        <div className="max-w-[1280px] mx-auto px-4 relative">
+      {/* NAVBAR */}
+      <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10" onMouseLeave={() => setOpen(null)}>
+        <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
             <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
             <div className="jz-nav flex items-stretch gap-[2px]">
@@ -590,14 +383,6 @@ function AppHeader() {
           )}
         </div>
       </nav>
-
-      {/* Mobile drawer (no hover mega rendered) */}
-      <MobileDrawer
-        open={mobileMenu.open}
-        onClose={mobileMenu.onClose}
-        theme={theme}
-        toggleTheme={toggleTheme}
-      />
     </header>
   );
 }
@@ -682,7 +467,7 @@ function AppFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 text-[15px]">
+          <div className="flex items-center gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
             <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
@@ -701,7 +486,7 @@ function AppFooter() {
 /* ================================
    AUTH PAGE
    ================================ */
-const BRAND = { teal: '#1CD2C1' };
+const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
@@ -752,13 +537,13 @@ export default function AuthPage() {
       <div className="flex-1">
         <div className="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-2">
           {/* LEFT: form */}
-          <section className="px-4 sm:px-6 lg:px-14 pt-8 sm:pt-12 pb-16">
+          <section className="px-6 sm:px-10 lg:px-14 pt-14 pb-16">
             <div className="max-w-[580px]">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#f1f1ff] shadow mb-6">
+              <div className="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-[#f1f1ff] shadow mb-6">
                 <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
 
-              <h1 className="text-[clamp(1.6rem,5.5vw,2.75rem)] font-semibold tracking-[.015em] mb-2">Welcome back!</h1>
+              <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
               <p className="text-[15px] text-[var(--muted-fg)] mb-8">
                 Enter to get unlimited access to data &amp; information.
               </p>
@@ -771,7 +556,7 @@ export default function AuthPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="jz-field w-full h-12 rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       required
                     />
                   </div>
@@ -783,7 +568,7 @@ export default function AuthPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="jz-field w-full h-12 rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                     placeholder="Enter your mail address"
                     required
                   />
@@ -796,7 +581,7 @@ export default function AuthPage() {
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="jz-field w-full h-12 rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       placeholder="Enter password"
                       required
                     />
@@ -810,7 +595,7 @@ export default function AuthPage() {
                       <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
                       Remember me
                     </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password?</a>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
 
@@ -840,7 +625,7 @@ export default function AuthPage() {
                 <span>{loading ? 'Connecting…' : 'Sign in with Google'}</span>
               </button>
 
-              <p className="mt-4 text-sm text-[var(--muted-fg)]">
+              <p className="mt-4 text-xs text-[var(--muted-fg)]">
                 {mode === 'login' ? (
                   <>
                     Don’t have an account?{' '}
@@ -860,7 +645,7 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image (hidden on small) */}
+          {/* RIGHT: hero image */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
               <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
@@ -917,9 +702,9 @@ export default function AuthPage() {
 
         .jz-nav, .jz-item, .jz-mega, .jz-sec-title, .jz-list, .jz-input { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
         .jz-nav { font-weight: 600; font-size: 15px; letter-spacing: .01em; }
-        .jz-item { padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
+        .jz-item { padding: 14px 20px; position: relative; line-height:1; color:#d7d7d7; text-decoration:none; border-radius:6px 6px 0 0; }
         .jz-item:hover { color:#00e1c9; background:linear-gradient(#f2f5f5,#eef6f6); }
-        .caret { margin-left:4px; opacity:.75; transition: transform .18s ease, opacity .18s ease; }
+        .caret { margin-left:6px; opacity:.75; transition: transform .18s ease, opacity .18s ease; }
         .jz-item.jz-active .caret, .jz-item:hover .caret { transform: translateY(1px) rotate(180deg); opacity:1; }
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0;height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s; }
@@ -948,6 +733,7 @@ export default function AuthPage() {
         .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width: 1280px){ .jz-input { width: 420px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 320px !important; } }
+        @media (max-width: 980px){ .jz-input { display:none; } }
 
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 16px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
@@ -956,7 +742,7 @@ export default function AuthPage() {
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        .auth-hero { position:relative; width:100%; height:100%; min-height:480px; background:#000; }
+        .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
       `}</style>
