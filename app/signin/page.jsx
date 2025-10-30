@@ -150,6 +150,15 @@ function AppHeader() {
     };
   }, []);
 
+  // lock body scroll when drawer open
+  useEffect(() => {
+    if (mobileOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [mobileOpen]);
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark';
     setTheme(next);
@@ -400,12 +409,11 @@ function AppHeader() {
         </div>
       </nav>
 
-      {/* Mobile Drawer Nav */}
+      {/* Mobile Drawer Nav — now FULL-SCREEN and above everything */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-[60] md:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-[88%] max-w-[380px] bg-[#1d1f24] text-white shadow-2xl flex flex-col">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+        <div className="fixed inset-0 z-[80] md:hidden">
+          <aside className="absolute inset-0 bg-[#1d1f24] text-white shadow-2xl flex flex-col">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 pt-[calc(var(--safe-top,0px)+12px)]">
               <span className="font-semibold">Menu</span>
               <button className="p-2 rounded-md hover:bg-white/10" onClick={() => setMobileOpen(false)} aria-label="Close menu">
                 <svg width="22" height="22" viewBox="0 0 24 24">
@@ -542,7 +550,8 @@ function AppFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
-          <div className="flex items-center gap-6 text-[15px]">
+          {/* WRAP so "View All" never gets clipped */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
             <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
