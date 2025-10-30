@@ -724,10 +724,10 @@ function Hero(){
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
           <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
-            Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span>
+            Do you want to see your pet groomed without going to a salon?—<span className="text-[#00e1c9]">with AI</span>
           </h1>
           <p className="mt-4 text-slate-200/90 max-w-xl">
-            Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
+            Upload a photo of your baby, our AI smooths fur, sharpens details, and keeps every whisker, color tone, and lighting exactly the same.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <a href="#app" className="btn btn-primary">Try it free</a>
@@ -745,13 +745,13 @@ function Hero(){
 function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
-      <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+      <h2 className="text-center text-2xl font-semibold mb-2">Insanely Easy, Impressively accurate</h2>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your dog’s photo - AI grooms your dog - Compare in real time.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
-          <h3 className="font-semibold mb-1">Upload a dog photo</h3>
-          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
+          <h3 className="font-semibold mb-1">Upload photo</h3>
+          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Snap a quick pic with your phone or choose one from your photos. PNG or JPG, up to 12MB.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Upload now</a>
           </div>
@@ -759,8 +759,8 @@ function HowItWorks() {
 
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
-          <h3 className="font-semibold mb-1">Let AI groom</h3>
-          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
+          <h3 className="font-semibold mb-1">Let Magic Happen</h3>
+          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while other things in the image remain the same.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
@@ -768,8 +768,8 @@ function HowItWorks() {
 
         <Card className="p-6 flex flex-col min-h/[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
-          <h3 className="font-semibold mb-1">Compare &amp; download</h3>
-          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
+          <h3 className="font-semibold mb-1">Compare or Save</h3>
+          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Drag the slider to see before & after. You can also click to download and save the image.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Try the slider</a>
           </div>
@@ -782,8 +782,8 @@ function HowItWorks() {
 function Samples(){
   return (
     <section id="examples" className="container mx-auto px-6 py-16">
-      <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
+      <h2 className="text-center text-2xl font-semibold mb-2">See what other parents got!</h2>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">They uploaded images of their babies and got groomed one, with the same breed, lightning, and pose.</p>
       <div className="grid md:grid-cols-3 gap-6">
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-[var(--app-border)]"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-[var(--app-border)]"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
