@@ -274,7 +274,7 @@ function UploadAndResult(){
 
   return (
     <section id="app" className="container mx-auto px-6 py-16">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
@@ -283,7 +283,7 @@ function UploadAndResult(){
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary" href={resultUrl} download><Icon.Download /> Download</a>
+          <a className="btn btn-primary self-start sm:self-auto" href={resultUrl} download><Icon.Download /> Download</a>
         ) : <div className="h-9" />}
       </div>
 
@@ -291,7 +291,7 @@ function UploadAndResult(){
         <Card className="p-4">
           <div ref={leftTopRef}>
             <div className="mb-2 text-sm font-semibold invisible">Upload</div>
-            <div className="flex items-stretch gap-2 mb-3">
+            <div className="flex flex-col sm:flex-row items-stretch gap-2 mb-3">
               <input
                 type="url"
                 value={urlText}
@@ -306,7 +306,7 @@ function UploadAndResult(){
           <div className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]" style={{ height: panelH, position:'relative' }}>
             <label className="absolute inset-0 grid place-items-center text-center cursor-pointer">
               {!hasInput && (
-                <div className="grid place-items-center gap-3 text-[var(--app-muted)]">
+                <div className="grid place-items-center gap-3 text-[var(--app-muted)] px-4">
                   <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]"><Icon.Upload /></div>
                   <div className="font-medium">Drag &amp; drop or click to upload</div>
                   <div className="text-xs">PNG, JPG up to 12MB</div>
@@ -316,11 +316,11 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)]">
-                <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+                <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
-                <div className="max-w-[220px] text-xs leading-5">
+                <div className="min-w-0 text-xs leading-5">
                   <div className="truncate">Selected image</div>
                   <div className="opacity-70 truncate">{file?.name || previewUrl}</div>
                 </div>
@@ -328,7 +328,7 @@ function UploadAndResult(){
             )}
           </div>
 
-          <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
+          <div className="mt-3 h-auto min-h-14 flex flex-wrap items-center gap-3">
             {!loading ? (
               <>
                 <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
@@ -349,7 +349,7 @@ function UploadAndResult(){
           <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)]">
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)] px-4">
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
@@ -364,7 +364,7 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA MENU
+   HEADER + NAV + MEGA MENU  (RESPONSIVE)
    ========================================================= */
 function MegaSection({ title, children }) {
   return (
@@ -377,10 +377,12 @@ function MegaSection({ title, children }) {
 
 function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') close(); };
+    const onKey = (e)=>{ if(e.key==='Escape') { close(); setMobileOpen(false);} };
     const onScroll = () => close();
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -390,7 +392,15 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // Single place to “delegate” hover based on data-nav
+  // lock body scroll when mobile drawer open
+  useEffect(() => {
+    if (mobileOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [mobileOpen]);
+
   const onNavOver = (e) => {
     const el = e.target.closest('[data-nav]');
     if (el) setOpen(el.getAttribute('data-nav'));
@@ -422,46 +432,55 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full">
-      {/* sticky container isolated to create a clear stacking context */}
       <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
-        {/* Top row: FULL-WIDTH so right block sits near scrollbar */}
-        <div style={headerStyle}>
-          <div className="w-full px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
-            {/* Phone top-left */}
-            <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
-              <Icon.Phone className="opacity-85" />
-              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-            </a>
+        {/* Top row */}
+        <div style={headerStyle} className="relative">
+          <div className="relative h-[64px] sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
+            {/* Left: hamburger + phone (phone hidden on xs) */}
+            <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
+              <button
+                className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
+                onClick={() => setMobileOpen(true)}
+                aria-label="Open menu"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24">
+                  <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                </svg>
+              </button>
+              <a href="tel:(877) 456-9993" className="hidden sm:flex items-center gap-2" style={{color:'var(--header-text)'}}>
+                <Icon.Phone className="opacity-85" />
+                <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+              </a>
+            </div>
 
-            {/* Centered logo */}
+            {/* Centered logo (absolute so it stays centered on all widths) */}
             <a
               href="https://joyzze.com/"
-              className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
               aria-label="Joyzze"
             >
-              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
+              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-5 sm:px-7 py-2 sm:py-2.5 rounded-[10px]">
                 <img
                   src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                   alt="Joyzze"
-                  className="h-[52px] w-auto align-middle"
-                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
+                  className="h-[38px] sm:h-[52px] w-auto align-middle"
+                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[26px] sm:text-[28px] font-semibold tracking-[0.25em] px-3">JOYZZE</span>'}}
                 />
               </div>
             </a>
 
-            {/* Search + icons top-right, flush to edge */}
-            <div className="justify-self-end flex items-center gap-4">
+            {/* Right: search + actions */}
+            <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center gap-1 sm:gap-3">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
                     type="text"
                     name="search_query"
                     placeholder="Search..."
-                    className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
+                    className="jz-input h-[40px] w-[220px] max-w-[220px] rounded-md pl-4 pr-[50px] text-[13px] italic placeholder:italic outline-none ring-1"
                     autoComplete="off"
                   />
                 </form>
-                <Icon.Plus className="search-plus absolute right-[56px] top-1/2 -translate-y-1/2 pointer-events-none" />
                 <button className="search-btn absolute right-[8px] top-1/2 -translate-y-1/2 h-[32px] w-[32px] grid place-items-center rounded-full" aria-label="Search">
                   <Icon.Search />
                 </button>
@@ -474,24 +493,23 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
+              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md hidden xs:flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
-                <span className="text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
+                <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* ½-inch gap */}
-        <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
+        {/* Small spacer on desktop only */}
+        <div className="hidden md:block" style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
-        {/* Navbar row */}
-        <nav className="nav-dark">
+        {/* Desktop Navbar */}
+        <nav className="nav-dark hidden md:block">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
-              {/* DELEGATED HOVER: parent listens, items set data-nav */}
               <div
                 className="jz-nav flex items-stretch gap-[2px]"
                 onMouseOver={onNavOver}
@@ -656,6 +674,44 @@ function SigninHeader({ theme, onToggleTheme }) {
             )}
           </div>
         </nav>
+
+        {/* Mobile Drawer (full screen) */}
+        {mobileOpen && (
+          <div className="fixed inset-0 z-[1300] md:hidden">
+            <aside className="absolute inset-0 bg-[#1d1f24] text-white shadow-2xl flex flex-col">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                <span className="font-semibold">Menu</span>
+                <button className="p-2 rounded-md hover:bg-white/10" onClick={() => setMobileOpen(false)} aria-label="Close menu">
+                  <svg width="22" height="22" viewBox="0 0 24 24">
+                    <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="overflow-y-auto divide-y divide-white/10">
+                <a className="block px-4 py-3" href="https://joyzze.com/all-products/">All Products</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/clippers/">Clippers</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/blades/">Blades</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/combs-accessories/">Combs & Accessories</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/recycling-sharpening/">Recycling & Sharpening</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/distributor/">Distributor</a>
+                <a className="block px-4 py-3" href="https://joyzze.com/information/">Information</a>
+
+                <div className="p-4 border-t border-white/10">
+                  <form action="/search.php" method="get" className="flex">
+                    <input
+                      type="text"
+                      name="search_query"
+                      placeholder="Search products..."
+                      className="flex-1 h-11 rounded-l-md bg-white text-black px-3 outline-none"
+                    />
+                    <button className="h-11 px-3 rounded-r-md bg-[var(--joyzze-teal)] text-black font-semibold">Go</button>
+                  </form>
+                </div>
+              </div>
+            </aside>
+          </div>
+        )}
       </div>
     </header>
   );
@@ -668,16 +724,16 @@ function Hero(){
   return (
     <header className="relative overflow-hidden text-white"
       style={{background: 'linear-gradient(135deg,#2a2f36 0%, #22262c 45%, #1a1e24 100%)'}}>
-      <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
+      <div className="container mx-auto px-6 py-16 md:py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
           <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+          <h1 className="text-3xl md:text-5xl font-extrabold leading-tight">
             Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span>
           </h1>
           <p className="mt-4 text-slate-200/90 max-w-xl">
             Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
           </p>
-          <div className="mt-6 flex items-center gap-3">
+          <div className="mt-6 flex flex-wrap items-center gap-3">
             <a href="#app" className="btn btn-primary">Try it free</a>
             <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b]">See how it works</a>
           </div>
@@ -742,12 +798,12 @@ function Samples(){
 }
 
 /* =========================================================
-   FOOTER
+   FOOTER (RESPONSIVE)
    ========================================================= */
 function FooterPromoRibbon(){
   return (
     <div className="bg-[#0e0e0e] text-[#d9d9d9]">
-      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
+      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-[13px]">
         <div className="flex items-center gap-3"><Icon.Truck className="text-[var(--joyzze-teal)]" /><span>Free Shipping on orders over $350</span></div>
         <div className="flex items-center gap-3"><Icon.Return className="text-[var(--joyzze-teal)]" /><span>Hassle Free Returns</span></div>
         <div className="flex items-center gap-3"><Icon.Card className="text-[var(--joyzze-teal)]" /><span>All Major Cards Accepted</span></div>
@@ -762,7 +818,7 @@ function SigninFooter() {
     <footer className="bg-[#4a4a4a] text-slate-100">
       <FooterPromoRibbon />
 
-      <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -795,13 +851,13 @@ function SigninFooter() {
 
           <div className="mt-6 flex items-center justify-center gap-4">
             <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg.white/5" href="#" aria-label="Instagram">◎</a>
+            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
-        <div className="lg:justify-self-end">
+        <div className="md:col-span-2 lg:col-span-1 lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w=[360px]">
+          <form className="flex items-stretch w-full max-w-[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
@@ -811,7 +867,8 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved. | Sitemap</div>
-          <div className="flex items-center gap-6 text-[15px]">
+          {/* wrap to prevent cropping on small screens */}
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
             <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
@@ -820,16 +877,16 @@ function SigninFooter() {
             <a href="https://joyzze.com/all-products/" className="hover:underline">View All</a>
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-4 opacity-90 text-xs">
+        <div className="mt-6 flex flex-wrap items-center justify-end gap-2 sm:gap-4 opacity-90 text-xs">
           <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg.white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
           <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
         </div>
       </div>
 
-      <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
+      <div className="bg-black/80 text-white text-xs px-4 py-2 text-center">Manage Website Data Collection Preferences</div>
     </footer>
   );
 }
@@ -870,7 +927,7 @@ export default function Page(){
           --joyzze-teal: #1CD2C1;
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-          --nav-bg: #2f2f2f;     /* dark navbar */
+          --nav-bg: #2f2f2f;
           --nav-text: #d7d7d7;
         }
         .theme-dark {
@@ -909,8 +966,8 @@ export default function Page(){
           color: var(--nav-text);
           border-top:1px solid rgba(0,0,0,.12);
           position:relative;
-          z-index: 1500;      /* keep nav above page content */
-          overflow:visible;   /* allow mega panel to render below */
+          z-index: 1500;
+          overflow:visible;
         }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
@@ -933,7 +990,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 3000;     /* higher than nav & hero */
+          z-index: 3000;
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -945,10 +1002,8 @@ export default function Page(){
         /* Search / toggle (theme aware) */
         .jz-input { background:#ffffff; color:#0f0f0f; border:0; }
         .search-btn { background:#ffffff; border:1px solid rgba(0,0,0,.15); }
-        .search-plus { color:#0f0f0f; opacity:.85; }
         .theme-dark .jz-input { background: var(--app-surface); color:#e5e7eb; border:1px solid var(--app-border); }
         .theme-dark .search-btn { background: var(--app-surface); border:1px solid var(--app-border); color:#e5e7eb; }
-        .theme-dark .search-plus { color:#e5e7eb; opacity:.8; }
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
@@ -968,6 +1023,7 @@ export default function Page(){
         /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
 
+        /* Input widths / visibility */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
