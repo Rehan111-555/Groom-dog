@@ -477,11 +477,70 @@ function AppFooter() {
   return (
     <footer className="bg-[#4a4a4a] text-slate-100 mt-auto">
       <FooterPromoRibbon />
-      {/* ... footer content stays the same as previous message ... */}
+
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
+        <div>
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
+          <ul className="space-y-2 text-[15px] text-slate-200/90">
+            <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
+            <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
+            <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
+            <li><a href="https://joyzze.com/combs-accessories/" className="hover:underline">Combs &amp; Accessories</a></li>
+            <li><a href="https://joyzze.com/information/" className="hover:underline">Information</a></li>
+            <li><a href="https://joyzze.com/recycling-sharpening/" className="hover:underline">Recycling &amp; Sharpening</a></li>
+            <li><a href="https://joyzze.com/distributor/" className="hover:underline">Distributor</a></li>
+            <li><a href="https://joyzze.com/sitemap.php" className="hover:underline">View All</a></li>
+          </ul>
+        </div>
+
+        <div className="text-center">
+          <div className="inline-block bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] rounded-lg px-7 py-3 shadow">
+            <img
+              src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
+              alt="Joyzze"
+              className="h-9 w-auto"
+              onError={(e) => {
+                e.currentTarget.outerHTML = '<span class="text-white text-2xl font-semibold tracking-[0.25em]">JOYZZE</span>';
+              }}
+            />
+          </div>
+          <p className="mt-3 text-sm text-white/80">Joy of Grooming Made Easy™</p>
+          <div className="mt-6 space-y-1 text-[15px] text-slate-100">
+            <div>(877) 456-9993</div>
+            <div><a href="mailto:info@joyzze.com" className="hover:underline">info@joyzze.com</a></div>
+          </div>
+        </div>
+
+        <div className="lg:justify-self-end">
+          <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">
+            SUBSCRIBE TO<br/>OUR NEWSLETTER
+          </h4>
+          <form className="flex items-stretch w-full max-w-[360px]" onSubmit={(e) => e.preventDefault()}>
+            <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
+            <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
+          </form>
+        </div>
+      </div>
+
+      <div className="max-w-[1280px] mx-auto px-6 pb-10">
+        <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
+          <div className="flex items-center gap-6 text-[15px]">
+            <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
+            <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
+            <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
+            <a href="https://joyzze.com/d-series/" className="hover:underline">D-SERIES</a>
+            <a href="https://joyzze.com/m-series/" className="hover:underline">M-SERIES</a>
+            <a href="https://joyzze.com/all-products/" className="hover:underline">View All</a>
+          </div>
+        </div>
+      </div>
+
       <div className="bg-black/80 text-white text-xs px-4 py-2">Manage Website Data Collection Preferences</div>
     </footer>
   );
 }
+
 
 /* ================================
    AUTH PAGE (form spacing kept)
