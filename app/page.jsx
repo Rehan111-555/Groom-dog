@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
-/* ───────── Icons ───────── */
+/* ─────────────────── Icons ─────────────────── */
 const Icon = {
   Upload: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
@@ -38,16 +38,6 @@ const Icon = {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
       <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.9"/>
       <path d="m20 20-3.2-3.2" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-    </svg>
-  ),
-  Hamburger: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-    </svg>
-  ),
-  Close: (p) => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
   Plus: (p)=>(
@@ -115,12 +105,13 @@ const Icon = {
   ),
 };
 
-/* ───────── Helpers ───────── */
+/* ─────────────────── Small UI helpers ─────────────────── */
 const Button = ({ className = "", disabled, onClick, children, type = "button" }) => (
   <button type={type} disabled={disabled} onClick={onClick} className={`btn ${className}`}>{children}</button>
 );
 const Card = ({ className="", children }) => <div className={`card ${className}`}>{children}</div>;
 
+/* ─────────────────── Utility ─────────────────── */
 function pickResultUrl(data){
   if (data && typeof data === "object") {
     if (typeof data.image === "string" && data.image.length) {
@@ -158,7 +149,7 @@ async function padToSize(dataUrl, targetW, targetH) {
   ctx.drawImage(img, dx, dy, nw, nh); return canvas.toDataURL("image/png");
 }
 
-/* ───────── Compare slider ───────── */
+/* ─────────────────── Compare slider ─────────────────── */
 function CompareSlider({ beforeSrc, afterSrc }) {
   const [pos, setPos] = useState(55);
   return (
@@ -167,14 +158,14 @@ function CompareSlider({ beforeSrc, afterSrc }) {
       <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
       <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
       <div className="absolute bottom-2 left-3 right-3">
-        <input aria-label="Compare before and after" type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
+        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
       </div>
     </div>
   );
 }
 
 /* =========================================================
-   Upload + Result (overflow fixed, button works)
+   Upload + Result
    ========================================================= */
 function UploadAndResult(){
   const [file,setFile]=useState(null);
@@ -187,6 +178,40 @@ function UploadAndResult(){
   const [imgH, setImgH] = useState(0);
   const [urlText, setUrlText] = useState("");
   const controllerRef=useRef(null);
+
+  const [panelH, setPanelH] = useState(640);
+  const ACTION_H = 56;
+
+  const leftTopRef = useRef(null);
+  const rightTitleRef = useRef(null);
+  const [spacerH, setSpacerH] = useState(0);
+
+  useEffect(() => {
+    const setH = () => {
+      const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
+      setPanelH(h);
+    };
+    setH();
+    window.addEventListener('resize', setH);
+    return () => window.removeEventListener('resize', setH);
+  }, []);
+
+  useEffect(() => {
+    const measure = () => {
+      const L = leftTopRef.current?.getBoundingClientRect()?.height || 0;
+      const R = rightTitleRef.current?.getBoundingClientRect()?.height || 0;
+      setSpacerH(Math.max(0, Math.round(L - R)));
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    if (leftTopRef.current) ro.observe(leftTopRef.current);
+    if (rightTitleRef.current) ro.observe(rightTitleRef.current);
+    window.addEventListener('resize', measure);
+    return () => {
+      window.removeEventListener('resize', measure);
+      ro.disconnect();
+    };
+  }, [urlText, previewUrl, panelH]);
 
   useEffect(() => {
     return () => {
@@ -218,7 +243,7 @@ function UploadAndResult(){
   const resetAll=()=>{ setFile(null); setPreviewUrl(null); setUrlText(""); setResultUrl(null); setProgress(0); setError(null); };
 
   const groom=async()=>{
-    if(!previewUrl) { setError("Please upload or paste an image URL first."); return; }
+    if(!file && !previewUrl) return;
     setLoading(true); setError(null); setProgress(12);
     controllerRef.current=new AbortController();
     try{
@@ -248,23 +273,23 @@ function UploadAndResult(){
   const hasInput = !!previewUrl;
 
   return (
-    <section id="app" className="container mx-auto px-4 sm:px-6 py-10 sm:py-16">
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-        <div className="flex items-center gap-3 min-w-0">
-          <img src="/dog-5.png" alt="logo" className="w-9 h-9 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
-          <div className="min-w-0">
-            <h1 className="text-[clamp(1.1rem,3.5vw,1.6rem)] font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)] truncate">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
+    <section id="app" className="container mx-auto px-6 py-16">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
+            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary shrink-0" href={resultUrl} download><Icon.Download /> Download</a>
-        ) : <div className="h-9" aria-hidden="true" />}
+          <a className="btn btn-primary" href={resultUrl} download><Icon.Download /> Download</a>
+        ) : <div className="h-9" />}
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-stretch">
+      <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         <Card className="p-4">
-          <div>
+          <div ref={leftTopRef}>
             <div className="mb-2 text-sm font-semibold invisible">Upload</div>
             <div className="flex items-stretch gap-2 mb-3">
               <input
@@ -278,66 +303,60 @@ function UploadAndResult(){
             </div>
           </div>
 
-          {/* Dropzone / Preview — responsive height, no overflow */}
-          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)] min-h-[320px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[620px] relative overflow-hidden">
-            {!hasInput && (
-              <label className="absolute inset-0 grid place-items-center text-center cursor-pointer">
-                <div className="grid place-items-center gap-3 text-[var(--app-muted)] px-4">
+          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]" style={{ height: panelH, position:'relative' }}>
+            <label className="absolute inset-0 grid place-items-center text-center cursor-pointer">
+              {!hasInput && (
+                <div className="grid place-items-center gap-3 text-[var(--app-muted)]">
                   <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]"><Icon.Upload /></div>
                   <div className="font-medium">Drag &amp; drop or click to upload</div>
                   <div className="text-xs">PNG, JPG up to 12MB</div>
                 </div>
-                <input type="file" accept="image/*" className="hidden" onChange={selectFile}/>
-              </label>
-            )}
+              )}
+              <input type="file" accept="image/*" className="hidden" onChange={selectFile}/>
+            </label>
 
             {hasInput && (
-              <div className="absolute inset-0 grid place-items-center p-3">
-                <img src={previewUrl} alt="Selected image preview" className="max-h-full max-w-full object-contain rounded-xl" />
-              </div>
-            )}
-
-            {/* File input control (for when preview is shown) */}
-            {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-2rem)]">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg overflow-hidden bg-black/10 shrink-0">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)]">
+                <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
-                <div className="text-[11px] sm:text-xs leading-5 min-w-0">
-                  <div className="truncate font-medium">Selected image</div>
+                <div className="max-w-[220px] text-xs leading-5">
+                  <div className="truncate">Selected image</div>
                   <div className="opacity-70 truncate">{file?.name || previewUrl}</div>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="mt-3 min-h-[56px] flex flex-wrap items-center gap-3">
+          <div className="mt-3 h-14 flex flex-wrap items-center gap-3">
             {!loading ? (
               <>
-                <Button className="btn-primary w-full sm:w-auto" onClick={groom}><Icon.Wand /> Groom</Button>
-                <Button className="btn-ghost w-full sm:w-auto" onClick={resetAll}><Icon.Reset /> Reset</Button>
-                {error && <span className="text-red-500 text-sm sm:ml-auto">{String(error)}</span>}
+                <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
+                <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
+                {error && <span className="text-red-500 text-sm ml-auto">{String(error)}</span>}
               </>
             ) : (
               <>
-                <Button className="btn-primary w-full sm:w-auto" disabled><Icon.Wand /> Working… {progress}%</Button>
-                <Button className="btn-ghost w-full sm:w-auto" onClick={cancel}><Icon.Reset /> Cancel</Button>
+                <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
+                <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
               </>
             )}
           </div>
         </Card>
 
         <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
-          <div className="rounded-2xl overflow-hidden min-h-[320px] sm:min-h-[420px] md:min-h-[520px] lg:min-h-[620px]">
+          <div style={{ height: spacerH }} aria-hidden="true" />
+          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
+          <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)] px-4">
+              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)]">
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
+          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
@@ -345,104 +364,8 @@ function UploadAndResult(){
 }
 
 /* =========================================================
-   HEADER + NAV + MEGA  (mobile drawer, centered logo)
+   HEADER + NAV + MEGA MENU
    ========================================================= */
-function useDisclosure(initial=false){
-  const [open,setOpen]=useState(!!initial);
-  const onOpen=()=>setOpen(true);
-  const onClose=()=>setOpen(false);
-  const onToggle=()=>setOpen(v=>!v);
-  return {open,onOpen,onClose,onToggle};
-}
-function useLockBodyScroll(locked){
-  useEffect(()=>{ if(!locked) return; const {overflow}=document.body.style; document.body.style.overflow='hidden'; return()=>{document.body.style.overflow=overflow||'';} },[locked]);
-}
-
-function MobileDrawer({ open, onClose, theme, toggleTheme }) {
-  useLockBodyScroll(open);
-  const firstBtnRef=useRef(null);
-  useEffect(()=>{
-    const onKey=(e)=> e.key==='Escape' && onClose();
-    if(open){ document.addEventListener('keydown', onKey); setTimeout(()=>firstBtnRef.current?.focus(),0); }
-    return ()=>document.removeEventListener('keydown', onKey);
-  },[open,onClose]);
-  if(!open) return null;
-
-  const sections = [
-    ['All Products', [
-      ['Raptor & Falcon | A-Series','https://joyzze.com/raptor-falcon-a5-clippers/'],
-      ['Hornet | C-Series','https://joyzze.com/hornet/'],
-      ['Stinger | C-Series','https://joyzze.com/stinger/'],
-      ['Piranha | D-Series','https://joyzze.com/piranha/'],
-      ['Hornet Mini | M-Series','https://joyzze.com/hornet-mini/'],
-    ]],
-    ['Clippers', [
-      ['Hornet','https://joyzze.com/hornet-clippers-5-in-1/'],
-      ['Stinger','https://joyzze.com/stinger-clippers-5-in-1/'],
-      ['Falcon','https://joyzze.com/falcon/'],
-      ['Raptor','https://joyzze.com/raptor-clippers/'],
-      ['Piranha','https://joyzze.com/piranha-clippers/'],
-    ]],
-    ['Blades', [
-      ['A5 Blades','https://joyzze.com/a5-blades/'],
-      ['Wide Blades','https://joyzze.com/wide-blades-a-series/'],
-      ['C-MAX Blades','https://joyzze.com/c-max-blades/'],
-      ['Mini Trimmer Blades','https://joyzze.com/mini-trimmer-blades/'],
-    ]],
-    ['Combs & Accessories', [
-      ['Wide Metal Combs','https://joyzze.com/a-series-wide-metal-combs/'],
-      ['8 Piece Set (A & D)','https://joyzze.com/a-d-series-8-piece-metal-comb-set/'],
-      ['8 Piece Set (C)','https://joyzze.com/c-series-8-piece-metal-comb-set/'],
-      ['12-Slot Case','https://joyzze.com/12-slot/'],
-      ['22-Slot Case','https://joyzze.com/22-slot/'],
-    ]],
-    ['Information', [
-      ['About JOYZZE™','https://joyzze.com/information/about-joyzze/'],
-      ['FAQ','https://joyzze.com/information/faqs/'],
-      ['Contact','https://joyzze.com/information/contact/'],
-      ['Shipping & Returns','https://joyzze.com/information/shipping-returns/'],
-    ]],
-    ['Recycling & Sharpening', [['Program Overview','https://joyzze.com/recycling-sharpening/']]],
-    ['Distributor', [
-      ['Find a Distributor','https://joyzze.com/distributor/'],
-      ['Become a Distributor','https://joyzze.com/distributor/#become'],
-    ]],
-  ];
-
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/50 z-[1000]" onClick={onClose} />
-      <aside role="dialog" aria-modal="true" id="mobile-drawer"
-        className="fixed inset-y-0 left-0 w-[85vw] max-w-[360px] bg-white dark:bg-[#121418] z-[1001] shadow-xl">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10">
-          <span className="font-semibold">Menu</span>
-          <button ref={firstBtnRef} onClick={onClose} className="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]" aria-label="Close menu"><Icon.Close/></button>
-        </div>
-        <nav className="px-2 py-2 text-sm">
-          {sections.map(([title,links])=>(
-            <details key={title} className="group border-b last:border-b-0 border-black/10 dark:border-white/10 py-2">
-              <summary className="flex items-center justify-between cursor-pointer list-none py-1 px-1 rounded focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]">
-                <span className="font-semibold">{title}</span>
-                <span className="transition group-open:rotate-180"><Icon.CaretDown/></span>
-              </summary>
-              <ul className="pl-3 pb-2 space-y-1">
-                {links.map(([label,href])=>(
-                  <li key={label}><a className="block px-2 py-2 rounded hover:bg-black/[.04] dark:hover:bg-white/[.06]" href={href}>{label}</a></li>
-                ))}
-              </ul>
-            </details>
-          ))}
-        </nav>
-        <div className="mt-3 px-4 pb-6">
-          <button onClick={toggleTheme} className="w-full h-11 rounded-md border border-black/10 dark:border-white/15 bg-white/70 dark:bg-white/5 backdrop-blur text-sm flex items-center justify-center gap-2" aria-label="Toggle theme">
-            {theme==='dark'?<Icon.Moon/>:<Icon.Sun/>}{theme==='dark'?'Dark':'Light'} mode
-          </button>
-        </div>
-      </aside>
-    </>
-  );
-}
-
 function MegaSection({ title, children }) {
   return (
     <div>
@@ -455,8 +378,6 @@ function MegaSection({ title, children }) {
 function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const close = () => setOpen(null);
-  const mobileMenu = useDisclosure(false);
-  const searchDisclosure = useDisclosure(false);
 
   useEffect(() => {
     const onKey = (e)=>{ if(e.key==='Escape') close(); };
@@ -469,6 +390,7 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
+  // Single place to “delegate” hover based on data-nav
   const onNavOver = (e) => {
     const el = e.target.closest('[data-nav]');
     if (el) setOpen(el.getAttribute('data-nav'));
@@ -500,63 +422,42 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   return (
     <header className="w-full">
+      {/* sticky container isolated to create a clear stacking context */}
       <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
-        {/* Top row */}
-        <div style={headerStyle} className="px-3 sm:px-4">
-          <div className="w-full h-[64px] md:h-[72px] grid grid-cols-[auto_1fr_auto] items-center gap-2">
-            {/* Left */}
-            <div className="flex items-center gap-2">
-              <button
-                className="lg:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-                aria-label="Open menu"
-                aria-expanded={mobileMenu.open ? 'true' : 'false'}
-                aria-controls="mobile-drawer"
-                onClick={mobileMenu.onOpen}
-              >
-                <Icon.Hamburger />
-              </button>
-              <a href="tel:(877) 456-9993" className="hidden xs:flex items-center gap-2" style={{color:'var(--header-text)'}}>
-                <Icon.Phone className="opacity-85" />
-                <span className="text-[14px] sm:text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
-              </a>
-            </div>
+        {/* Top row: FULL-WIDTH so right block sits near scrollbar */}
+        <div style={headerStyle}>
+          <div className="w-full px-4 lg:px-6 h-[72px] grid grid-cols-[1fr_auto_1fr] items-center">
+            {/* Phone top-left */}
+            <a href="tel:(877) 456-9993" className="justify-self-start flex items-center gap-2" style={{color:'var(--header-text)'}}>
+              <Icon.Phone className="opacity-85" />
+              <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+            </a>
 
-            {/* Center logo - truly centered */}
+            {/* Centered logo */}
             <a
               href="https://joyzze.com/"
               className="justify-self-center block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
               aria-label="Joyzze"
             >
-              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-6 sm:px-7 py-2.5 rounded-[10px]">
+              <div className="bg-gradient-to-b from-[#2a2a2a] to-[#0d0d0d] px-7 py-2.5 rounded-[10px]">
                 <img
                   src="https://cdn11.bigcommerce.com/s-buaam68bbp/images/stencil/250x80/joyzze-logo-300px_1_1661969382__49444.original.png"
                   alt="Joyzze"
-                  className="h-10 sm:h-[52px] w-auto align-middle"
-                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[26px] sm:text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
+                  className="h-[52px] w-auto align-middle"
+                  onError={(e)=>{e.currentTarget.outerHTML='<span class="text-white text-[28px] font-semibold tracking-[0.25em] px-4">JOYZZE</span>'}}
                 />
               </div>
             </a>
 
-            {/* Right */}
-            <div className="justify-self-end flex items-center gap-1 sm:gap-3">
-              {/* Mobile search icon */}
-              <button
-                className="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[var(--joyzze-teal)]"
-                aria-label="Toggle search"
-                aria-expanded={searchDisclosure.open ? 'true' : 'false'}
-                onClick={searchDisclosure.onToggle}
-              >
-                <Icon.Search />
-              </button>
-
-              {/* Desktop search */}
+            {/* Search + icons top-right, flush to edge */}
+            <div className="justify-self-end flex items-center gap-4">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
                     type="text"
                     name="search_query"
                     placeholder="Search..."
-                    className="jz-input h-[42px] w-[220px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
+                    className="jz-input h-[44px] w-[200px] max-w-[200px] rounded-md pl-4 pr-[58px] text-[14px] italic placeholder:italic outline-none ring-1"
                     autoComplete="off"
                   />
                 </form>
@@ -575,36 +476,22 @@ function SigninHeader({ theme, onToggleTheme }) {
 
               <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
-                <span className="text-[13px] hidden md:inline">{theme === 'light' ? 'Light' : 'Dark'}</span>
+                <span className="text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
             </div>
           </div>
-
-          {/* Collapsible search row on mobile */}
-          {searchDisclosure.open && (
-            <div className="md:hidden pb-3">
-              <form action="/search.php" method="get" className="px-1">
-                <input
-                  type="text"
-                  name="search_query"
-                  placeholder="Search products…"
-                  className="w-full h-11 rounded-md bg-white px-3 pr-10 text-[14px] outline-none ring-1 ring-black/10"
-                  aria-label="Search"
-                />
-              </form>
-            </div>
-          )}
         </div>
 
-        {/* Spacer only on lg+ */}
-        <div style={{ background: 'var(--header-bg)', height: '0.5in' }} className="hidden lg:block" aria-hidden="true" />
+        {/* ½-inch gap */}
+        <div style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
-        {/* Navbar (hover only on lg+) */}
-        <nav className="nav-dark hidden lg:block">
+        {/* Navbar row */}
+        <nav className="nav-dark">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
               <div className="px-4 text-[22px] text-[var(--joyzze-teal)] select-none leading-[1]">ʝ</div>
 
+              {/* DELEGATED HOVER: parent listens, items set data-nav */}
               <div
                 className="jz-nav flex items-stretch gap-[2px]"
                 onMouseOver={onNavOver}
@@ -629,6 +516,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
+                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -654,6 +542,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Clippers */}
                     {open === 'clippers' && (
                       <>
                         <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -677,6 +566,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Blades */}
                     {open === 'blades' && (
                       <>
                         <MegaSection title="A-SERIES | A5 STYLE">
@@ -696,6 +586,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Combs & Accessories */}
                     {open === 'combs' && (
                       <>
                         <MegaSection title="A-SERIES | WIDE COMBS">
@@ -716,6 +607,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Information */}
                     {open === 'info' && (
                       <>
                         <MegaSection title="ABOUT JOYZZE™">
@@ -738,6 +630,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Recycling */}
                     {open === 'recycling' && (
                       <>
                         <MegaSection title="RECYCLING & SHARPENING">
@@ -748,6 +641,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
+                    {/* Distributor */}
                     {open === 'dist' && (
                       <>
                         <MegaSection title="DISTRIBUTOR">
@@ -763,9 +657,6 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </nav>
       </div>
-
-      {/* Mobile drawer */}
-      <MobileDrawer open={mobileMenu.open} onClose={mobileMenu.onClose} theme={theme} toggleTheme={onToggleTheme}/>
     </header>
   );
 }
@@ -777,18 +668,18 @@ function Hero(){
   return (
     <header className="relative overflow-hidden text-white"
       style={{background: 'linear-gradient(135deg,#2a2f36 0%, #22262c 45%, #1a1e24 100%)'}}>
-      <div className="container mx-auto px-4 sm:px-6 py-14 sm:py-20 grid lg:grid-cols-2 gap-8 items-center">
+      <div className="container mx-auto px-6 py-20 grid lg:grid-cols-2 gap-10 items-center">
         <div>
-          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-5">Joyzze</div>
-          <h1 className="text-[clamp(1.6rem,5.5vw,2.75rem)] font-extrabold leading-tight">
+          <div className="inline-block px-3 py-1 text-xs rounded-full bg-white/10 border border-white/20 mb-6">Joyzze</div>
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
             Make your dog look freshly groomed—<span className="text-[#00e1c9]">with AI</span>
           </h1>
-          <p className="mt-3 text-slate-200/90 max-w-xl">
+          <p className="mt-4 text-slate-200/90 max-w-xl">
             Upload a photo, we tidy fur and outline while keeping the <b>breed, pose, background, lighting, and colors identical</b>. Compare before &amp; after with a slider.
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <a href="#app" className="btn btn-primary w-full sm:w-auto justify-center">Try it free</a>
-            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b] w-full sm:w-auto justify-center">See how it works</a>
+          <div className="mt-6 flex items-center gap-3">
+            <a href="#app" className="btn btn-primary">Try it free</a>
+            <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b]">See how it works</a>
           </div>
         </div>
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
@@ -801,16 +692,16 @@ function Hero(){
 
 function HowItWorks() {
   return (
-    <section id="how" className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-      <h2 className="text-center text-xl sm:text-2xl font-semibold mb-2">Three simple steps</h2>
-      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-8 sm:mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
+    <section id="how" className="container mx-auto px-6 py-16">
+      <h2 className="text-center text-2xl font-semibold mb-2">Three simple steps</h2>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your photo → AI grooms the dog → compare before &amp; after.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
           <h3 className="font-semibold mb-1">Upload a dog photo</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">PNG or JPG up to ~12MB. Works best with a clear subject.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Upload now</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Upload now</a>
           </div>
         </Card>
 
@@ -819,16 +710,16 @@ function HowItWorks() {
           <h3 className="font-semibold mb-1">Let AI groom</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">We tidy fur around face and paws for a neat, cleaned look—while keeping everything else unchanged.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Start grooming</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
         </Card>
 
-        <Card className="p-6 flex flex-col min-h-[220px]">
+        <Card className="p-6 flex flex-col min-h/[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">3</div>
           <h3 className="font-semibold mb-1">Compare &amp; download</h3>
           <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Use the slider to compare before/after. Download the result in one click.</p>
           <div className="mt-auto pt-4">
-            <a href="#app" className="btn btn-primary inline-flex w-full sm:w-[146px] justify-center">Try the slider</a>
+            <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Try the slider</a>
           </div>
         </Card>
       </div>
@@ -838,9 +729,9 @@ function HowItWorks() {
 
 function Samples(){
   return (
-    <section id="examples" className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
-      <h2 className="text-center text-xl sm:text-2xl font-semibold mb-2">Sample results</h2>
-      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-8 sm:mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
+    <section id="examples" className="container mx-auto px-6 py-16">
+      <h2 className="text-center text-2xl font-semibold mb-2">Sample results</h2>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Background, breed, pose, lighting and colors stay identical—only grooming changes.</p>
       <div className="grid md:grid-cols-3 gap-6">
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-[var(--app-border)]"><img src="/dog-1.jpg" alt="Sample 1" className="w-full h-auto object-cover" /></div>
         <div className="rounded-3xl overflow-hidden shadow ring-1 ring-slate-200 dark:ring-[var(--app-border)]"><img src="/dog-2.jpg" alt="Sample 2" className="w-full h-auto object-cover" /></div>
@@ -856,7 +747,7 @@ function Samples(){
 function FooterPromoRibbon(){
   return (
     <div className="bg-[#0e0e0e] text-[#d9d9d9]">
-      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 text-[13px]">
+      <div className="max-w-[1280px] mx-auto px-4 py-3 grid grid-cols-2 md:grid-cols-4 gap-6 text-[13px]">
         <div className="flex items-center gap-3"><Icon.Truck className="text-[var(--joyzze-teal)]" /><span>Free Shipping on orders over $350</span></div>
         <div className="flex items-center gap-3"><Icon.Return className="text-[var(--joyzze-teal)]" /><span>Hassle Free Returns</span></div>
         <div className="flex items-center gap-3"><Icon.Card className="text-[var(--joyzze-teal)]" /><span>All Major Cards Accepted</span></div>
@@ -871,7 +762,7 @@ function SigninFooter() {
     <footer className="bg-[#4a4a4a] text-slate-100">
       <FooterPromoRibbon />
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-12 grid lg:grid-cols-3 gap-10">
+      <div className="max-w-[1280px] mx-auto px-6 py-12 grid lg:grid-cols-3 gap-10">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
           <ul className="space-y-2 text-[15px] text-slate-200/90">
@@ -904,23 +795,23 @@ function SigninFooter() {
 
           <div className="mt-6 flex items-center justify-center gap-4">
             <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
+            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg.white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
         <div className="lg:justify-self-end">
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">SUBSCRIBE TO<br/>OUR NEWSLETTER</h4>
-          <form className="flex items-stretch w-full max-w-[360px]">
+          <form className="flex items-stretch w-full max-w=[360px]">
             <input type="email" placeholder="Email address..." className="px-3 py-3 flex-1 rounded-l-md text-black text-sm outline-none"/>
             <button type="submit" className="px-4 rounded-r-md bg-[var(--joyzze-teal)] text-black text-sm font-semibold">✉</button>
           </form>
         </div>
       </div>
 
-      <div className="max-w-[1280px] mx-auto px-4 sm:px-6 pb-10">
+      <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved. | Sitemap</div>
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 text-[15px]">
+          <div className="flex items-center gap-6 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
             <a href="https://joyzze.com/c-series/" className="hover:underline">C-SERIES</a>
@@ -929,9 +820,9 @@ function SigninFooter() {
             <a href="https://joyzze.com/all-products/" className="hover:underline">View All</a>
           </div>
         </div>
-        <div className="mt-6 flex flex-wrap items-center justify-end gap-2 sm:gap-4 opacity-90 text-xs">
+        <div className="mt-6 flex items-center justify-end gap-4 opacity-90 text-xs">
           <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg.white/10">Discover</span>
           <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
           <span className="px-2 py-1 rounded bg-white/10">VISA</span>
           <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
@@ -979,7 +870,7 @@ export default function Page(){
           --joyzze-teal: #1CD2C1;
           --header-bg: #e9edf3;
           --header-text: #0f0f0f;
-          --nav-bg: #2f2f2f;
+          --nav-bg: #2f2f2f;     /* dark navbar */
           --nav-text: #d7d7d7;
         }
         .theme-dark {
@@ -1007,7 +898,7 @@ export default function Page(){
         body{ background: var(--app-bg); color:#0f1115; }
         .theme-dark body{ color:#e5e7eb; }
 
-        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.7rem 1rem; border-radius:.8rem; border:1px solid transparent; min-height:44px; }
+        .btn { display:inline-flex; gap:.5rem; align-items:center; padding:.55rem .9rem; border-radius:.6rem; border:1px solid transparent; }
         .btn-primary { background:var(--joyzze-teal); color:#0b0b0b; }
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
@@ -1018,8 +909,8 @@ export default function Page(){
           color: var(--nav-text);
           border-top:1px solid rgba(0,0,0,.12);
           position:relative;
-          z-index: 1500;
-          overflow:visible;
+          z-index: 1500;      /* keep nav above page content */
+          overflow:visible;   /* allow mega panel to render below */
         }
         .jz-nav { font-weight:600; font-size:15px; letter-spacing:.01em; }
         .jz-item { padding:14px 20px; position:relative; line-height:1; color: var(--nav-text); text-decoration:none; border-radius:6px 6px 0 0; display:inline-flex; align-items:center; gap:6px; }
@@ -1042,7 +933,7 @@ export default function Page(){
           box-shadow: 0 32px 64px -20px rgba(0,0,0,.35), 0 12px 24px rgba(0,0,0,.12);
           border-radius: 2px;
           overflow: hidden;
-          z-index: 3000;
+          z-index: 3000;     /* higher than nav & hero */
         }
         .jz-mega-bg { position:absolute; inset:0; background-image: radial-gradient(1000px 440px at 75% 18%, rgba(0,0,0,.08), transparent 60%); opacity:.14; pointer-events:none; border-radius:2px; }
         .jz-sec-title { margin-bottom:12px; color:#2f2f2f; font-weight:700; text-transform:uppercase; letter-spacing:.06em; font-size:14px; }
@@ -1061,12 +952,25 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
-        /* Range thumb bigger for touch */
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width:28px; height:28px; border-radius:9999px; background:#fff; border:2px solid rgba(79,70,229,0.9); box-shadow:0 1px 2px rgba(0,0,0,.2); }
-        input[type="range"]::-moz-range-thumb { width:28px; height:28px; border-radius:9999px; background:#fff; border:2px solid rgba(79,70,229,0.9); box-shadow:0 1px 2px rgba(0,0,0,.2); }
+        /* Dark consistency for inner app */
+        .theme-dark .bg-white,
+        .theme-dark .bg-slate-50,
+        .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
 
-        /* Avoid horizontal scrollbars */
-        html, body { overflow-x:hidden; }
+        .theme-dark .border-slate-300,
+        .theme-dark .ring-slate-200,
+        .theme-dark .ring-black\\/10 { border-color: var(--app-border) !important; box-shadow: 0 0 0 1px var(--app-border) inset !important; }
+
+        .theme-dark .text-slate-600{ color: var(--app-muted) !important; }
+        .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
+        .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
+
+        /* Ensure content below can't cover header area */
+        header + * { position: relative; z-index: 1; }
+
+        @media (max-width: 1280px){ .jz-input { width: 520px; } }
+        @media (max-width: 1100px){ .jz-input { width: 420px; } }
+        @media (max-width: 980px){ .jz-input { display:none; } }
       `}</style>
     </main>
   );
