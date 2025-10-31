@@ -1,6 +1,6 @@
 // app/api/auth/[...nextauth]/route.js
 
-// --- Safe ESM/CJS interop (your original pattern) ---
+// Safe ESM/CJS interop (works on Vercel)
 import NextAuthImport from "next-auth/next";
 import GoogleProviderImport from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
@@ -15,12 +15,12 @@ if (!NextAuth || !GoogleProvider) {
   throw new Error("Failed to import next-auth or providers/google (interop).");
 }
 
-// --- Reuse Prisma across hot reloads (prevents 'PrismaClient already running') ---
+// Reuse Prisma across hot reloads (prevents “already running” in dev)
 const g = globalThis;
 const prisma = g.__prisma__ ?? new PrismaClient();
 if (!g.__prisma__) g.__prisma__ = prisma;
 
-// --- Force Node runtime & turn off caching for API route ---
+// Force Node runtime & disable caching for this API route
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -38,7 +38,7 @@ const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async jwt({ token, user }) {
-      if (user?.id) token.uid = user.id;     // persist DB user id to the token
+      if (user?.id) token.uid = user.id; // persist DB user id
       return token;
     },
     async session({ session, token }) {
