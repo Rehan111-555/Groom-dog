@@ -1,8 +1,10 @@
 // app/api/auth/[...nextauth]/route.js
 
-// --- Safe ESM/CJS interop imports (handle .default or function) ---
+// --- Safe ESM/CJS interop (your original pattern) ---
 import NextAuthImport from "next-auth/next";
 import GoogleProviderImport from "next-auth/providers/google";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaClient } from "@prisma/client";
 
 const NextAuth =
   typeof NextAuthImport === "function" ? NextAuthImport : NextAuthImport?.default;
@@ -13,15 +15,19 @@ if (!NextAuth || !GoogleProvider) {
   throw new Error("Failed to import next-auth or providers/google (interop).");
 }
 
-// --- Force Node runtime & disable static rendering for this API route ---
+// --- Reuse Prisma across hot reloads (prevents 'PrismaClient already running') ---
+const g = globalThis;
+const prisma = g.__prisma__ ?? new PrismaClient();
+if (!g.__prisma__) g.__prisma__ = prisma;
+
+// --- Force Node runtime & turn off caching for API route ---
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-// (Optional – extra belt & suspenders)
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 const authOptions = {
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -30,9 +36,17 @@ const authOptions = {
   ],
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user?.id) token.uid = user.id;     // persist DB user id to the token
+      return token;
+    },
+    async session({ session, token }) {
+      if (session?.user && token?.uid) session.user.id = token.uid; // expose on session
+      return session;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);
-
-// v4 App Router exports
 export { handler as GET, handler as POST };
