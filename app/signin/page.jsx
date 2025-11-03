@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -578,6 +578,10 @@ export default function AuthPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPw, setShowPw] = useState(false);
+  const [regSuccess, setRegSuccess] = useState(false);
+  const emailRef = useRef(null);
+
   const router = useRouter();
 
   async function handleGoogle() {
@@ -596,12 +600,23 @@ export default function AuthPage() {
     setLoading(true);
     try {
       if (mode === 'signup') {
-        await fetch('/api/register', {
+        const r = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name, email, password }),
         });
+        if (!r.ok) {
+          const { error } = await r.json().catch(() => ({}));
+          alert(error || 'Registration failed.');
+          return;
+        }
+        // Show thank-you popup and move to login (same page)
+        setRegSuccess(true);
+        setMode('login');
+        setTimeout(() => emailRef.current?.focus(), 30);
+        return;
       }
+      // LOGIN
       const result = await signIn('credentials', { redirect: false, email, password });
       if (result?.error) {
         alert('Authentication failed. Please check your credentials.');
@@ -649,6 +664,7 @@ export default function AuthPage() {
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
                   <input
+                    ref={emailRef}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -662,17 +678,34 @@ export default function AuthPage() {
                   <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
                   <div className="relative">
                     <input
-                      type="password"
+                      type={showPw ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       placeholder="Enter password"
                       required
                     />
-                    <svg width="18" height="18" viewBox="0 0 24 24" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
-                      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                    </svg>
+                    <button
+                      type="button"
+                      onClick={() => setShowPw(v => !v)}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
+                      aria-label={showPw ? 'Hide password' : 'Show password'}
+                    >
+                      {showPw ? (
+                        /* Eye off */
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                          <path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+                          <path d="M10 5.1A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a18.6 18.6 0 0 1-4.1 4.9" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                          <path d="M6.8 8.2A16.2 16.2 0 0 0 1 12s4 7 11 7c1.1 0 2.1-.1 3.1-.4" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                        </svg>
+                      ) : (
+                        /* Eye */
+                        <svg width="20" height="20" viewBox="0 0 24 24">
+                          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+                          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+                        </svg>
+                      )}
+                    </button>
                   </div>
                   <div className="flex items-center justify-between mt-2">
                     <label className="inline-flex items-center gap-2 text-[13px]">
@@ -739,6 +772,28 @@ export default function AuthPage() {
       </div>
 
       <AppFooter />
+
+      {/* THANK YOU POPUP AFTER REGISTRATION */}
+      {regSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white shadow-xl p-6 text-center">
+            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-emerald-100 text-emerald-700">
+              ✓
+            </div>
+            <h2 className="text-xl font-semibold mb-2">Thank you for registering</h2>
+            <p className="text-sm text-gray-600 mb-5">
+              Click below to login with your new credentials.
+            </p>
+            <button
+              onClick={() => { setRegSuccess(false); setMode('login'); setTimeout(() => emailRef.current?.focus(), 30); }}
+              className="inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium text-white"
+              style={{ backgroundColor: BRAND.teal }}
+            >
+              Click here to login
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* GLOBAL STYLES */}
       <style jsx global>{`
