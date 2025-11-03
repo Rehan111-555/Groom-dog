@@ -596,37 +596,53 @@ export default function AuthPage() {
   }
 
   async function handleCredentials(e) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      if (mode === 'signup') {
-        const r = await fetch('/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password }),
-        });
-        if (!r.ok) {
-          const { error } = await r.json().catch(() => ({}));
-          alert(error || 'Registration failed.');
-          return;
-        }
-        // Show thank-you popup and move to login (same page)
-        setRegSuccess(true);
-        setMode('login');
-        setTimeout(() => emailRef.current?.focus(), 30);
+  e.preventDefault();
+  setLoading(true);
+  try {
+    if (mode === 'signup') {
+      const r = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!r.ok) {
+        const { error } = await r.json().catch(() => ({}));
+        alert(error || 'Registration failed.');
         return;
       }
-      // LOGIN
-      const result = await signIn('credentials', { redirect: false, email, password });
-      if (result?.error) {
-        alert('Authentication failed. Please check your credentials.');
-      } else {
-        router.push(result?.url || '/');
-      }
-    } finally {
-      setLoading(false);
+      // Thank-you popup and switch to login (already in your file)
+      setRegSuccess(true);
+      setMode('login');
+      setTimeout(() => emailRef.current?.focus(), 30);
+      return;
     }
+
+    // LOGIN
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (!res) {
+      alert('No response from server. Please try again.');
+      return;
+    }
+    if (res.error) {
+      // Common values: "CredentialsSignin"
+      alert(res.error === 'CredentialsSignin' ? 'Invalid email or password.' : res.error);
+      return;
+    }
+
+    // Success
+    const to = new URLSearchParams(window.location.search).get('from') || '/';
+    router.push(res.url || to);
+    router.refresh(); // 🟢 make sure session is visible on the next page
+  } finally {
+    setLoading(false);
   }
+}
+
 
   return (
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
