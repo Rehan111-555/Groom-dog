@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -578,13 +578,13 @@ export default function AuthPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPw, setShowPw] = useState(false);
-  const [regSuccess, setRegSuccess] = useState(false);
-  const emailRef = useRef(null);
-
+  const [showPwd, setShowPwd] = useState(false);
+  const [regOk, setRegOk] = useState(false);
+  const [errText, setErrText] = useState('');
   const router = useRouter();
 
   async function handleGoogle() {
+    if (loading) return;
     setLoading(true);
     try {
       const params = new URLSearchParams(window.location.search);
@@ -596,57 +596,67 @@ export default function AuthPage() {
   }
 
   async function handleCredentials(e) {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    if (mode === 'signup') {
-      const r = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-      if (!r.ok) {
-        const { error } = await r.json().catch(() => ({}));
-        alert(error || 'Registration failed.');
+    e.preventDefault();
+    if (loading) return;
+    setErrText('');
+    setLoading(true);
+    try {
+      if (mode === 'signup') {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const msg = data?.error || 'Registration failed';
+          setErrText(msg);
+          alert(msg);
+          setLoading(false);
+          return;
+        }
+        // Success: show thank-you and swap to login
+        setRegOk(true);
+        setMode('login');
+        setPassword('');
+        setLoading(false);
         return;
       }
-      // Thank-you popup and switch to login (already in your file)
-      setRegSuccess(true);
-      setMode('login');
-      setTimeout(() => emailRef.current?.focus(), 30);
-      return;
-    }
 
-    // LOGIN
-    const res = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (!res) {
-      alert('No response from server. Please try again.');
-      return;
+      // LOGIN
+      const result = await signIn('credentials', { redirect: false, email, password });
+      if (result?.error) {
+        setErrText('Invalid email or password.');
+        alert('Invalid email or password.');
+      } else {
+        const params = new URLSearchParams(window.location.search);
+        router.push(params.get('from') || '/');
+      }
+    } finally {
+      setLoading(false);
     }
-    if (res.error) {
-      // Common values: "CredentialsSignin"
-      alert(res.error === 'CredentialsSignin' ? 'Invalid email or password.' : res.error);
-      return;
-    }
-
-    // Success
-    const to = new URLSearchParams(window.location.search).get('from') || '/';
-    router.push(res.url || to);
-    router.refresh(); // 🟢 make sure session is visible on the next page
-  } finally {
-    setLoading(false);
   }
-}
-
 
   return (
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
+
+      {/* Registration success popup */}
+      {regOk && (
+        <div className="fixed inset-0 z-[90] grid place-items-center bg-black/40" onClick={() => setRegOk(false)}>
+          <div className="bg-white text-black p-5 rounded-md shadow max-w-sm mx-3" onClick={(e)=>e.stopPropagation()}>
+            <h3 className="font-semibold text-lg mb-2">Thank you for registering 🎉</h3>
+            <p className="text-sm mb-4">Click below to log in with your new credentials.</p>
+            <button
+              onClick={() => { setRegOk(false); setMode('login'); }}
+              className="px-4 py-2 rounded-md text-white"
+              style={{ backgroundColor: BRAND.teal }}
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Page body */}
       <div className="flex-1">
@@ -658,7 +668,9 @@ export default function AuthPage() {
                 <img src="/dog-5.png" alt="logo" className="w-6 h-6 object-contain" />
               </div>
 
-              <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">Welcome back !</h1>
+              <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">
+                {mode === 'login' ? 'Welcome back !' : 'Create your account'}
+              </h1>
               <p className="text-[15px] text-[var(--muted-fg)] mb-8">
                 Enter to get unlimited access to data &amp; information.
               </p>
@@ -680,7 +692,6 @@ export default function AuthPage() {
                 <div className="mb-4">
                   <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
                   <input
-                    ref={emailRef}
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -694,7 +705,7 @@ export default function AuthPage() {
                   <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
                   <div className="relative">
                     <input
-                      type={showPw ? 'text' : 'password'}
+                      type={showPwd ? 'text' : 'password'}
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
@@ -703,22 +714,18 @@ export default function AuthPage() {
                     />
                     <button
                       type="button"
-                      onClick={() => setShowPw(v => !v)}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-800"
-                      aria-label={showPw ? 'Hide password' : 'Show password'}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600"
+                      onClick={() => setShowPwd((s) => !s)}
+                      aria-label={showPwd ? 'Hide password' : 'Show password'}
                     >
-                      {showPw ? (
-                        /* Eye off */
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                          <path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                          <path d="M10 5.1A10.6 10.6 0 0 1 12 5c7 0 11 7 11 7a18.6 18.6 0 0 1-4.1 4.9" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-                          <path d="M6.8 8.2A16.2 16.2 0 0 0 1 12s4 7 11 7c1.1 0 2.1-.1 3.1-.4" stroke="currentColor" strokeWidth="1.8" fill="none"/>
+                      {showPwd ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                          <path d="M2 2l20 20M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7c2 0 3.9-.7 5.4-1.7M9.9 9.9A3 3 0 0012 15a3 3 0 002.1-.9" stroke="currentColor" strokeWidth="1.6" fill="none"/>
                         </svg>
                       ) : (
-                        /* Eye */
-                        <svg width="20" height="20" viewBox="0 0 24 24">
-                          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.8"/>
-                          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
                         </svg>
                       )}
                     </button>
@@ -731,6 +738,8 @@ export default function AuthPage() {
                     <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
                   </div>
                 </div>
+
+                {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
 
                 <button
                   type="submit"
@@ -788,28 +797,6 @@ export default function AuthPage() {
       </div>
 
       <AppFooter />
-
-      {/* THANK YOU POPUP AFTER REGISTRATION */}
-      {regSuccess && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-xl bg-white shadow-xl p-6 text-center">
-            <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-emerald-100 text-emerald-700">
-              ✓
-            </div>
-            <h2 className="text-xl font-semibold mb-2">Thank you for registering</h2>
-            <p className="text-sm text-gray-600 mb-5">
-              Click below to login with your new credentials.
-            </p>
-            <button
-              onClick={() => { setRegSuccess(false); setMode('login'); setTimeout(() => emailRef.current?.focus(), 30); }}
-              className="inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium text-white"
-              style={{ backgroundColor: BRAND.teal }}
-            >
-              Click here to login
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* GLOBAL STYLES */}
       <style jsx global>{`
