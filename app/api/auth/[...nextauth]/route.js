@@ -1,6 +1,4 @@
 // app/api/auth/[...nextauth]/route.js
-
-// --- ESM/CJS interop (prevents “l is not a function” on Vercel) ---
 import NextAuthImport from "next-auth/next";
 import GoogleProviderImport from "next-auth/providers/google";
 import CredentialsProviderImport from "next-auth/providers/credentials";
@@ -15,9 +13,10 @@ const CredentialsProvider =
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+const g = globalThis;
+const prisma = g.__prisma__ ?? new PrismaClient();
+if (!g.__prisma__) g.__prisma__ = prisma;
 
-// Force Node runtime & disable caching for this API route
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -35,27 +34,22 @@ const authOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+      async authorize(creds) {
+        if (!creds?.email || !creds?.password) return null;
+        const email = String(creds.email).toLowerCase().trim();
 
-        // Find user and verify password (expects `passwordHash` in your User model)
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
+        const user = await prisma.user.findUnique({ where: { email } });
         if (!user?.passwordHash) return null;
 
-        const ok = await bcrypt.compare(credentials.password, user.passwordHash);
+        const ok = await bcrypt.compare(creds.password, user.passwordHash);
         if (!ok) return null;
 
-        // Must return a plain object on success
-        return { id: String(user.id), name: user.name, email: user.email };
+        return { id: user.id, name: user.name ?? null, email: user.email ?? email };
       },
     }),
   ],
   session: { strategy: "jwt" },
-  pages: {
-    signIn: "/signin",
-  },
+  pages: { signIn: "/signin" },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -67,11 +61,7 @@ const authOptions = {
     },
     async session({ session, token }) {
       if (token) {
-        session.user = {
-          id: token.id,
-          name: token.name,
-          email: token.email,
-        };
+        session.user = { id: token.id, name: token.name, email: token.email };
       }
       return session;
     },
