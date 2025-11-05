@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 /* ================================
    ICONS
@@ -574,14 +574,27 @@ const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
 export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'forgot' | 'reset'
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
   const [errText, setErrText] = useState('');
+  const [infoText, setInfoText] = useState('');
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetToken, setResetToken] = useState('');
+  const [newPwd, setNewPwd] = useState('');
   const router = useRouter();
+  const search = useSearchParams();
+
+  useEffect(() => {
+    const verified = search.get('verified');
+    if (verified) setInfoText('Email verified! You can log in now.');
+    const rTok = search.get('resetToken');
+    if (rTok) { setMode('reset'); setResetToken(rTok); }
+  }, [search]);
 
   async function handleGoogle() {
     if (loading) return;
@@ -599,13 +612,14 @@ export default function AuthPage() {
     e.preventDefault();
     if (loading) return;
     setErrText('');
+    setInfoText('');
     setLoading(true);
     try {
       if (mode === 'signup') {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({ name, email, password, phone }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -615,10 +629,10 @@ export default function AuthPage() {
           setLoading(false);
           return;
         }
-        // Success: show thank-you and swap to login
         setRegOk(true);
         setMode('login');
         setPassword('');
+        setInfoText('We emailed you a verification link. Please verify to log in.');
         setLoading(false);
         return;
       }
@@ -626,12 +640,61 @@ export default function AuthPage() {
       // LOGIN
       const result = await signIn('credentials', { redirect: false, email, password });
       if (result?.error) {
-        setErrText('Invalid email or password.');
-        alert('Invalid email or password.');
+        setErrText('Invalid email or password, or email not verified.');
+        alert('Invalid email or password, or email not verified.');
       } else {
         const params = new URLSearchParams(window.location.search);
         router.push(params.get('from') || '/');
       }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function requestReset(e) {
+    e.preventDefault();
+    if (!resetEmail) return;
+    setErrText('');
+    setInfoText('');
+    setLoading(true);
+    try {
+      await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'requestReset', email: resetEmail }),
+      });
+      setInfoText('If that email exists, a reset link has been sent.');
+      setMode('login');
+    } catch {
+      setErrText('Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function confirmReset(e) {
+    e.preventDefault();
+    if (!resetToken || !newPwd) return;
+    setErrText('');
+    setInfoText('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'confirmReset', token: resetToken, password: newPwd }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErrText(data?.error || 'Reset failed');
+      } else {
+        setInfoText('Password updated! You can log in now.');
+        setMode('login');
+        setNewPwd('');
+        setResetToken('');
+      }
+    } catch {
+      setErrText('Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -646,13 +709,13 @@ export default function AuthPage() {
         <div className="fixed inset-0 z-[90] grid place-items-center bg-black/40" onClick={() => setRegOk(false)}>
           <div className="bg-white text-black p-5 rounded-md shadow max-w-sm mx-3" onClick={(e)=>e.stopPropagation()}>
             <h3 className="font-semibold text-lg mb-2">Thank you for registering 🎉</h3>
-            <p className="text-sm mb-4">Click below to log in with your new credentials.</p>
+            <p className="text-sm mb-4">We sent a verification link to your email. Verify to log in.</p>
             <button
               onClick={() => { setRegOk(false); setMode('login'); }}
               className="px-4 py-2 rounded-md text-white"
               style={{ backgroundColor: BRAND.teal }}
             >
-              Go to Login
+              OK
             </button>
           </div>
         </div>
@@ -669,87 +732,165 @@ export default function AuthPage() {
               </div>
 
               <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">
-                {mode === 'login' ? 'Welcome back !' : 'Create your account'}
+                {mode === 'login' ? 'Welcome back !' : mode === 'signup' ? 'Create your account' : mode === 'forgot' ? 'Forgot your password' : 'Reset your password'}
               </h1>
               <p className="text-[15px] text-[var(--muted-fg)] mb-8">
-                Enter to get unlimited access to data &amp; information.
+                {mode === 'reset' ? 'Enter a new password for your account.' : 'Enter to get unlimited access to data &amp; information.'}
               </p>
 
-              <form onSubmit={handleCredentials} className="mb-4">
-                {mode === 'signup' && (
+              {infoText && <p className="text-emerald-600 text-sm mb-3">{infoText}</p>}
+              {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
+
+              {(mode === 'login' || mode === 'signup') && (
+                <form onSubmit={handleCredentials} className="mb-4">
+                  {mode === 'signup' && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                        required
+                      />
+                    </div>
+                  )}
+
+                  {mode === 'signup' && (
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">Phone</label>
+                      <input
+                        type="tel"
+                        inputMode="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                        placeholder="Optional (e.g. +1 555 123 4567)"
+                      />
+                    </div>
+                  )}
+
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
+                    <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
                     <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      placeholder="Enter your mail address"
                       required
                     />
                   </div>
-                )}
 
-                <div className="mb-4">
-                  <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                    placeholder="Enter your mail address"
-                    required
-                  />
-                </div>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
+                    <div className="relative">
+                      <input
+                        type={showPwd ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                        placeholder="Enter password"
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600"
+                        onClick={() => setShowPwd((s) => !s)}
+                        aria-label={showPwd ? 'Hide password' : 'Show password'}
+                      >
+                        {showPwd ? (
+                          <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M2 2l20 20M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7c2 0 3.9-.7 5.4-1.7M9.9 9.9A3 3 0 0012 15a3 3 0 002.1-.9" stroke="currentColor" strokeWidth="1.6" fill="none"/>
+                          </svg>
+                        ) : (
+                          <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                            <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <label className="inline-flex items-center gap-2 text-[13px]">
+                        <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
+                        Remember me
+                      </label>
+                      <button type="button" onClick={() => setMode('forgot')} className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</button>
+                    </div>
+                  </div>
 
-                <div className="mb-6">
-                  <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
-                  <div className="relative">
+                  {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
+
+                  <button
+                    type="submit"
+                    className="w-full h-12 sm:h-[50px] rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
+                    style={{ backgroundColor: BRAND.teal }}
+                    disabled={loading}
+                  >
+                    {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
+                  </button>
+                </form>
+              )}
+
+              {/* Forgot password (request link) */}
+              {mode === 'forgot' && (
+                <form onSubmit={requestReset} className="mb-4">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">Email</label>
                     <input
-                      type={showPwd ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter password"
+                      type="email"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      placeholder="Enter your account email"
                       required
                     />
+                  </div>
+                  <div className="flex gap-2">
                     <button
-                      type="button"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600"
-                      onClick={() => setShowPwd((s) => !s)}
-                      aria-label={showPwd ? 'Hide password' : 'Show password'}
+                      type="submit"
+                      className="flex-1 h-12 rounded-[10px] text-white font-medium"
+                      style={{ backgroundColor: BRAND.teal }}
+                      disabled={loading}
                     >
-                      {showPwd ? (
-                        <svg width="18" height="18" viewBox="0 0 24 24">
-                          <path d="M2 2l20 20M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7c2 0 3.9-.7 5.4-1.7M9.9 9.9A3 3 0 0012 15a3 3 0 002.1-.9" stroke="currentColor" strokeWidth="1.6" fill="none"/>
-                        </svg>
-                      ) : (
-                        <svg width="18" height="18" viewBox="0 0 24 24">
-                          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                        </svg>
-                      )}
+                      {loading ? 'Sending…' : 'Send reset link'}
+                    </button>
+                    <button type="button" className="flex-1 h-12 rounded-[10px] ring-1" onClick={() => setMode('login')}>
+                      Cancel
                     </button>
                   </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <label className="inline-flex items-center gap-2 text-[13px]">
-                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
-                      Remember me
-                    </label>
-                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
+                </form>
+              )}
+
+              {/* Reset password (from emailed link) */}
+              {mode === 'reset' && (
+                <form onSubmit={confirmReset} className="mb-4">
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">New password</label>
+                    <input
+                      type="password"
+                      value={newPwd}
+                      onChange={(e) => setNewPwd(e.target.value)}
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      placeholder="Enter new password"
+                      required
+                      minLength={6}
+                    />
                   </div>
-                </div>
-
-                {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
-
-                <button
-                  type="submit"
-                  className="w-full h-12 sm:h-[50px] rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
-                  style={{ backgroundColor: BRAND.teal }}
-                  disabled={loading}
-                >
-                  {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
-                </button>
-              </form>
+                  <button
+                    type="submit"
+                    className="w-full h-12 rounded-[10px] text-white font-medium"
+                    style={{ backgroundColor: BRAND.teal }}
+                    disabled={loading}
+                  >
+                    {loading ? 'Saving…' : 'Update password'}
+                  </button>
+                  <button type="button" className="mt-3 w-full h-11 rounded-[10px] ring-1" onClick={() => setMode('login')}>
+                    Back to login
+                  </button>
+                </form>
+              )}
 
               <div className="my-4 flex items-center">
                 <div className="flex-1 border-t border-gray-300" />
