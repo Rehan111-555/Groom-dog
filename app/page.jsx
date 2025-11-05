@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { signOut } from 'next-auth/react';
 
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
@@ -316,7 +317,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -378,6 +379,25 @@ function MegaSection({ title, children }) {
 function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // NEW: simple session checker to show Sign out button (no Provider required)
+  const [authUser, setAuthUser] = useState(null);
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        if (active) setAuthUser(data?.user || null);
+      } catch {
+        if (active) setAuthUser(null);
+      }
+    };
+    load();
+    const vis = () => { if (document.visibilityState === 'visible') load(); };
+    document.addEventListener('visibilitychange', vis);
+    return () => { active = false; document.removeEventListener('visibilitychange', vis); };
+  }, []);
 
   const close = () => setOpen(null);
 
@@ -493,7 +513,19 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              {/* CHANGED: make toggle visible on mobile too */}
+              {/* CHANGED: Add sign-out if logged in */}
+              {authUser ? (
+                <button
+                  onClick={() => signOut({ callbackUrl: '/signin' })}
+                  className="h-9 px-3 rounded-md text-white"
+                  style={{ background: '#1CD2C1' }}
+                  title="Sign out"
+                >
+                  Sign out
+                </button>
+              ) : null}
+
+              {/* theme toggle */}
               <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
                 <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
@@ -561,7 +593,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                       </>
                     )}
 
-                    {/* ... (unchanged other mega panels) ... */}
                     {open === 'clippers' && (
                       <>
                         <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
@@ -817,7 +848,7 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
-          <ul className="space-y-2 text-[15px] text-slate-200/90">
+          <ul className="space-y-2 text:[15px] text-slate-200/90">
             <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
             <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
             <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
@@ -847,7 +878,7 @@ function SigninFooter() {
 
           <div className="mt-6 flex items-center justify-center gap-4">
             <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
+            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg.white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
@@ -874,11 +905,11 @@ function SigninFooter() {
           </div>
         </div>
         <div className="mt-6 flex flex-wrap items-center justify-end gap-2 sm:gap-4 opacity-90 text-xs">
-          <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
-          <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
-          <span className="px-2 py-1 rounded bg-white/10">VISA</span>
-          <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
+          <span className="px-2 py-1 rounded bg.white/10">AMEX</span>
+          <span className="px-2 py-1 rounded bg.white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg.white/10">PayPal</span>
+          <span className="px-2 py-1 rounded bg.white/10">VISA</span>
+          <span className="px-2 py-1 rounded bg.white/10">MasterCard</span>
         </div>
       </div>
 
