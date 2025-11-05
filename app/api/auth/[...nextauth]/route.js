@@ -56,7 +56,7 @@ const authOptions = {
         const ok = await bcrypt.compare(creds.password, user.passwordHash);
         if (!ok) return null;
 
-        // Lock credentials login until email verified
+        // Require verification before allowing credentials login
         if (!user.emailVerified) {
           throw new Error("Email not verified");
         }
@@ -72,8 +72,8 @@ const authOptions = {
   ],
   session: {
     strategy: "jwt",
-    maxAge: MAX_AGE,      // absolute timeout window
-    updateAge: UPDATE_AGE // rolling refresh cadence
+    maxAge: MAX_AGE,
+    updateAge: UPDATE_AGE,
   },
   pages: { signIn: "/signin" },
   callbacks: {
@@ -87,16 +87,12 @@ const authOptions = {
         token.phone = user.phone ?? token.phone ?? null;
         token.lastActivity = now;
       } else {
-        // Basic inactivity tracking client can react to
         const last = token.lastActivity ?? now;
-        if (now - last > MAX_AGE * 1000) {
-          token.expired = true;
-        } else {
-          token.lastActivity = now;
-        }
+        if (now - last > MAX_AGE * 1000) token.expired = true;
+        else token.lastActivity = now;
       }
 
-      // If Google just signed in, make sure user is marked verified in DB
+      // If Google just signed in, mark verified in DB (defensive)
       if (account?.provider === "google" && token?.email) {
         const u = await prisma.user.findUnique({ where: { email: token.email } });
         if (u && !u.emailVerified) {
