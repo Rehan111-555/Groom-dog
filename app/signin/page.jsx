@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -245,7 +245,7 @@ function AppHeader() {
               <Icon.Plus className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
-            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
+            <a className="hidden sm/grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
               <Icon.Shuffle />
             </a>
             <div className="hidden sm:flex items-center">
@@ -550,7 +550,6 @@ function AppFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
-          {/* WRAP so "View All" never gets clipped */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -572,37 +571,25 @@ function AppFooter() {
    ================================ */
 const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
-export default function AuthPage() {
+function AuthContent() {
+  const router = useRouter();
+  const params = useSearchParams(); // now safe under Suspense
+  const callbackTo = params?.get('from') || '/';
+
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'forgot' | 'reset'
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
   const [errText, setErrText] = useState('');
-  const [infoText, setInfoText] = useState('');
-  const [resetEmail, setResetEmail] = useState('');
-  const [resetToken, setResetToken] = useState('');
-  const [newPwd, setNewPwd] = useState('');
-  const router = useRouter();
-  const search = useSearchParams();
-
-  useEffect(() => {
-    const verified = search.get('verified');
-    if (verified) setInfoText('Email verified! You can log in now.');
-    const rTok = search.get('resetToken');
-    if (rTok) { setMode('reset'); setResetToken(rTok); }
-  }, [search]);
 
   async function handleGoogle() {
     if (loading) return;
     setLoading(true);
     try {
-      const params = new URLSearchParams(window.location.search);
-      const to = params.get('from') || '/';
-      await signIn('google', { callbackUrl: to });
+      await signIn('google', { callbackUrl: callbackTo });
     } finally {
       setLoading(false);
     }
@@ -612,14 +599,13 @@ export default function AuthPage() {
     e.preventDefault();
     if (loading) return;
     setErrText('');
-    setInfoText('');
     setLoading(true);
     try {
       if (mode === 'signup') {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password, phone }),
+          body: JSON.stringify({ name, email, password }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -632,69 +618,17 @@ export default function AuthPage() {
         setRegOk(true);
         setMode('login');
         setPassword('');
-        setInfoText('We emailed you a verification link. Please verify to log in.');
         setLoading(false);
         return;
       }
 
-      // LOGIN
       const result = await signIn('credentials', { redirect: false, email, password });
       if (result?.error) {
-        setErrText('Invalid email or password, or email not verified.');
-        alert('Invalid email or password, or email not verified.');
+        setErrText('Invalid email or password.');
+        alert('Invalid email or password.');
       } else {
-        const params = new URLSearchParams(window.location.search);
-        router.push(params.get('from') || '/');
+        router.push(callbackTo);
       }
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function requestReset(e) {
-    e.preventDefault();
-    if (!resetEmail) return;
-    setErrText('');
-    setInfoText('');
-    setLoading(true);
-    try {
-      await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'requestReset', email: resetEmail }),
-      });
-      setInfoText('If that email exists, a reset link has been sent.');
-      setMode('login');
-    } catch {
-      setErrText('Something went wrong.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function confirmReset(e) {
-    e.preventDefault();
-    if (!resetToken || !newPwd) return;
-    setErrText('');
-    setInfoText('');
-    setLoading(true);
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'confirmReset', token: resetToken, password: newPwd }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setErrText(data?.error || 'Reset failed');
-      } else {
-        setInfoText('Password updated! You can log in now.');
-        setMode('login');
-        setNewPwd('');
-        setResetToken('');
-      }
-    } catch {
-      setErrText('Something went wrong.');
     } finally {
       setLoading(false);
     }
@@ -709,13 +643,13 @@ export default function AuthPage() {
         <div className="fixed inset-0 z-[90] grid place-items-center bg-black/40" onClick={() => setRegOk(false)}>
           <div className="bg-white text-black p-5 rounded-md shadow max-w-sm mx-3" onClick={(e)=>e.stopPropagation()}>
             <h3 className="font-semibold text-lg mb-2">Thank you for registering 🎉</h3>
-            <p className="text-sm mb-4">We sent a verification link to your email. Verify to log in.</p>
+            <p className="text-sm mb-4">Click below to log in with your new credentials.</p>
             <button
               onClick={() => { setRegOk(false); setMode('login'); }}
               className="px-4 py-2 rounded-md text-white"
               style={{ backgroundColor: BRAND.teal }}
             >
-              OK
+              Go to Login
             </button>
           </div>
         </div>
@@ -732,165 +666,87 @@ export default function AuthPage() {
               </div>
 
               <h1 className="text-[36px] md:text-[40px] font-semibold tracking-[.015em] mb-2">
-                {mode === 'login' ? 'Welcome back !' : mode === 'signup' ? 'Create your account' : mode === 'forgot' ? 'Forgot your password' : 'Reset your password'}
+                {mode === 'login' ? 'Welcome back !' : 'Create your account'}
               </h1>
               <p className="text-[15px] text-[var(--muted-fg)] mb-8">
-                {mode === 'reset' ? 'Enter a new password for your account.' : 'Enter to get unlimited access to data &amp; information.'}
+                Enter to get unlimited access to data &amp; information.
               </p>
 
-              {infoText && <p className="text-emerald-600 text-sm mb-3">{infoText}</p>}
-              {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
-
-              {(mode === 'login' || mode === 'signup') && (
-                <form onSubmit={handleCredentials} className="mb-4">
-                  {mode === 'signup' && (
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                        required
-                      />
-                    </div>
-                  )}
-
-                  {mode === 'signup' && (
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">Phone</label>
-                      <input
-                        type="tel"
-                        inputMode="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                        placeholder="Optional (e.g. +1 555 123 4567)"
-                      />
-                    </div>
-                  )}
-
+              <form onSubmit={handleCredentials} className="mb-4">
+                {mode === 'signup' && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
+                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
                     <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter your mail address"
                       required
                     />
                   </div>
+                )}
 
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
-                    <div className="relative">
-                      <input
-                        type={showPwd ? 'text' : 'password'}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                        placeholder="Enter password"
-                        required
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600"
-                        onClick={() => setShowPwd((s) => !s)}
-                        aria-label={showPwd ? 'Hide password' : 'Show password'}
-                      >
-                        {showPwd ? (
-                          <svg width="18" height="18" viewBox="0 0 24 24">
-                            <path d="M2 2l20 20M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7c2 0 3.9-.7 5.4-1.7M9.9 9.9A3 3 0 0012 15a3 3 0 002.1-.9" stroke="currentColor" strokeWidth="1.6" fill="none"/>
-                          </svg>
-                        ) : (
-                          <svg width="18" height="18" viewBox="0 0 24 24">
-                            <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                            <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
-                          </svg>
-                        )}
-                      </button>
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <label className="inline-flex items-center gap-2 text-[13px]">
-                        <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
-                        Remember me
-                      </label>
-                      <button type="button" onClick={() => setMode('forgot')} className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</button>
-                    </div>
-                  </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium mb-1">Email <span className="text-[#6b6bff]">*</span></label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                    placeholder="Enter your mail address"
+                    required
+                  />
+                </div>
 
-                  {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
-
-                  <button
-                    type="submit"
-                    className="w-full h-12 sm:h-[50px] rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
-                    style={{ backgroundColor: BRAND.teal }}
-                    disabled={loading}
-                  >
-                    {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
-                  </button>
-                </form>
-              )}
-
-              {/* Forgot password (request link) */}
-              {mode === 'forgot' && (
-                <form onSubmit={requestReset} className="mb-4">
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Email</label>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-1">Password <span className="text-[#6b6bff]">*</span></label>
+                  <div className="relative">
                     <input
-                      type="email"
-                      value={resetEmail}
-                      onChange={(e) => setResetEmail(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter your account email"
+                      type={showPwd ? 'text' : 'password'}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 pr-10 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      placeholder="Enter password"
                       required
                     />
-                  </div>
-                  <div className="flex gap-2">
                     <button
-                      type="submit"
-                      className="flex-1 h-12 rounded-[10px] text-white font-medium"
-                      style={{ backgroundColor: BRAND.teal }}
-                      disabled={loading}
+                      type="button"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-600"
+                      onClick={() => setShowPwd((s) => !s)}
+                      aria-label={showPwd ? 'Hide password' : 'Show password'}
                     >
-                      {loading ? 'Sending…' : 'Send reset link'}
-                    </button>
-                    <button type="button" className="flex-1 h-12 rounded-[10px] ring-1" onClick={() => setMode('login')}>
-                      Cancel
+                      {showPwd ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                          <path d="M2 2l20 20M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7c2 0 3.9-.7 5.4-1.7M9.9 9.9A3 3 0 0012 15a3 3 0 002.1-.9" stroke="currentColor" strokeWidth="1.6" fill="none"/>
+                        </svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                          <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" strokeWidth="1.6"/>
+                        </svg>
+                      )}
                     </button>
                   </div>
-                </form>
-              )}
+                  <div className="flex items-center justify-between mt-2">
+                    <label className="inline-flex items-center gap-2 text-[13px]">
+                      <input type="checkbox" className="accent-[var(--joyzze-teal)]" defaultChecked />
+                      Remember me
+                    </label>
+                    <a href="#" className="text-[13px] text-[#6b6bff] hover:underline">Forgot your password ?</a>
+                  </div>
+                </div>
 
-              {/* Reset password (from emailed link) */}
-              {mode === 'reset' && (
-                <form onSubmit={confirmReset} className="mb-4">
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">New password</label>
-                    <input
-                      type="password"
-                      value={newPwd}
-                      onChange={(e) => setNewPwd(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      placeholder="Enter new password"
-                      required
-                      minLength={6}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full h-12 rounded-[10px] text-white font-medium"
-                    style={{ backgroundColor: BRAND.teal }}
-                    disabled={loading}
-                  >
-                    {loading ? 'Saving…' : 'Update password'}
-                  </button>
-                  <button type="button" className="mt-3 w-full h-11 rounded-[10px] ring-1" onClick={() => setMode('login')}>
-                    Back to login
-                  </button>
-                </form>
-              )}
+                {errText && <p className="text-red-600 text-sm mb-3">{errText}</p>}
+
+                <button
+                  type="submit"
+                  className="w-full h-12 sm:h-[50px] rounded-[10px] text-white font-medium shadow-md hover:shadow-lg transition"
+                  style={{ backgroundColor: BRAND.teal }}
+                  disabled={loading}
+                >
+                  {loading ? 'Connecting…' : mode === 'login' ? 'Log In' : 'Create Account'}
+                </button>
+              </form>
 
               <div className="my-4 flex items-center">
                 <div className="flex-1 border-t border-gray-300" />
@@ -1014,13 +870,11 @@ export default function AuthPage() {
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
-        /* Header input sizing tweaks for breakpoints */
         .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width: 1280px){ .jz-input { width: 360px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 280px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
-        /* Promo ribbon grid */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 12px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 14px; border-right:1px solid var(--joyzze-teal); }
@@ -1028,19 +882,27 @@ export default function AuthPage() {
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
-        /* Kill desktop hover caret motion on small screens (defensive) */
-        @media (max-width: 768px){ .jz-item:hover .caret { transform:none; } }
-
-        /* Auth hero minimum height (large-only area) */
         .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
 
-        /* Google btn */
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
 
-        /* Respect safe areas for iOS when drawer is open */
         :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
       `}</style>
     </main>
   );
 }
+
+/* ================================
+   PAGE EXPORT UNDER SUSPENSE (fix)
+   ================================ */
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <AuthContent />
+    </Suspense>
+  );
+}
+
+// Make sure Next doesn't try to prerender this statically (safe for auth pages)
+export const dynamic = 'force-dynamic';
