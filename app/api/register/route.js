@@ -57,7 +57,6 @@ export async function GET(req) {
     }
 
     if (reset) {
-      // Don’t change anything on GET; just route to UI with token
       return NextResponse.redirect(`${appUrl}/signin?resetToken=${encodeURIComponent(reset)}`);
     }
 
@@ -151,7 +150,7 @@ export async function POST(req) {
       });
     }
 
-    // Create email verification token
+    // Email verification token
     const t = makeToken();
     const expires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24 hours
     await prisma.verificationToken.create({
