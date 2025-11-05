@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 /* ================================
@@ -12,10 +12,7 @@ const Icon = {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path
         d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
       />
     </svg>
   ),
@@ -101,13 +98,7 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path
-        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
 };
@@ -129,6 +120,10 @@ function AppHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState('light');
 
+  // NEW: user dropdown + auth session check
+  const [openUser, setOpenUser] = useState(false);
+  const [authUser, setAuthUser] = useState(null);
+
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
@@ -139,14 +134,33 @@ function AppHeader() {
       if (e.key === 'Escape') {
         setOpen(null);
         setMobileOpen(false);
+        setOpenUser(false);
       }
     };
-    const onScroll = () => setOpen(null);
+    const onScroll = () => { setOpen(null); setOpenUser(false); };
+    const onDoc = (e) => {
+      const target = e.target.closest?.('[data-user-menu-root]');
+      if (!target) setOpenUser(false);
+    };
+
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('click', onDoc);
+
+    // load session-liten
+    const load = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        const data = await res.json();
+        setAuthUser(data?.user || null);
+      } catch { setAuthUser(null); }
+    };
+    load();
+
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('click', onDoc);
     };
   }, []);
 
@@ -189,10 +203,10 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top bar — absolute centered logo so it’s always perfectly centered */}
+      {/* Top bar */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
         <div className="relative h-16 sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
-          {/* Left group */}
+          {/* Left */}
           <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
             <button
               className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
@@ -248,12 +262,43 @@ function AppHeader() {
             <a className="hidden sm/grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
               <Icon.Shuffle />
             </a>
-            <div className="hidden sm:flex items-center">
-              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
+
+            {/* USER ICON + DROPDOWN with Sign out */}
+            <div className="relative hidden sm:block" data-user-menu-root>
+              <button
+                onClick={() => setOpenUser(v => !v)}
+                className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5"
+                aria-haspopup="menu"
+                aria-expanded={openUser ? 'true' : 'false'}
+                aria-label="Account"
+              >
                 <Icon.User />
-              </a>
-              <Icon.CaretDown className="ml-[2px] opacity-80" />
+              </button>
+              <Icon.CaretDown className="inline-block ml-[2px] opacity-80 align-middle" />
+
+              {openUser && (
+                <div className="absolute right-0 mt-2 w-48 rounded-lg border bg-white shadow-lg ring-1 ring-black/10 z-[100]">
+                  {authUser ? (
+                    <>
+                      <a href="/account.php" className="block px-3 py-2 hover:bg-gray-50">My account</a>
+                      <a href="/orders" className="block px-3 py-2 hover:bg-gray-50">Orders</a>
+                      <button
+                        onClick={() => signOut({ callbackUrl: '/signin' })}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-50"
+                      >
+                        Sign out
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <a href="/signin" className="block px-3 py-2 hover:bg-gray-50">Sign in</a>
+                      <a href="/signin?tab=signup" className="block px-3 py-2 hover:bg-gray-50">Create account</a>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
+
             <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
               <Icon.Bag />
             </a>
@@ -270,10 +315,9 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* Spacer between top bar and nav – hidden on mobile */}
+      {/* Spacer and desktop nav remain the same */}
       <div className="hidden md:block" style={{ height: '36px', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
-      {/* Desktop NAVBAR */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10 hidden md:block" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
@@ -288,128 +332,10 @@ function AppHeader() {
               <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
             </div>
           </div>
-
-          {open && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
-              <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
-                <div className="jz-mega-bg" />
-                <div className="relative grid grid-cols-3 gap-14 p-8">
-                  {open === 'all' && (
-                    <>
-                      <MegaSection title="CLIPPERS">
-                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
-                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
-                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
-                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
-                      </MegaSection>
-                      <MegaSection title="BLADES">
-                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
-                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
-                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
-                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
-                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
-                      </MegaSection>
-                      <MegaSection title="COMBS & ACCESSORIES">
-                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
-                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
-                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
-                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'clippers' && (
-                    <>
-                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
-                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
-                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
-                      </MegaSection>
-                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
-                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
-                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="D-SERIES CLIPPERS">
-                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
-                        <li className="mt-2" />
-                        <li className="jz-sec-title !mb-2">PARTS</li>
-                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
-                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
-                      </MegaSection>
-                      <MegaSection title="MINI TRIMMERS | M-SERIES">
-                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'blades' && (
-                    <>
-                      <MegaSection title="A-SERIES | A5 STYLE">
-                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
-                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
-                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
-                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
-                      </MegaSection>
-                      <MegaSection title="M-SERIES | MINI TRIMMERS">
-                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'combs' && (
-                    <>
-                      <MegaSection title="A-SERIES | WIDE COMBS">
-                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
-                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
-                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
-                      </MegaSection>
-                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
-                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="C-SERIES | STINGER & HORNET">
-                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
-                      </MegaSection>
-                      <MegaSection title="CASES">
-                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
-                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-
-                  {open === 'info' && (
-                    <>
-                      <MegaSection title="ABOUT JOYZZE™">
-                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
-                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
-                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
-                      </MegaSection>
-                      <MegaSection title="SUPPORT">
-                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
-                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
-                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
-                      </MegaSection>
-                      <MegaSection title="DOCS">
-                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
-                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
-                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
-                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
-                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
-                      </MegaSection>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
 
-      {/* Mobile Drawer Nav — now FULL-SCREEN and above everything */}
+      {/* Mobile Drawer Nav */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[80] md:hidden">
           <aside className="absolute inset-0 bg-[#1d1f24] text-white shadow-2xl flex flex-col">
@@ -573,17 +499,24 @@ const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
 function AuthContent() {
   const router = useRouter();
-  const params = useSearchParams(); // now safe under Suspense
+  const params = useSearchParams(); // wrapped by Suspense at export
   const callbackTo = params?.get('from') || '/';
 
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState('login'); // 'login' | 'signup'
+  const [mode, setMode] = useState(params?.get('tab') === 'signup' ? 'signup' : 'login');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState(''); // NEW: phone on signup
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
+  const [banner, setBanner] = useState(''); // show "verified" message
   const [errText, setErrText] = useState('');
+
+  useEffect(() => {
+    const v = params?.get('verified');
+    if (v === '1') setBanner('Email verified! You can log in now.');
+  }, [params]);
 
   async function handleGoogle() {
     if (loading) return;
@@ -599,13 +532,14 @@ function AuthContent() {
     e.preventDefault();
     if (loading) return;
     setErrText('');
+    setBanner('');
     setLoading(true);
     try {
       if (mode === 'signup') {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({ name, email, password, phone }), // include phone
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -618,14 +552,15 @@ function AuthContent() {
         setRegOk(true);
         setMode('login');
         setPassword('');
+        setBanner('We sent a verification email. Please check your inbox.');
         setLoading(false);
         return;
       }
 
       const result = await signIn('credentials', { redirect: false, email, password });
       if (result?.error) {
-        setErrText('Invalid email or password.');
-        alert('Invalid email or password.');
+        setErrText(result.error === 'Email not verified' ? 'Please verify your email before logging in.' : 'Invalid email or password.');
+        alert(result.error === 'Email not verified' ? 'Please verify your email before logging in.' : 'Invalid email or password.');
       } else {
         router.push(callbackTo);
       }
@@ -638,12 +573,19 @@ function AuthContent() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
+      {/* Banners */}
+      {banner ? (
+        <div className="mx-4 sm:mx-auto sm:max-w-xl mt-4 rounded-md bg-green-100 text-green-900 border border-green-300 p-3 text-sm">
+          {banner}
+        </div>
+      ) : null}
+
       {/* Registration success popup */}
       {regOk && (
         <div className="fixed inset-0 z-[90] grid place-items-center bg-black/40" onClick={() => setRegOk(false)}>
           <div className="bg-white text-black p-5 rounded-md shadow max-w-sm mx-3" onClick={(e)=>e.stopPropagation()}>
             <h3 className="font-semibold text-lg mb-2">Thank you for registering 🎉</h3>
-            <p className="text-sm mb-4">Click below to log in with your new credentials.</p>
+            <p className="text-sm mb-4">Check your inbox to verify your email. Then log in with your credentials.</p>
             <button
               onClick={() => { setRegOk(false); setMode('login'); }}
               className="px-4 py-2 rounded-md text-white"
@@ -674,16 +616,29 @@ function AuthContent() {
 
               <form onSubmit={handleCredentials} className="mb-4">
                 {mode === 'signup' && (
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                      required
-                    />
-                  </div>
+                  <>
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium mb-1">Phone <span className="text-gray-400">(optional)</span></label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                        placeholder="e.g., +1 555 555 5555"
+                      />
+                    </div>
+                  </>
                 )}
 
                 <div className="mb-4">
@@ -894,7 +849,7 @@ function AuthContent() {
 }
 
 /* ================================
-   PAGE EXPORT UNDER SUSPENSE (fix)
+   PAGE EXPORT UNDER SUSPENSE
    ================================ */
 export default function SignInPage() {
   return (
@@ -904,5 +859,4 @@ export default function SignInPage() {
   );
 }
 
-// Make sure Next doesn't try to prerender this statically (safe for auth pages)
 export const dynamic = 'force-dynamic';
