@@ -1,3 +1,5 @@
+//app/signin/page.jsx
+
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -576,6 +578,7 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState(''); // <-- added
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
@@ -605,7 +608,7 @@ export default function AuthPage() {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password }),
+          body: JSON.stringify({ name, email, password, phone: phone.trim() }), // <-- include phone (required)
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -683,6 +686,24 @@ export default function AuthPage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      required
+                    />
+                  </div>
+                )}
+
+                {/* Phone (required on signup) */}
+                {mode === 'signup' && (
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">
+                      Phone <span className="text-[#6b6bff]">*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      placeholder="+1 (555) 123-4567"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
                       required
                     />
