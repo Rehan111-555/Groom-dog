@@ -44,7 +44,13 @@ const authOptions = {
         const ok = await bcrypt.compare(creds.password, user.passwordHash);
         if (!ok) return null;
 
-        return { id: user.id, name: user.name ?? null, email: user.email ?? email };
+        // include phone on the returned user so it flows into JWT/session
+        return {
+          id: user.id,
+          name: user.name ?? null,
+          email: user.email ?? email,
+          phone: user.phone ?? null,
+        };
       },
     }),
   ],
@@ -56,12 +62,32 @@ const authOptions = {
         token.id = user.id;
         token.name = user.name;
         token.email = user.email;
+        token.phone = user.phone ?? token.phone ?? null;
+      } else if (token?.email) {
+        // keep token in sync with DB for phone on subsequent requests
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email.toLowerCase() },
+            select: { id: true, name: true, email: true, phone: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.name = dbUser.name;
+            token.email = dbUser.email;
+            token.phone = dbUser.phone ?? null;
+          }
+        } catch {}
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.user = { id: token.id, name: token.name, email: token.email };
+        session.user = {
+          id: token.id,
+          name: token.name,
+          email: token.email,
+          phone: token.phone ?? null,
+        };
       }
       return session;
     },
