@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { signOut } from 'next-auth/react';
 
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
@@ -317,7 +316,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -380,41 +379,11 @@ function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Session checker for dropdown
-  const [authUser, setAuthUser] = useState(null);
-  const [openUser, setOpenUser] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      try {
-        const res = await fetch('/api/auth/session');
-        const data = await res.json();
-        if (active) setAuthUser(data?.user || null);
-      } catch {
-        if (active) setAuthUser(null);
-      }
-    };
-    load();
-    const vis = () => { if (document.visibilityState === 'visible') load(); };
-    const onDoc = (e) => {
-      const target = e.target.closest?.('[data-user-menu-root]');
-      if (!target) setOpenUser(false);
-    };
-    document.addEventListener('visibilitychange', vis);
-    document.addEventListener('click', onDoc);
-    return () => {
-      active = false;
-      document.removeEventListener('visibilitychange', vis);
-      document.removeEventListener('click', onDoc);
-    };
-  }, []);
-
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') { close(); setMobileOpen(false); setOpenUser(false);} };
-    const onScroll = () => { close(); setOpenUser(false); };
+    const onKey = (e)=>{ if(e.key==='Escape') { close(); setMobileOpen(false);} };
+    const onScroll = () => close();
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
@@ -423,7 +392,7 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // lock body scroll when drawer open
+  // lock body scroll when mobile drawer open
   useEffect(() => {
     if (mobileOpen) {
       const prev = document.body.style.overflow;
@@ -467,7 +436,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         {/* Top row */}
         <div style={headerStyle} className="relative">
           <div className="relative h-[64px] sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
-            {/* Left: hamburger + phone */}
+            {/* Left: hamburger + phone (phone hidden on xs) */}
             <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
               <button
                 className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
@@ -484,7 +453,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </a>
             </div>
 
-            {/* Center logo */}
+            {/* Centered logo (absolute so it stays centered on all widths) */}
             <a
               href="https://joyzze.com/"
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -518,46 +487,13 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
 
               <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
-
-              {/* USER ICON + DROPDOWN with Sign out */}
-              <div className="relative hidden sm:block" data-user-menu-root>
-                <button
-                  onClick={() => setOpenUser(v => !v)}
-                  className="icon-btn w-9 h-9 rounded-md"
-                  aria-haspopup="menu"
-                  aria-expanded={openUser ? 'true' : 'false'}
-                  aria-label="Account"
-                >
-                  <Icon.User />
-                </button>
-                <Icon.CaretDown className="ml-[2px] opacity-80 inline-block" />
-
-                {openUser && (
-                  <div className="absolute right-0 mt-2 w-48 rounded-lg border bg-white shadow-lg ring-1 ring-black/10 z-[1600]">
-                    {authUser ? (
-                      <>
-                        <a href="/account.php" className="block px-3 py-2 hover:bg-gray-50">My account</a>
-                        <a href="/orders" className="block px-3 py-2 hover:bg-gray-50">Orders</a>
-                        <button
-                          onClick={() => signOut({ callbackUrl: '/signin' })}
-                          className="w-full text-left px-3 py-2 hover:bg-gray-50"
-                        >
-                          Sign out
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <a href="/signin" className="block px-3 py-2 hover:bg-gray-50">Sign in</a>
-                        <a href="/signin?tab=signup" className="block px-3 py-2 hover:bg-gray-50">Create account</a>
-                      </>
-                    )}
-                  </div>
-                )}
+              <div className="hidden sm:flex items-center">
+                <a className="icon-btn w-9 h-9 rounded-md" href="/account.php" aria-label="Account"><Icon.User /></a>
+                <Icon.CaretDown className="ml-[2px] opacity-80" />
               </div>
-
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              {/* theme toggle */}
+              {/* CHANGED: make toggle visible on mobile too */}
               <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
                 <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
@@ -566,7 +502,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* Spacer on desktop */}
+        {/* Small spacer on desktop only */}
         <div className="hidden md:block" style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Desktop Navbar */}
@@ -577,7 +513,7 @@ function SigninHeader({ theme, onToggleTheme }) {
 
               <div
                 className="jz-nav flex items-stretch gap-[2px]"
-                onMouseOver={(e)=>{ const el=e.target.closest('[data-nav]'); if (el) setOpen(el.getAttribute('data-nav')); }}
+                onMouseOver={onNavOver}
                 onMouseLeave={() => setOpen(null)}
               >
                 <NavItem id="all" href="https://joyzze.com/all-products/">All Products</NavItem>
@@ -589,6 +525,149 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <NavItem id="dist" href="https://joyzze.com/distributor/">Distributor</NavItem>
               </div>
             </div>
+
+            {open && (
+              <div
+                className="absolute left-1/2 -translate-x-1/2 top-full"
+                onMouseEnter={()=>setOpen(open)}
+                onMouseLeave={close}
+              >
+                <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
+                  <div className="jz-mega-bg" />
+                  <div className="relative grid grid-cols-3 gap-14 p-8">
+                    {/* All Products */}
+                    {open === 'all' && (
+                      <>
+                        <MegaSection title="CLIPPERS">
+                          <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
+                          <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
+                          <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
+                          <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
+                          <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
+                        </MegaSection>
+                        <MegaSection title="BLADES">
+                          <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
+                          <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                          <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
+                          <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
+                          <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
+                        </MegaSection>
+                        <MegaSection title="COMBS & ACCESSORIES">
+                          <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
+                          <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
+                          <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
+                          <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {/* ... (unchanged other mega panels) ... */}
+                    {open === 'clippers' && (
+                      <>
+                        <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
+                          <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
+                          <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
+                        </MegaSection>
+                        <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                          <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
+                          <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
+                        </MegaSection>
+                        <MegaSection title="D-SERIES CLIPPERS">
+                          <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
+                          <li className="mt-2" />
+                          <li className="jz-sec-title !mb-2">PARTS</li>
+                          <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
+                          <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
+                        </MegaSection>
+                        <MegaSection title="MINI TRIMMERS | M-SERIES">
+                          <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {open === 'blades' && (
+                      <>
+                        <MegaSection title="A-SERIES | A5 STYLE">
+                          <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
+                        </MegaSection>
+                        <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                          <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
+                          <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
+                          <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
+                        </MegaSection>
+                        <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                          <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
+                        </MegaSection>
+                        <MegaSection title="M-SERIES | MINI TRIMMERS">
+                          <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {open === 'combs' && (
+                      <>
+                        <MegaSection title="A-SERIES | WIDE COMBS">
+                          <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
+                          <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
+                          <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
+                        </MegaSection>
+                        <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                          <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                        </MegaSection>
+                        <MegaSection title="C-SERIES | STINGER & HORNET">
+                          <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                        </MegaSection>
+                        <MegaSection title="CASES">
+                          <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
+                          <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {open === 'info' && (
+                      <>
+                        <MegaSection title="ABOUT JOYZZE™">
+                          <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
+                          <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
+                          <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
+                        </MegaSection>
+                        <MegaSection title="SUPPORT">
+                          <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
+                          <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
+                          <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
+                        </MegaSection>
+                        <MegaSection title="DOCS">
+                          <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
+                          <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
+                          <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
+                          <li><a href="https://joyzze.com/educational/">Educational</a></li>
+                          <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {open === 'recycling' && (
+                      <>
+                        <MegaSection title="RECYCLING & SHARPENING">
+                          <li><a href="https://joyzze.com/recycling-sharpening/">Program Overview</a></li>
+                          <li><a href="https://joyzze.com/recycling-sharpening/#shipping">Shipping</a></li>
+                          <li><a href="https://joyzze.com/recycling-sharpening/#faq">FAQ</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+
+                    {open === 'dist' && (
+                      <>
+                        <MegaSection title="DISTRIBUTOR">
+                          <li><a href="https://joyzze.com/distributor/">Find a Distributor</a></li>
+                          <li><a href="https://joyzze.com/distributor/#become">Become a Distributor</a></li>
+                        </MegaSection>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </nav>
 
@@ -667,7 +746,7 @@ function HowItWorks() {
   return (
     <section id="how" className="container mx-auto px-6 py-16">
       <h2 className="text-center text-2xl font-semibold mb-2">Insanely Easy, Impressively accurate</h2>
-      <p className="text-center text-slate-600 dark:text:[var(--app-muted)] mb-10">Upload your dog’s photo - AI grooms your dog - Compare in real time.</p>
+      <p className="text-center text-slate-600 dark:text-[var(--app-muted)] mb-10">Upload your dog’s photo - AI grooms your dog - Compare in real time.</p>
       <div className="grid md:grid-cols-3 gap-6 items-stretch">
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">1</div>
@@ -738,7 +817,7 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 py-12 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         <div>
           <h4 className="text-[var(--joyzze-teal)] tracking-wide text-lg mb-4">LINKS</h4>
-          <ul className="space-y-2 text:[15px] text-slate-200/90">
+          <ul className="space-y-2 text-[15px] text-slate-200/90">
             <li><a href="https://joyzze.com/all-products/" className="hover:underline">All Products</a></li>
             <li><a href="https://joyzze.com/clippers/" className="hover:underline">Clippers</a></li>
             <li><a href="https://joyzze.com/blades/" className="hover:underline">Blades</a></li>
@@ -768,7 +847,7 @@ function SigninFooter() {
 
           <div className="mt-6 flex items-center justify-center gap-4">
             <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Facebook">f</a>
-            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg.white/5" href="#" aria-label="Instagram">◎</a>
+            <a className="w-9 h-9 grid place-items-center rounded-md bg-transparent ring-1 ring-white/15 hover:bg-white/5" href="#" aria-label="Instagram">◎</a>
           </div>
         </div>
 
@@ -795,11 +874,11 @@ function SigninFooter() {
           </div>
         </div>
         <div className="mt-6 flex flex-wrap items-center justify-end gap-2 sm:gap-4 opacity-90 text-xs">
-          <span className="px-2 py-1 rounded bg.white/10">AMEX</span>
-          <span className="px-2 py-1 rounded bg.white/10">Discover</span>
-          <span className="px-2 py-1 rounded bg.white/10">PayPal</span>
-          <span className="px-2 py-1 rounded bg.white/10">VISA</span>
-          <span className="px-2 py-1 rounded bg.white/10">MasterCard</span>
+          <span className="px-2 py-1 rounded bg-white/10">AMEX</span>
+          <span className="px-2 py-1 rounded bg-white/10">Discover</span>
+          <span className="px-2 py-1 rounded bg-white/10">PayPal</span>
+          <span className="px-2 py-1 rounded bg-white/10">VISA</span>
+          <span className="px-2 py-1 rounded bg-white/10">MasterCard</span>
         </div>
       </div>
 
@@ -815,6 +894,7 @@ export default function Page(){
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
+    // CHANGED: respect saved theme or system preference
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initial = saved || (prefersDark ? 'dark' : 'light');
@@ -925,6 +1005,7 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
+        /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -937,8 +1018,10 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
+        /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
 
+        /* Input widths / visibility */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
