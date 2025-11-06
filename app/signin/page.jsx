@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, Suspense } from 'react';
-import { signIn, signOut } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 /* ================================
    ICONS
@@ -12,7 +12,10 @@ const Icon = {
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <path
         d="M4 5c0 8.284 6.716 15 15 15v-3a2 2 0 0 0-2-2l-2 .5a16 16 0 0 1-6.5-6.5L8 7a2 2 0 0 0-2-2H4Z"
-        stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   ),
@@ -98,7 +101,13 @@ const Icon = {
   ),
   Moon: (p) => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   ),
 };
@@ -120,10 +129,6 @@ function AppHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [theme, setTheme] = useState('light');
 
-  // NEW: user dropdown + auth session check
-  const [openUser, setOpenUser] = useState(false);
-  const [authUser, setAuthUser] = useState(null);
-
   useEffect(() => {
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const initial = saved || 'light';
@@ -134,33 +139,14 @@ function AppHeader() {
       if (e.key === 'Escape') {
         setOpen(null);
         setMobileOpen(false);
-        setOpenUser(false);
       }
     };
-    const onScroll = () => { setOpen(null); setOpenUser(false); };
-    const onDoc = (e) => {
-      const target = e.target.closest?.('[data-user-menu-root]');
-      if (!target) setOpenUser(false);
-    };
-
+    const onScroll = () => setOpen(null);
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
-    document.addEventListener('click', onDoc);
-
-    // load session-liten
-    const load = async () => {
-      try {
-        const res = await fetch('/api/auth/session');
-        const data = await res.json();
-        setAuthUser(data?.user || null);
-      } catch { setAuthUser(null); }
-    };
-    load();
-
     return () => {
       window.removeEventListener('keydown', onKey);
       window.removeEventListener('scroll', onScroll);
-      document.removeEventListener('click', onDoc);
     };
   }, []);
 
@@ -203,10 +189,10 @@ function AppHeader() {
 
   return (
     <header className="w-full sticky top-0 z-50">
-      {/* Top bar */}
+      {/* Top bar — absolute centered logo so it’s always perfectly centered */}
       <div className="bg-[var(--header-top-bg)] text-[var(--header-top-fg)] transition-colors">
         <div className="relative h-16 sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
-          {/* Left */}
+          {/* Left group */}
           <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
             <button
               className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
@@ -259,46 +245,15 @@ function AppHeader() {
               <Icon.Plus className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#0f0f0f]/85 pointer-events-none" />
             </div>
 
-            <a className="hidden sm/grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
+            <a className="hidden sm:grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/compare" aria-label="Compare">
               <Icon.Shuffle />
             </a>
-
-            {/* USER ICON + DROPDOWN with Sign out */}
-            <div className="relative hidden sm:block" data-user-menu-root>
-              <button
-                onClick={() => setOpenUser(v => !v)}
-                className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5"
-                aria-haspopup="menu"
-                aria-expanded={openUser ? 'true' : 'false'}
-                aria-label="Account"
-              >
+            <div className="hidden sm:flex items-center">
+              <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
                 <Icon.User />
-              </button>
-              <Icon.CaretDown className="inline-block ml-[2px] opacity-80 align-middle" />
-
-              {openUser && (
-                <div className="absolute right-0 mt-2 w-48 rounded-lg border bg-white shadow-lg ring-1 ring-black/10 z-[100]">
-                  {authUser ? (
-                    <>
-                      <a href="/account.php" className="block px-3 py-2 hover:bg-gray-50">My account</a>
-                      <a href="/orders" className="block px-3 py-2 hover:bg-gray-50">Orders</a>
-                      <button
-                        onClick={() => signOut({ callbackUrl: '/signin' })}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-50"
-                      >
-                        Sign out
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <a href="/signin" className="block px-3 py-2 hover:bg-gray-50">Sign in</a>
-                      <a href="/signin?tab=signup" className="block px-3 py-2 hover:bg-gray-50">Create account</a>
-                    </>
-                  )}
-                </div>
-              )}
+              </a>
+              <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
-
             <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
               <Icon.Bag />
             </a>
@@ -315,9 +270,10 @@ function AppHeader() {
         </div>
       </div>
 
-      {/* Spacer and desktop nav remain the same */}
+      {/* Spacer between top bar and nav – hidden on mobile */}
       <div className="hidden md:block" style={{ height: '36px', background: 'var(--header-top-bg)' }} aria-hidden="true" />
 
+      {/* Desktop NAVBAR */}
       <nav className="bg-[#2f2f2f] text-[#d7d7d7] border-t border-black/10 hidden md:block" onMouseLeave={() => setOpen(null)}>
         <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
           <div className="flex items-center">
@@ -332,10 +288,128 @@ function AppHeader() {
               <a href="https://joyzze.com/distributor/" className="jz-item">Distributor</a>
             </div>
           </div>
+
+          {open && (
+            <div className="absolute left-1/2 -translate-x-1/2 top-full pt-[8px]" onMouseEnter={() => setOpen(open)}>
+              <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
+                <div className="jz-mega-bg" />
+                <div className="relative grid grid-cols-3 gap-14 p-8">
+                  {open === 'all' && (
+                    <>
+                      <MegaSection title="CLIPPERS">
+                        <li><a href="https://joyzze.com/raptor-falcon-a5-clippers/">Raptor &amp; Falcon | A-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet/">Hornet | C-Series</a></li>
+                        <li><a href="https://joyzze.com/stinger/">Stinger | C-Series</a></li>
+                        <li><a href="https://joyzze.com/piranha/">Piranha | D-Series</a></li>
+                        <li><a href="https://joyzze.com/hornet-mini/">Hornet Mini | M-Series</a></li>
+                      </MegaSection>
+                      <MegaSection title="BLADES">
+                        <li><a href="https://joyzze.com/a-series-raptor/">A-Series | Raptor &amp; Falcon</a></li>
+                        <li><a href="https://joyzze.com/a-series-raptor-falcon-wide/">A-Series | Raptor &amp; Falcon | Wide</a></li>
+                        <li><a href="https://joyzze.com/c-series-hornet-stinger-blades-all/">C-Series | Hornet &amp; Stinger</a></li>
+                        <li><a href="https://joyzze.com/d-series-piranha/">D-Series | Piranha</a></li>
+                        <li><a href="https://joyzze.com/m-series-hornet-mini/">M-Series | Hornet Mini</a></li>
+                      </MegaSection>
+                      <MegaSection title="COMBS & ACCESSORIES">
+                        <li><a href="https://joyzze.com/cases-all-products/">Cases</a></li>
+                        <li><a href="https://joyzze.com/joyzze-combs/">Combs</a></li>
+                        <li><a href="https://joyzze.com/blade-scissor-oil-all-products/">Blade &amp; Scissor Oil</a></li>
+                        <li><a href="https://joyzze.com/multi-functional-tool-bag/">Multi-Functional Tool Bag</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'clippers' && (
+                    <>
+                      <MegaSection title="5-IN-1 CLIPPERS | C-SERIES">
+                        <li><a href="https://joyzze.com/hornet-clippers-5-in-1/">Hornet</a></li>
+                        <li><a href="https://joyzze.com/stinger-clippers-5-in-1/">Stinger</a></li>
+                      </MegaSection>
+                      <MegaSection title="A5 STYLE CLIPPERS | A-SERIES">
+                        <li><a href="https://joyzze.com/falcon/">Falcon</a></li>
+                        <li><a href="https://joyzze.com/raptor-clippers/">Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="D-SERIES CLIPPERS">
+                        <li><a href="https://joyzze.com/piranha-clippers/">Piranha</a></li>
+                        <li className="mt-2" />
+                        <li className="jz-sec-title !mb-2">PARTS</li>
+                        <li><a href="https://joyzze.com/a5-falcon/">A5 Falcon</a></li>
+                        <li><a href="https://joyzze.com/a5-raptor/">A5 Raptor</a></li>
+                      </MegaSection>
+                      <MegaSection title="MINI TRIMMERS | M-SERIES">
+                        <li><a href="https://joyzze.com/hornet-mini-clippers/">Hornet Mini</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'blades' && (
+                    <>
+                      <MegaSection title="A-SERIES | A5 STYLE">
+                        <li><a href="https://joyzze.com/a5-blades/">A5 Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="A-SERIES - WIDE | A5 STYLE">
+                        <li><a href="https://joyzze.com/wide-blades-a-series/">Wide Blades</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle-plus/">Bundle Plus</a></li>
+                        <li><a href="https://joyzze.com/joyzze-bundle/">Bundle</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | 5-IN-1 CLIPPERS">
+                        <li><a href="https://joyzze.com/c-max-blades/">C-MAX Blades</a></li>
+                      </MegaSection>
+                      <MegaSection title="M-SERIES | MINI TRIMMERS">
+                        <li><a href="https://joyzze.com/mini-trimmer-blades/">Mini Trimmer Blades</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'combs' && (
+                    <>
+                      <MegaSection title="A-SERIES | WIDE COMBS">
+                        <li><a href="https://joyzze.com/a-series-wide-metal-combs/">Wide Metal Combs</a></li>
+                        <li><a href="https://joyzze.com/bundle/">Bundle</a></li>
+                        <li><a href="https://joyzze.com/bundle-plus/">Bundle Plus</a></li>
+                      </MegaSection>
+                      <MegaSection title="A & D SERIES | RAPTOR/FALCON/PIRANHA">
+                        <li><a href="https://joyzze.com/a-d-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="C-SERIES | STINGER & HORNET">
+                        <li><a href="https://joyzze.com/c-series-8-piece-metal-comb-set/">8 Piece Metal Comb Set</a></li>
+                      </MegaSection>
+                      <MegaSection title="CASES">
+                        <li><a href="https://joyzze.com/12-slot/">12-Slot</a></li>
+                        <li><a href="https://joyzze.com/22-slot/">22-Slot</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+
+                  {open === 'info' && (
+                    <>
+                      <MegaSection title="ABOUT JOYZZE™">
+                        <li><a href="https://joyzze.com/information/about-joyzze/">About JOYZZE™</a></li>
+                        <li><a href="https://joyzze.com/information/faqs/">FAQs</a></li>
+                        <li><a href="https://joyzze.com/joyzze-privacy-policy/">Privacy Policy</a></li>
+                      </MegaSection>
+                      <MegaSection title="SUPPORT">
+                        <li><a href="https://joyzze.com/information/contact/">Contact</a></li>
+                        <li><a href="https://joyzze.com/information/shipping-returns/">Shipping &amp; Returns</a></li>
+                        <li><a href="https://joyzze.com/accessibility-statement/">Accessibility</a></li>
+                      </MegaSection>
+                      <MegaSection title="DOCS">
+                        <li><a href="https://joyzze.com/clipper-repair-form-joyzze/">JOYZZE™ Clipper Repair Form</a></li>
+                        <li><a href="https://joyzze.com/warranty-joyzze/">Warranty</a></li>
+                        <li><a href="https://joyzze.com/joyzze-product-brochure/">JOYZZE Product Brochure</a></li>
+                        <li><a href="https://joyzze.com/educational/">Educational</a></li>
+                        <li><a href="https://joyzze.com/information/terms-conditions/">Terms &amp; Conditions</a></li>
+                      </MegaSection>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
-      {/* Mobile Drawer Nav */}
+      {/* Mobile Drawer Nav — now FULL-SCREEN and above everything */}
       {mobileOpen && (
         <div className="fixed inset-0 z-[80] md:hidden">
           <aside className="absolute inset-0 bg-[#1d1f24] text-white shadow-2xl flex flex-col">
@@ -476,6 +550,7 @@ function AppFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze . All rights reserved. | Sitemap</div>
+          {/* WRAP so "View All" never gets clipped */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -497,32 +572,24 @@ function AppFooter() {
    ================================ */
 const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
 
-function AuthContent() {
-  const router = useRouter();
-  const params = useSearchParams(); // wrapped by Suspense at export
-  const callbackTo = params?.get('from') || '/';
-
+export default function AuthPage() {
   const [loading, setLoading] = useState(false);
-  const [mode, setMode] = useState(params?.get('tab') === 'signup' ? 'signup' : 'login');
+  const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
-  const [phone, setPhone] = useState(''); // NEW: phone on signup
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
-  const [banner, setBanner] = useState(''); // show "verified" message
   const [errText, setErrText] = useState('');
-
-  useEffect(() => {
-    const v = params?.get('verified');
-    if (v === '1') setBanner('Email verified! You can log in now.');
-  }, [params]);
+  const router = useRouter();
 
   async function handleGoogle() {
     if (loading) return;
     setLoading(true);
     try {
-      await signIn('google', { callbackUrl: callbackTo });
+      const params = new URLSearchParams(window.location.search);
+      const to = params.get('from') || '/';
+      await signIn('google', { callbackUrl: to });
     } finally {
       setLoading(false);
     }
@@ -532,14 +599,13 @@ function AuthContent() {
     e.preventDefault();
     if (loading) return;
     setErrText('');
-    setBanner('');
     setLoading(true);
     try {
       if (mode === 'signup') {
         const res = await fetch('/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, password, phone }), // include phone
+          body: JSON.stringify({ name, email, password }),
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) {
@@ -549,20 +615,22 @@ function AuthContent() {
           setLoading(false);
           return;
         }
+        // Success: show thank-you and swap to login
         setRegOk(true);
         setMode('login');
         setPassword('');
-        setBanner('We sent a verification email. Please check your inbox.');
         setLoading(false);
         return;
       }
 
+      // LOGIN
       const result = await signIn('credentials', { redirect: false, email, password });
       if (result?.error) {
-        setErrText(result.error === 'Email not verified' ? 'Please verify your email before logging in.' : 'Invalid email or password.');
-        alert(result.error === 'Email not verified' ? 'Please verify your email before logging in.' : 'Invalid email or password.');
+        setErrText('Invalid email or password.');
+        alert('Invalid email or password.');
       } else {
-        router.push(callbackTo);
+        const params = new URLSearchParams(window.location.search);
+        router.push(params.get('from') || '/');
       }
     } finally {
       setLoading(false);
@@ -573,19 +641,12 @@ function AuthContent() {
     <main className="min-h-screen flex flex-col bg-[var(--page-bg)] text-[var(--page-fg)] transition-colors">
       <AppHeader />
 
-      {/* Banners */}
-      {banner ? (
-        <div className="mx-4 sm:mx-auto sm:max-w-xl mt-4 rounded-md bg-green-100 text-green-900 border border-green-300 p-3 text-sm">
-          {banner}
-        </div>
-      ) : null}
-
       {/* Registration success popup */}
       {regOk && (
         <div className="fixed inset-0 z-[90] grid place-items-center bg-black/40" onClick={() => setRegOk(false)}>
           <div className="bg-white text-black p-5 rounded-md shadow max-w-sm mx-3" onClick={(e)=>e.stopPropagation()}>
             <h3 className="font-semibold text-lg mb-2">Thank you for registering 🎉</h3>
-            <p className="text-sm mb-4">Check your inbox to verify your email. Then log in with your credentials.</p>
+            <p className="text-sm mb-4">Click below to log in with your new credentials.</p>
             <button
               onClick={() => { setRegOk(false); setMode('login'); }}
               className="px-4 py-2 rounded-md text-white"
@@ -616,29 +677,16 @@ function AuthContent() {
 
               <form onSubmit={handleCredentials} className="mb-4">
                 {mode === 'signup' && (
-                  <>
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
-                      <input
-                        type="text"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                        required
-                      />
-                    </div>
-
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium mb-1">Phone <span className="text-gray-400">(optional)</span></label>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                        placeholder="e.g., +1 555 555 5555"
-                      />
-                    </div>
-                  </>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-1">Name <span className="text-[#6b6bff]">*</span></label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
+                      required
+                    />
+                  </div>
                 )}
 
                 <div className="mb-4">
@@ -825,11 +873,13 @@ function AuthContent() {
         .jz-list a { color:#3f3f3f; font-size:15px; }
         .jz-list a:hover { color:#111; text-decoration:none; }
 
+        /* Header input sizing tweaks for breakpoints */
         .jz-input:focus { box-shadow:0 0 0 3px rgba(0,0,0,.06); }
         @media (max-width: 1280px){ .jz-input { width: 360px !important; } }
         @media (max-width: 1100px){ .jz-input { width: 280px !important; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
 
+        /* Promo ribbon grid */
         .promo-wrap { background:#0a0a0a; border-bottom:2px solid var(--joyzze-teal); }
         .promo-row { max-width:1280px; margin:0 auto; padding:10px 12px; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; color:#f5f5f5; font-size:16px; line-height:1.25; }
         .promo-item { display:flex; align-items:center; gap:12px; padding:8px 14px; border-right:1px solid var(--joyzze-teal); }
@@ -837,26 +887,19 @@ function AuthContent() {
         @media (max-width:900px){ .promo-row { grid-template-columns:1fr 1fr; row-gap:8px; } .promo-item { border-right:0; } }
         @media (max-width:560px){ .promo-row { grid-template-columns:1fr; } }
 
+        /* Kill desktop hover caret motion on small screens (defensive) */
+        @media (max-width: 768px){ .jz-item:hover .caret { transform:none; } }
+
+        /* Auth hero minimum height (large-only area) */
         .auth-hero { position:relative; width:100%; height:100%; min-height:640px; background:#000; }
 
+        /* Google btn */
         .google-btn { background:#fff; color:#3c4043; border:1px solid #dadce0; }
         .google-btn:disabled { opacity:.7; cursor:not-allowed; }
 
+        /* Respect safe areas for iOS when drawer is open */
         :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
       `}</style>
     </main>
   );
 }
-
-/* ================================
-   PAGE EXPORT UNDER SUSPENSE
-   ================================ */
-export default function SignInPage() {
-  return (
-    <Suspense fallback={null}>
-      <AuthContent />
-    </Suspense>
-  );
-}
-
-export const dynamic = 'force-dynamic';
