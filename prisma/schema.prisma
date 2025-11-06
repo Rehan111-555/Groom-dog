@@ -1,3 +1,4 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -40,9 +41,8 @@ model User {
   emailVerified DateTime?
   image         String?
 
-  // NEW: for credentials login + phone
+  // NEW: for credentials login
   passwordHash  String?
-  phone         String?   @db.VarChar(32)
 
   accounts      Account[]
   sessions      Session[]
