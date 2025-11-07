@@ -1,4 +1,4 @@
-//app/signin/page.jsx
+// app/signin/page.jsx
 
 'use client';
 
@@ -105,6 +105,13 @@ const Icon = {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+    </svg>
+  ),
+
+  /* ADDED for mobile drawer <details> summaries */
+  CaretDown: (p) => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   ),
 };
@@ -774,7 +781,7 @@ export default function AuthPage() {
               </div>
 
               <button
-                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
+                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex itemscenter justify-center gap-3"
                 onClick={handleGoogle}
                 disabled={loading}
                 aria-label="Continue with Google"
