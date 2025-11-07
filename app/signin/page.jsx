@@ -780,8 +780,9 @@ export default function AuthPage() {
                 <div className="flex-1 border-t border-gray-300" />
               </div>
 
+              {/* FIX: itemscenter -> items-center */}
               <button
-                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex itemscenter justify-center gap-3"
+                className="google-btn w-full h-12 rounded-[10px] font-medium shadow-sm hover:shadow-md transition flex items-center justify-center gap-3"
                 onClick={handleGoogle}
                 disabled={loading}
                 aria-label="Continue with Google"
