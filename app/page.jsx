@@ -830,7 +830,7 @@ function HowItWorks() {
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let Magic Happen</h3>
-          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while other things in the image remain the same.</p>
+          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while everything remain the same.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
