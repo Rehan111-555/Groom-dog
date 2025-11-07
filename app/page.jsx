@@ -375,6 +375,25 @@ function SigninHeader({ theme, onToggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
 
+  // ▼▼▼ Added: small hover-intent delay for the Sign out popover ▼▼▼
+  const signoutHoverTimer = useRef(null);
+  const HIDE_DELAY_MS = 220;
+  const openSignout = () => {
+    if (signoutHoverTimer.current) {
+      clearTimeout(signoutHoverTimer.current);
+      signoutHoverTimer.current = null;
+    }
+    setShowSignOut(true);
+  };
+  const scheduleCloseSignout = () => {
+    if (signoutHoverTimer.current) clearTimeout(signoutHoverTimer.current);
+    signoutHoverTimer.current = setTimeout(() => {
+      setShowSignOut(false);
+      signoutHoverTimer.current = null;
+    }, HIDE_DELAY_MS);
+  };
+  // ▲▲▲ End: hover-intent helpers ▲▲▲
+
   const close = () => setOpen(null);
 
   useEffect(() => {
@@ -445,7 +464,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </button>
               <a href="tel:(877) 456-9993" className="hidden sm:flex items-center gap-2" style={{color:'var(--header-text)'}}>
                 <Icon.Phone className="opacity-85" />
-                <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993</span>
+                <span className="text-[15px] font-semibold tracking-[.01em]">(877) 456-9993)</span>
               </a>
             </div>
 
@@ -487,26 +506,27 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <Icon.Shuffle />
               </a>
 
-              {/* User icon with hover-to-show sign out */}
+              {/* User icon with delayed hover-to-show sign out */}
               <div
                 className="relative"
-                onMouseEnter={() => setShowSignOut(true)}
-                onMouseLeave={() => setShowSignOut(false)}
+                onMouseEnter={openSignout}
+                onMouseLeave={scheduleCloseSignout}
               >
                 <a className="icon-btn grid place-items-center w-10 h-10 rounded-md" href="/account.php" aria-label="Account">
                   <Icon.User />
                 </a>
 
-                {/* THEME-AWARE HOVER PANEL (white in light mode) */}
                 {showSignOut && (
                   <div
-                    className="absolute top-[115%] right-0 rounded-md shadow-lg py-2 px-3 text-sm whitespace-nowrap"
+                    className="absolute top[115%] top-[115%] right-0 rounded-md shadow-lg py-2 px-3 text-sm whitespace-nowrap"
                     style={{
                       background: theme === 'light' ? '#ffffff' : '#1d1f24',
                       color: theme === 'light' ? '#0f0f0f' : '#e5e7eb',
                       border: '1px solid',
                       borderColor: theme === 'light' ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,.1)'
                     }}
+                    onMouseEnter={openSignout}
+                    onMouseLeave={scheduleCloseSignout}
                   >
                     <button
                       className="w-full text-left hover:opacity-90"
@@ -521,7 +541,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 )}
               </div>
 
-              {/* Bag: hidden on mobile so user icon occupies that spot on small screens */}
+              {/* Bag: hidden on mobile */}
               <a
                 className="icon-btn grid place-items-center w-10 h-10 rounded-md hidden md:grid"
                 href="/cart.php"
@@ -530,7 +550,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <Icon.Bag />
               </a>
 
-              {/* Theme toggle aligned to same height */}
+              {/* Theme toggle */}
               <button
                 onClick={onToggleTheme}
                 className="theme-toggle icon-btn h-10 px-2 rounded-md flex items-center gap-2"
