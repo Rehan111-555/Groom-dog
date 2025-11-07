@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { signOut, useSession } from 'next-auth/react';
 
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
@@ -312,7 +311,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg:white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -352,7 +351,7 @@ function UploadAndResult(){
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          <div style={{ height: 56 }} />
+          <div style={{ height: ACTION_H }} />
         </Card>
       </div>
     </section>
@@ -374,17 +373,13 @@ function MegaSection({ title, children }) {
 function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  // NEW: user dropdown hover/tap
-  const [userOpen, setUserOpen] = useState(false);
-  const userWrapRef = useRef(null);
-  const { data: session } = useSession();
+  const [showSignOut, setShowSignOut] = useState(false);
 
   const close = () => setOpen(null);
 
   useEffect(() => {
-    const onKey = (e)=>{ if(e.key==='Escape') { close(); setMobileOpen(false); setUserOpen(false);} };
-    const onScroll = () => { close(); setUserOpen(false); };
+    const onKey = (e)=>{ if(e.key==='Escape') { close(); setMobileOpen(false);} };
+    const onScroll = () => close();
     window.addEventListener('keydown', onKey);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
@@ -437,7 +432,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         {/* Top row */}
         <div style={headerStyle} className="relative">
           <div className="relative h-[64px] sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
-            {/* Left group */}
+            {/* Left: hamburger + phone (phone hidden on xs) */}
             <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
               <button
                 className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
@@ -454,7 +449,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </a>
             </div>
 
-            {/* Centered logo */}
+            {/* Centered logo (absolute so it stays centered on all widths) */}
             <a
               href="https://joyzze.com/"
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -470,9 +465,8 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
             </a>
 
-            {/* Right actions */}
-            <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center gap-2 sm:gap-3">
-              {/* search */}
+            {/* Right: search + actions */}
+            <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center gap-1 sm:gap-3">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
@@ -488,60 +482,52 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              {/* icons (keep identical size/line-height for perfect alignment) */}
-              <a className="icon-btn grid place-items-center w-10 h-10 rounded-md hidden sm:grid" href="/compare" aria-label="Compare">
-                <Icon.Shuffle />
-              </a>
+              <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
 
-              {/* User with hover dropdown */}
+              {/* User icon with hover-to-show sign out */}
               <div
-                ref={userWrapRef}
                 className="relative"
-                onMouseEnter={() => setUserOpen(true)}
-                onMouseLeave={() => setUserOpen(false)}
+                onMouseEnter={() => setShowSignOut(true)}
+                onMouseLeave={() => setShowSignOut(false)}
               >
-                <button
-                  className="icon-btn grid place-items-center w-10 h-10 rounded-md"
-                  aria-haspopup="menu"
-                  aria-expanded={userOpen ? 'true' : 'false'}
-                  onClick={() => setUserOpen(o => !o)}
-                >
+                <a className="icon-btn grid place-items-center w-10 h-10 rounded-md" href="/account.php" aria-label="Account">
                   <Icon.User />
-                </button>
-
-                {/* dropdown */}
-                <div
-                  className={`abs-dropdown ${userOpen ? 'open' : ''}`}
-                  role="menu"
-                >
-                  <button
-                    className="dropdown-item"
-                    onClick={() => signOut({ callbackUrl: '/' })}
-                  >
-                    Sign out
-                  </button>
-                </div>
+                </a>
+                {/* Hover dropdown */}
+                {showSignOut && (
+                  <div className="absolute top-[115%] right-0 bg-white dark:bg-[#1d1f24] border border-black/10 dark:border-white/10 rounded-md shadow-lg py-2 px-3 text-sm whitespace-nowrap">
+                    <button
+                      className="w-full text-left hover:opacity-90"
+                      onClick={async () => {
+                        try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
+                        window.location.href = '/signin';
+                      }}
+                    >
+                      Sign out
+                    </button>
+                  </div>
+                )}
               </div>
 
-              {/* Bag */}
-              <a className="icon-btn grid place-items-center w-10 h-10 rounded-md" href="/cart.php" aria-label="Cart">
+              {/* Bag: hidden on mobile so the user icon takes its spot */}
+              <a
+                className="icon-btn grid place-items-center w-10 h-10 rounded-md hidden md:grid"
+                href="/cart.php"
+                aria-label="Cart"
+              >
                 <Icon.Bag />
               </a>
 
               {/* Theme toggle */}
-              <button
-                onClick={onToggleTheme}
-                className="theme-toggle icon-btn h-10 px-3 rounded-md flex items-center gap-2"
-                aria-label="Toggle theme"
-              >
-                {theme === 'light' ? <Icon.Moon/> : <Icon.Sun/>}
-                <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Dark' : 'Light'}</span>
+              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
+                {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
+                <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
             </div>
           </div>
         </div>
 
-        {/* Spacer between top bar and nav – desktop only */}
+        {/* Small spacer on desktop only */}
         <div className="hidden md:block" style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
         {/* Desktop Navbar */}
@@ -574,6 +560,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
+                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -721,17 +708,18 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              {/* NEW: Sign out right under the bar */}
-              <div className="px-4 py-3 border-b border-white/10">
+              <div className="overflow-y-auto divide-y divide-white/10">
+                {/* Sign out quick action at top on mobile */}
                 <button
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="w-full text-left bg-white/10 hover:bg-white/15 rounded-md px-3 py-2 font-medium"
+                  className="block w-full text-left px-4 py-3 hover:bg-white/10"
+                  onClick={async () => {
+                    try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
+                    window.location.href = '/signin';
+                  }}
                 >
                   Sign out
                 </button>
-              </div>
 
-              <div className="overflow-y-auto divide-y divide-white/10">
                 <a className="block px-4 py-3" href="https://joyzze.com/all-products/">All Products</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/clippers/">Clippers</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/blades/">Blades</a>
@@ -740,7 +728,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <a className="block px-4 py-3" href="https://joyzze.com/distributor/">Distributor</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/information/">Information</a>
 
-                <div className="p-4">
+                <div className="p-4 border-t border-white/10">
                   <form action="/search.php" method="get" className="flex">
                     <input
                       type="text"
@@ -756,43 +744,6 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         )}
       </div>
-
-      {/* user dropdown styles */}
-      <style jsx>{`
-        .icon-btn { line-height: 0; }
-        .abs-dropdown{
-          position: absolute;
-          top: 44px;
-          right: 0;
-          min-width: 160px;
-          background: var(--dropdown-bg);
-          color: var(--dropdown-fg);
-          border: 1px solid var(--dropdown-border);
-          border-radius: 10px;
-          box-shadow: 0 12px 28px rgba(0,0,0,.18);
-          padding: 6px;
-          opacity: 0;
-          pointer-events: none;
-          transform: translateY(-6px);
-          transition: opacity .15s ease, transform .15s ease;
-          z-index: 2000;
-        }
-        .abs-dropdown.open{
-          opacity: 1;
-          pointer-events: auto;
-          transform: translateY(0);
-        }
-        .dropdown-item{
-          width: 100%;
-          text-align: left;
-          background: transparent;
-          color: inherit;
-          padding: 10px 12px;
-          border-radius: 8px;
-          font-weight: 600;
-        }
-        .dropdown-item:hover{ background: var(--dropdown-hover); }
-      `}</style>
     </header>
   );
 }
@@ -947,6 +898,7 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved. | Sitemap</div>
+          {/* wrap to prevent cropping on small screens */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -977,11 +929,12 @@ export default function Page(){
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
+    // CHANGED: respect saved theme or system preference
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initial = saved || (prefersDark ? 'dark' : 'light');
     setTheme(initial);
-    document.documentElement.classList.toggle('theme-dark', initial === 'dark');
+    if (initial === 'dark') document.documentElement.classList.add('theme-dark');
   }, []);
 
   const toggleTheme = () => {
@@ -1009,24 +962,12 @@ export default function Page(){
           --header-text: #0f0f0f;
           --nav-bg: #2f2f2f;
           --nav-text: #d7d7d7;
-
-          /* dropdown colors (light) */
-          --dropdown-bg: #ffffff;
-          --dropdown-fg: #0f0f0f;
-          --dropdown-border: rgba(0,0,0,.12);
-          --dropdown-hover: rgba(0,0,0,.05);
         }
         .theme-dark {
           --header-bg: #1c1f26;
           --header-text: #ffffff;
           --nav-bg: #111318;
           --nav-text: #d7d7d7;
-
-          /* dropdown colors (dark) */
-          --dropdown-bg: #171a20;
-          --dropdown-fg: #f1f5f9;
-          --dropdown-border: rgba(255,255,255,.14);
-          --dropdown-hover: rgba(255,255,255,.06);
         }
 
         html, body { font-family: 'Josefin Sans', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif; }
@@ -1099,6 +1040,7 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
+        /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -1111,7 +1053,7 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
-        /* Keep header content on top of page below */
+        /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
 
         /* Input widths / visibility */
