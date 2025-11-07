@@ -449,7 +449,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </a>
             </div>
 
-            {/* Centered logo (absolute so it stays centered on all widths) */}
+            {/* Centered logo */}
             <a
               href="https://joyzze.com/"
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -466,7 +466,7 @@ function SigninHeader({ theme, onToggleTheme }) {
             </a>
 
             {/* Right: search + actions */}
-            <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center gap-1 sm:gap-3">
+            <div className="absolute inset-y-0 right-3 sm:right-4 flex items-center gap-3">
               <div className="relative hidden md:block">
                 <form action="/search.php" method="get">
                   <input
@@ -482,7 +482,10 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
+              {/* Compare icon aligned */}
+              <a className="hidden sm:grid icon-btn w-10 h-10 rounded-md place-items-center" href="/compare" aria-label="Compare">
+                <Icon.Shuffle />
+              </a>
 
               {/* User icon with hover-to-show sign out */}
               <div
@@ -493,9 +496,18 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <a className="icon-btn grid place-items-center w-10 h-10 rounded-md" href="/account.php" aria-label="Account">
                   <Icon.User />
                 </a>
-                {/* Hover dropdown */}
+
+                {/* THEME-AWARE HOVER PANEL (white in light mode) */}
                 {showSignOut && (
-                  <div className="absolute top-[115%] right-0 bg-white dark:bg-[#1d1f24] border border-black/10 dark:border-white/10 rounded-md shadow-lg py-2 px-3 text-sm whitespace-nowrap">
+                  <div
+                    className="absolute top-[115%] right-0 rounded-md shadow-lg py-2 px-3 text-sm whitespace-nowrap"
+                    style={{
+                      background: theme === 'light' ? '#ffffff' : '#1d1f24',
+                      color: theme === 'light' ? '#0f0f0f' : '#e5e7eb',
+                      border: '1px solid',
+                      borderColor: theme === 'light' ? 'rgba(0,0,0,.1)' : 'rgba(255,255,255,.1)'
+                    }}
+                  >
                     <button
                       className="w-full text-left hover:opacity-90"
                       onClick={async () => {
@@ -509,7 +521,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 )}
               </div>
 
-              {/* Bag: hidden on mobile so the user icon takes its spot */}
+              {/* Bag: hidden on mobile so user icon occupies that spot on small screens */}
               <a
                 className="icon-btn grid place-items-center w-10 h-10 rounded-md hidden md:grid"
                 href="/cart.php"
@@ -518,8 +530,12 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <Icon.Bag />
               </a>
 
-              {/* Theme toggle */}
-              <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
+              {/* Theme toggle aligned to same height */}
+              <button
+                onClick={onToggleTheme}
+                className="theme-toggle icon-btn h-10 px-2 rounded-md flex items-center gap-2"
+                aria-label="Toggle theme"
+              >
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
                 <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
               </button>
@@ -898,7 +914,6 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved. | Sitemap</div>
-          {/* wrap to prevent cropping on small screens */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -929,7 +944,6 @@ export default function Page(){
   const [theme, setTheme] = useState('light');
 
   useEffect(() => {
-    // CHANGED: respect saved theme or system preference
     const saved = typeof window !== 'undefined' ? localStorage.getItem('joyzze-theme') : null;
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initial = saved || (prefersDark ? 'dark' : 'light');
@@ -993,7 +1007,6 @@ export default function Page(){
         .btn-ghost { background:transparent; border:1px solid var(--app-border); color:inherit; }
         .card { background:var(--app-surface); border-radius:1rem; box-shadow:0 1px 0 var(--app-border), 0 1px 2px var(--app-border); }
 
-        /* NAV + MEGA */
         .nav-dark{
           background: var(--nav-bg);
           color: var(--nav-text);
@@ -1011,9 +1024,6 @@ export default function Page(){
 
         .jz-underline { position:absolute; left:0; right:0; bottom:-1px; height:2px; background:var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
         .jz-pointer { position:absolute; left:50%; transform:translateX(-50%); bottom:-6px; width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:6px solid var(--joyzze-teal); opacity:0; transition:opacity .18s ease; }
-        .jz-item:hover .jz-underline, .jz-item.jz-active .jz-underline,
-        .jz-item:hover .jz-pointer,   .jz-item.jz-active .jz-pointer { opacity:1; }
-
         .jz-mega {
           position: relative;
           border: 1px solid rgba(28,210,193,.85);
@@ -1032,7 +1042,6 @@ export default function Page(){
         .jz-list li:last-child { border-bottom:0; }
         .jz-list a { color:#3f3f3f; font-size:15px; text-decoration:none; }
 
-        /* Search / toggle (theme aware) */
         .jz-input { background:#ffffff; color:#0f0f0f; border:0; }
         .search-btn { background:#ffffff; border:1px solid rgba(0,0,0,.15); }
         .theme-dark .jz-input { background: var(--app-surface); color:#e5e7eb; border:1px solid var(--app-border); }
@@ -1040,7 +1049,6 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
-        /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
         .theme-dark .bg-slate-50\\/60 { background: var(--app-surface) !important; }
@@ -1053,10 +1061,8 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
-        /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
 
-        /* Input widths / visibility */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
