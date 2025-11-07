@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
@@ -312,7 +312,7 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg.white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
@@ -374,7 +374,23 @@ function MegaSection({ title, children }) {
 function SigninHeader({ theme, onToggleTheme }) {
   const [open, setOpen] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: session } = useSession();
+
+  // NEW: controlled account dropdown (click, not hover)
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  useEffect(() => {
+    const onEsc = (e) => e.key === 'Escape' && setUserMenuOpen(false);
+    window.addEventListener('keydown', onEsc);
+    return () => window.removeEventListener('keydown', onEsc);
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      setUserMenuOpen(false);
+      await signOut({ callbackUrl: '/signin' });
+    } catch (e) {
+      console.error('SIGN_OUT_ERROR', e);
+    }
+  };
 
   const close = () => setOpen(null);
 
@@ -427,22 +443,6 @@ function SigninHeader({ theme, onToggleTheme }) {
 
   const headerStyle = { background: 'var(--header-bg)', color: 'var(--header-text)' };
 
-  // sign out handler (non-blocking DB audit if you add an API later)
-  const handleSignOut = async () => {
-    try {
-      // Optional audit hook – safe to ignore if you don't have the route yet
-      fetch('/api/auth/audit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signout' })
-      }).catch(() => {});
-    } finally {
-      await signOut({ redirect: false });
-      // soft reload to refresh UI state
-      if (typeof window !== 'undefined') window.location.reload();
-    }
-  };
-
   return (
     <header className="w-full">
       <div className="sticky top-0 z-[1200]" style={{ isolation: 'isolate' }}>
@@ -466,7 +466,7 @@ function SigninHeader({ theme, onToggleTheme }) {
               </a>
             </div>
 
-            {/* Centered logo */}
+            {/* Centered logo (absolute so it stays centered on all widths) */}
             <a
               href="https://joyzze.com/"
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 block rounded-[10px] overflow-hidden shadow-[0_12px_26px_rgba(0,0,0,.35)]"
@@ -501,19 +501,39 @@ function SigninHeader({ theme, onToggleTheme }) {
 
               <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
 
-              {/* Account with hover sign-out (desktop/tablet) */}
-              <div className="hidden sm:block relative group">
-                <button className="icon-btn w-9 h-9 rounded-md" aria-label="Account">
+              {/* Account menu (desktop/tablet) — absolute so it never pushes layout */}
+              <div className="hidden sm:block relative">
+                <button
+                  type="button"
+                  className="icon-btn w-9 h-9 rounded-md"
+                  aria-haspopup="menu"
+                  aria-expanded={userMenuOpen ? 'true' : 'false'}
+                  onClick={() => setUserMenuOpen(v => !v)}
+                  onBlur={(e) => {
+                    const r = e.currentTarget.parentElement;
+                    setTimeout(() => {
+                      if (!r.contains(document.activeElement)) setUserMenuOpen(false);
+                    }, 0);
+                  }}
+                >
                   <Icon.User />
                 </button>
-                <div className="user-pop absolute right-0 mt-2 w-[220px] rounded-md border border-black/10 bg-white text-black shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition">
-                  <div className="px-3 py-2 border-b border-black/10">
-                    <div className="text-xs uppercase tracking-wide opacity-60">Signed in</div>
-                    <div className="text-sm truncate">{session?.user?.email || '—'}</div>
-                  </div>
+
+                <div
+                  role="menu"
+                  className="absolute right-0 mt-2 w-44 rounded-md border border-black/10 bg-white text-black shadow-lg"
+                  style={{
+                    opacity: userMenuOpen ? 1 : 0,
+                    transform: `scale(${userMenuOpen ? 1 : 0.98})`,
+                    pointerEvents: userMenuOpen ? 'auto' : 'none',
+                    transition: 'opacity 120ms ease, transform 120ms ease',
+                    zIndex: 2000
+                  }}
+                >
                   <button
-                    onClick={handleSignOut}
+                    role="menuitem"
                     className="w-full text-left px-3 py-2 text-sm hover:bg-black/5"
+                    onClick={handleSignOut}
                   >
                     Sign out
                   </button>
@@ -522,7 +542,7 @@ function SigninHeader({ theme, onToggleTheme }) {
 
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
-              {/* theme toggle */}
+              {/* Theme toggle */}
               <button onClick={onToggleTheme} className="theme-toggle icon-btn h-9 px-2 rounded-md flex items-center gap-2" aria-label="Toggle theme">
                 {theme === 'light' ? <Icon.Sun/> : <Icon.Moon/>}
                 <span className="hidden sm:inline text-[13px]">{theme === 'light' ? 'Light' : 'Dark'}</span>
@@ -712,23 +732,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              {/* Mobile account row with sign-out */}
-              <div className="px-4 py-3 flex items-center justify-between border-b border-white/10">
-                <div className="text-sm">
-                  <div className="font-semibold">Account</div>
-                  <div className="opacity-80 truncate max-w-[60vw]">
-                    {session?.user?.email || 'Signed in'}
-                  </div>
-                </div>
-                <button
-                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
-                  className="px-3 py-1.5 rounded-md bg-white text-black text-sm font-semibold"
-                  aria-label="Sign out"
-                >
-                  Sign out
-                </button>
-              </div>
-
               <div className="overflow-y-auto divide-y divide-white/10">
                 <a className="block px-4 py-3" href="https://joyzze.com/all-products/">All Products</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/clippers/">Clippers</a>
@@ -737,6 +740,16 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <a className="block px-4 py-3" href="https://joyzze.com/recycling-sharpening/">Recycling & Sharpening</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/distributor/">Distributor</a>
                 <a className="block px-4 py-3" href="https://joyzze.com/information/">Information</a>
+
+                {/* Mobile: Sign out button */}
+                <div className="p-4 border-t border-white/10">
+                  <button
+                    onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                    className="w-full h-11 rounded-md bg-white text-black font-semibold"
+                  >
+                    Sign out
+                  </button>
+                </div>
 
                 <div className="p-4 border-t border-white/10">
                   <form action="/search.php" method="get" className="flex">
@@ -908,6 +921,7 @@ function SigninFooter() {
       <div className="max-w-[1280px] mx-auto px-6 pb-10">
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="text-sm text-white/80">© {new Date().getFullYear()} Joyzze. All rights reserved. | Sitemap</div>
+          {/* wrap to prevent cropping on small screens */}
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[15px]">
             <span className="text-[var(--joyzze-teal)] font-semibold">SERIES</span>
             <a href="https://joyzze.com/a-series/" className="hover:underline">A-SERIES</a>
@@ -1048,10 +1062,6 @@ export default function Page(){
         .theme-dark .theme-toggle { background: var(--app-surface) !important; border:1px solid var(--app-border) !important; color:#e5e7eb; }
         .icon-btn:hover{ background: transparent; }
 
-        /* User popover */
-        .user-pop { transform: translateY(-4px); }
-        .group:hover .user-pop { transform: translateY(0); }
-
         /* Dark consistency for inner app */
         .theme-dark .bg-white,
         .theme-dark .bg-slate-50,
@@ -1065,8 +1075,10 @@ export default function Page(){
         .theme-dark #app .border-dashed{ border-color: var(--app-border) !important; }
         .theme-dark #app .rounded-2xl.overflow-hidden{ background: var(--app-surface) !important; }
 
+        /* Ensure content below can't cover header area */
         header + * { position: relative; z-index: 1; }
 
+        /* Input widths / visibility */
         @media (max-width: 1280px){ .jz-input { width: 520px; } }
         @media (max-width: 1100px){ .jz-input { width: 420px; } }
         @media (max-width: 980px){ .jz-input { display:none; } }
