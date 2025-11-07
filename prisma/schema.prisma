@@ -47,11 +47,13 @@ model User {
   // for credentials login
   passwordHash  String?
 
-  // phone: make nullable so schema push can run on existing rows; your API still requires and saves it
-  phone         String?   @unique
+  // Store phone, but DO NOT add a unique constraint in this deploy
+  phone         String?   // <- keep nullable & non-unique to avoid db push warning
 
   accounts      Account[]
   sessions      Session[]
+
+  @@index([phone]) // optional: speeds up your uniqueness check in API
 }
 
 model VerificationToken {
