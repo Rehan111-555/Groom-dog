@@ -2,6 +2,9 @@
 import NextAuthImport from "next-auth/next";
 import GoogleProviderImport from "next-auth/providers/google";
 import CredentialsProviderImport from "next-auth/providers/credentials";
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import bcrypt from "bcryptjs";
 
 const NextAuth =
   typeof NextAuthImport === "function" ? NextAuthImport : NextAuthImport?.default;
@@ -9,9 +12,6 @@ const GoogleProvider =
   typeof GoogleProviderImport === "function" ? GoogleProviderImport : GoogleProviderImport?.default;
 const CredentialsProvider =
   typeof CredentialsProviderImport === "function" ? CredentialsProviderImport : CredentialsProviderImport?.default;
-
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
 
 const g = globalThis;
 const prisma = g.__prisma__ ?? new PrismaClient();
@@ -23,6 +23,9 @@ export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
 const authOptions = {
+  // ►► ADAPTER: persist users/accounts/sessions in your Prisma tables
+  adapter: PrismaAdapter(prisma),
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? "",
@@ -44,7 +47,6 @@ const authOptions = {
         const ok = await bcrypt.compare(creds.password, user.passwordHash);
         if (!ok) return null;
 
-        // include phone on the returned user so it flows into JWT/session
         return {
           id: user.id,
           name: user.name ?? null,
@@ -54,17 +56,39 @@ const authOptions = {
       },
     }),
   ],
-  session: { strategy: "jwt" },
+
+  // ►► DATABASE sessions (so Session table is used / deleted on signout)
+  session: {
+    strategy: "database",
+    maxAge: 30 * 60,     // 30 minutes total lifetime
+    updateAge: 5 * 60,   // extend every 5 minutes while active (rolling)
+  },
+
   pages: { signIn: "/signin" },
+
   callbacks: {
+    // NOTE: with strategy:"database", `user` is set here; `token` may be undefined.
+    async session({ session, token, user }) {
+      const src = user ?? token; // support either strategy
+      if (src) {
+        session.user = {
+          id: src.id,
+          name: src.name ?? null,
+          email: src.email ?? null,
+          phone: src.phone ?? null,
+        };
+      }
+      return session;
+    },
+
+    // Keep this for completeness (helps if you ever switch back to jwt in tests)
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name;
-        token.email = user.email;
-        token.phone = user.phone ?? token.phone ?? null;
+        token.name = user.name ?? null;
+        token.email = user.email ?? null;
+        token.phone = user.phone ?? null;
       } else if (token?.email) {
-        // keep token in sync with DB for phone on subsequent requests
         try {
           const dbUser = await prisma.user.findUnique({
             where: { email: token.email.toLowerCase() },
@@ -80,18 +104,11 @@ const authOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
-      if (token) {
-        session.user = {
-          id: token.id,
-          name: token.name,
-          email: token.email,
-          phone: token.phone ?? null,
-        };
-      }
-      return session;
-    },
   },
+
+  // Not strictly required; the adapter deletes the DB session on signOut.
+  events: {},
+
   secret: process.env.NEXTAUTH_SECRET,
 };
 
