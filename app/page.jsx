@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import { signOut } from 'next-auth/react'; // ← added
 
 /* ─────────────────── Icons ─────────────────── */
 const Icon = {
@@ -531,8 +532,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                     <button
                       className="w-full text-left hover:opacity-90"
                       onClick={async () => {
-                        try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
-                        window.location.href = '/signin';
+                        await signOut({ callbackUrl: "/signin", redirect: true }); // ← changed
                       }}
                     >
                       Sign out
@@ -749,8 +749,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <button
                   className="block w-full text-left px-4 py-3 hover:bg-white/10"
                   onClick={async () => {
-                    try { await fetch('/api/auth/signout', { method: 'POST' }); } catch {}
-                    window.location.href = '/signin';
+                    await signOut({ callbackUrl: "/signin", redirect: true }); // ← changed
                   }}
                 >
                   Sign out
