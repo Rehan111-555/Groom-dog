@@ -58,11 +58,6 @@ const Icon = {
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  CaretDown: (p)=>(
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" {...p}>
-      <path d="m6 9 6 6 6-6" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round"/>
-    </svg>
-  ),
   Bag: (p)=>(
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8"/>
@@ -489,7 +484,6 @@ function SigninHeader({ theme, onToggleTheme }) {
               <a className="hidden sm:grid icon-btn w-9 h-9 rounded-md" href="/compare" aria-label="Compare"><Icon.Shuffle /></a>
               <div className="hidden sm:flex items-center">
                 <a className="icon-btn w-9 h-9 rounded-md" href="/account.php" aria-label="Account"><Icon.User /></a>
-                <Icon.CaretDown className="ml-[2px] opacity-80" />
               </div>
               <a className="icon-btn w-9 h-9 rounded-md" href="/cart.php" aria-label="Cart"><Icon.Bag /></a>
 
