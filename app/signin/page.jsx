@@ -45,7 +45,6 @@ const Icon = {
       <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
     </svg>
   ),
- 
   Bag: (p) => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" {...p}>
       <rect x="6" y="7" width="12" height="12" rx="2" stroke="currentColor" strokeWidth="1.8" />
@@ -250,7 +249,6 @@ function AppHeader() {
               <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/account.php" aria-label="Account">
                 <Icon.User />
               </a>
-              <Icon.CaretDown className="ml-[2px] opacity-80" />
             </div>
             <a className="grid place-items-center w-9 h-9 rounded-md hover:bg-black/5" href="/cart.php" aria-label="Cart">
               <Icon.Bag />
