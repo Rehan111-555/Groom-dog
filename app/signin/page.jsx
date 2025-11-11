@@ -631,11 +631,7 @@ export default function AuthPage() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
   const [phone, setPhone] = useState(''); // <-- added
-  const [ema
-         
-         
-         
-         il, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
