@@ -107,7 +107,6 @@ const Icon = {
       />
     </svg>
   ),
-
   /* ADDED for mobile drawer <details> summaries */
   CaretDown: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
@@ -571,6 +570,58 @@ function AppFooter() {
 }
 
 /* ================================
+   BEFORE/AFTER COMPARE SLIDER
+   ================================ */
+function CompareSlider({
+  beforeSrc = '/before.jpg',   // <-- replace with your "before" image path (in /public)
+  afterSrc  = '/after.jpg',    // <-- replace with your "after"  image path (in /public)
+  beforeAlt = 'Before',
+  afterAlt  = 'After',
+  start = 50,                  // starting position (percent)
+}) {
+  const [pos, setPos] = useState(start);
+
+  return (
+    <div
+      className="cmp-wrap"
+      onDoubleClick={() => setPos(50)}
+      aria-label="Before and after image comparison"
+    >
+      {/* Base (after) */}
+      <img className="cmp-img" src={afterSrc} alt={afterAlt} />
+
+      {/* Clipped (before) */}
+      <div className="cmp-before" style={{ width: `${pos}%` }}>
+        <img className="cmp-img" src={beforeSrc} alt={beforeAlt} />
+      </div>
+
+      {/* Divider & knob */}
+      <div className="cmp-bar" style={{ left: `${pos}%` }} />
+      <div className="cmp-knob" style={{ left: `${pos}%` }} aria-hidden="true" />
+
+      {/* Labels */}
+      <div className="cmp-label before">Before</div>
+      <div className="cmp-label after">After</div>
+
+      {/* Full overlay range for drag / keyboard control */}
+      <input
+        type="range"
+        min={0}
+        max={100}
+        step={0.1}
+        value={pos}
+        onChange={(e) => setPos(parseFloat(e.target.value))}
+        className="cmp-range"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(pos)}
+        aria-label="Drag left or right to compare"
+      />
+    </div>
+  );
+}
+
+/* ================================
    AUTH PAGE
    ================================ */
 const BRAND = { charcoal: '#2f2f31', teal: '#1CD2C1' };
@@ -688,7 +739,7 @@ export default function AuthPage() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="jz-field w-full h-[50px] rounded-[10px] px-4 ring-1 ring-gray-300 focus:ring-2 focus:ring-[#6b6bff] outline-none"
-                       placeholder="Enter your name"
+                      placeholder="Enter your name"
                       required
                     />
                   </div>
@@ -811,10 +862,17 @@ export default function AuthPage() {
             </div>
           </section>
 
-          {/* RIGHT: hero image */}
+          {/* RIGHT: hero with BEFORE/AFTER COMPARE SLIDER */}
           <section className="relative hidden lg:block">
             <div className="auth-hero">
-              <img src="/dog-7.png" alt="hero dogs" className="w-full h-full object-cover" />
+              {/* Update these two image paths to your actual before/after assets in /public */}
+              <CompareSlider
+                beforeSrc="/before.jpg"
+                afterSrc="/after.jpg"
+                beforeAlt="Before grooming"
+                afterAlt="After grooming"
+                start={50}
+              />
             </div>
           </section>
         </div>
@@ -923,6 +981,104 @@ export default function AuthPage() {
 
         /* Respect safe areas for iOS when drawer is open */
         :root { --safe-top: env(safe-area-inset-top); --safe-bottom: env(safe-area-inset-bottom); }
+
+        /* ===========================
+           Compare Slider styles
+           =========================== */
+        .cmp-wrap {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          min-height: 640px;
+          background: #0b0b0b;
+          overflow: hidden;
+          user-select: none;
+          touch-action: none;
+        }
+        .cmp-img {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          pointer-events: none;
+          user-select: none;
+        }
+        .cmp-before {
+          position: absolute;
+          inset: 0;
+          overflow: hidden;
+          max-width: 100%;
+        }
+        .cmp-bar {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: rgba(255,255,255,.95);
+          box-shadow: 0 0 0 1px rgba(0,0,0,.2);
+          transform: translateX(-1px);
+          z-index: 25;
+        }
+        .cmp-knob {
+          position: absolute;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: 46px;
+          height: 46px;
+          border-radius: 9999px;
+          background: #ffffff;
+          color: #111;
+          box-shadow: 0 10px 18px rgba(0,0,0,.35), 0 0 0 3px rgba(28,210,193,.85);
+          z-index: 26;
+          pointer-events: none; /* purely visual handle; input captures interaction */
+        }
+        .cmp-knob::before, .cmp-knob::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 0; height: 0;
+          border-top: 6px solid transparent;
+          border-bottom: 6px solid transparent;
+        }
+        .cmp-knob::before { left: 12px; border-right: 8px solid #111; }
+        .cmp-knob::after  { right: 12px; border-left:  8px solid #111; }
+
+        .cmp-label {
+          position: absolute;
+          top: 14px;
+          z-index: 28;
+          font-size: 14px;
+          letter-spacing: .03em;
+          padding: 6px 10px;
+          border-radius: 999px;
+          font-weight: 700;
+          text-transform: uppercase;
+          backdrop-filter: blur(2px);
+        }
+        .cmp-label.before { left: 14px; background: rgba(255,255,255,.92); color: #0e0f11; }
+        .cmp-label.after  { right: 14px; background: rgba(0,0,0,.38); color: #fff; border: 1px solid rgba(255,255,255,.55); }
+
+        /* Full overlay invisible range to capture drag + keyboard */
+        .cmp-range {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          appearance: none;
+          background: transparent;
+          z-index: 40;
+          cursor: ew-resize;
+          color: transparent;
+        }
+        .cmp-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 0; height: 0; }
+        .cmp-range::-moz-range-thumb { width: 0; height: 0; border: 0; background: transparent; }
+        .cmp-range::-ms-thumb { width: 0; height: 0; border: 0; }
+
+        /* Dark theme tweaks for labels (optional but nice) */
+        html.theme-dark .cmp-label.before { background: rgba(255,255,255,.92); color: #0f1115; }
+        html.theme-dark .cmp-label.after  { background: rgba(0,0,0,.45); color: #fff; border-color: rgba(255,255,255,.5); }
       `}</style>
     </main>
   );
