@@ -146,12 +146,13 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* ─────────────────── Compare slider ─────────────────── */
-function CompareSlider({ beforeSrc, afterSrc }) {
+function CompareSlider({ beforeSrc, afterSrc, imgFit = 'contain' }) {
   const [pos, setPos] = useState(55);
+  const imgClass = `absolute inset-0 h-full w-full ${imgFit === 'cover' ? 'object-cover' : 'object-contain'}`;
   return (
     <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
-      <img src={afterSrc} alt="After" className="absolute inset-0 h-full w-full object-contain" draggable={false}/>
-      <img src={beforeSrc} alt="Before" className="absolute inset-0 h-full w-full object-contain" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
+      <img src={afterSrc} alt="After" className={imgClass} draggable={false}/>
+      <img src={beforeSrc} alt="Before" className={imgClass} style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
       <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
       <div className="absolute bottom-2 left-3 right-3">
         <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
@@ -804,8 +805,16 @@ function Hero(){
             <a href="#how" className="btn text-white border border-white/20 bg-[#121a2b]">See how it works</a>
           </div>
         </div>
+
+        {/* ── Replaced static image with BEFORE/AFTER slider (dog4 → before, dog3 → after) ── */}
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-          <img src="/dog-10.png" alt="Hero sample" className="w-full h-auto object-cover" />
+          <div className="h-[360px] sm:h-[420px] lg:h-[460px]">
+            <CompareSlider
+              beforeSrc="/dog4.png"
+              afterSrc="/dog3.png"
+              imgFit="cover"
+            />
+          </div>
         </div>
       </div>
     </header>
