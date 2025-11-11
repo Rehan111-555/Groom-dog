@@ -631,7 +631,11 @@ export default function AuthPage() {
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [name, setName] = useState('');
   const [phone, setPhone] = useState(''); // <-- added
-  const [email, setEmail] = useState('');
+  const [ema
+         
+         
+         
+         il, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [regOk, setRegOk] = useState(false);
@@ -867,8 +871,8 @@ export default function AuthPage() {
             <div className="auth-hero">
               {/* Update these two image paths to your actual before/after assets in /public */}
               <CompareSlider
-                beforeSrc="/before.jpg"
-                afterSrc="/after.jpg"
+                beforeSrc="/dog-7.png"
+                afterSrc="/dog-7.png"
                 beforeAlt="Before grooming"
                 afterAlt="After grooming"
                 start={50}
