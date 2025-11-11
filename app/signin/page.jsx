@@ -867,8 +867,8 @@ export default function AuthPage() {
             <div className="auth-hero">
               {/* Update these two image paths to your actual before/after assets in /public */}
               <CompareSlider
-                beforeSrc="/dog1.png"
-                afterSrc="/dog2.png"
+                beforeSrc="/dog2.png"
+                afterSrc="/dog1.png"
                 beforeAlt="Before grooming"
                 afterAlt="After grooming"
                 start={50}
