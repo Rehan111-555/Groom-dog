@@ -146,7 +146,6 @@ async function padToSize(dataUrl, targetW, targetH) {
 }
 
 /* ─────────────────── Compare slider ─────────────────── */
-/* ─────────────────── Compare slider ─────────────────── */
 function CompareSlider({ beforeSrc, afterSrc, imgFit = 'contain' }) {
   const [pos, setPos] = useState(55);
   const imgClass = `absolute inset-0 h-full w-full ${imgFit === 'cover' ? 'object-cover' : 'object-contain'}`;
@@ -201,7 +200,6 @@ function CompareSlider({ beforeSrc, afterSrc, imgFit = 'contain' }) {
     </div>
   );
 }
-
 
 /* =========================================================
    Upload + Result
