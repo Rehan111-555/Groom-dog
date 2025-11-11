@@ -173,17 +173,21 @@ function CompareSlider({ beforeSrc, afterSrc, imgFit = 'contain' }) {
         style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }}
       />
 
-      {/* Corner labels */}
-      <div className="absolute top-2 left-2 z-20 pointer-events-none">
-        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-white text-black/90 shadow">
-          BEFORE
-        </span>
-      </div>
-      <div className="absolute top-2 right-2 z-20 pointer-events-none">
-        <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-black/40 text-white ring-1 ring-white/60">
-          AFTER
-        </span>
-      </div>
+      {/* Corner labels — hide at the extremes */}
+      {pos > 0 && (
+        <div className="absolute top-2 left-2 z-20 pointer-events-none">
+          <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-white text-black/90 shadow">
+            BEFORE
+          </span>
+        </div>
+      )}
+      {pos < 100 && (
+        <div className="absolute top-2 right-2 z-20 pointer-events-none">
+          <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-black/40 text-white ring-1 ring-white/60">
+            AFTER
+          </span>
+        </div>
+      )}
 
       {/* Range control */}
       <div className="absolute bottom-2 left-3 right-3">
@@ -879,7 +883,7 @@ function HowItWorks() {
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let Magic Happen</h3>
-          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while everything remain the same.</p>
+          <p className="text-sm text-slate-600 dark:text+[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while everything remain the same.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
