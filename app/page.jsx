@@ -149,57 +149,13 @@ async function padToSize(dataUrl, targetW, targetH) {
 function CompareSlider({ beforeSrc, afterSrc, imgFit = 'contain' }) {
   const [pos, setPos] = useState(55);
   const imgClass = `absolute inset-0 h-full w-full ${imgFit === 'cover' ? 'object-cover' : 'object-contain'}`;
-
   return (
-    <div
-      className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none"
-      style={{ touchAction: 'none' }}
-    >
-      {/* AFTER (base) */}
-      <img src={afterSrc} alt="After" className={imgClass} draggable={false} />
-
-      {/* BEFORE (clipped) */}
-      <img
-        src={beforeSrc}
-        alt="Before"
-        className={imgClass}
-        style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}
-        draggable={false}
-      />
-
-      {/* Divider */}
-      <div
-        className="absolute top-0 bottom-0"
-        style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }}
-      />
-
-      {/* Corner labels — hide at the extremes */}
-      {pos > 0 && (
-        <div className="absolute top-2 left-2 z-20 pointer-events-none">
-          <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-white text-black/90 shadow">
-            BEFORE
-          </span>
-        </div>
-      )}
-      {pos < 100 && (
-        <div className="absolute top-2 right-2 z-20 pointer-events-none">
-          <span className="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wide bg-black/40 text-white ring-1 ring-white/60">
-            AFTER
-          </span>
-        </div>
-      )}
-
-      {/* Range control */}
+    <div className="relative h-full w-full rounded-2xl overflow-hidden bg-slate-50 select-none" style={{ touchAction: 'none' }}>
+      <img src={afterSrc} alt="After" className={imgClass} draggable={false}/>
+      <img src={beforeSrc} alt="Before" className={imgClass} style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} draggable={false}/>
+      <div className="absolute top-0 bottom-0" style={{ left: `${pos}%`, width: 2, background: 'rgba(79,70,229,0.9)' }} />
       <div className="absolute bottom-2 left-3 right-3">
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={pos}
-          onChange={(e) => setPos(Number(e.target.value) || 55)}
-          className="w-full"
-          aria-label="Compare before and after"
-        />
+        <input type="range" min={0} max={100} value={pos} onChange={(e)=>setPos(Number(e.target.value)||55)} className="w-full"/>
       </div>
     </div>
   );
@@ -883,7 +839,7 @@ function HowItWorks() {
         <Card className="p-6 flex flex-col min-h-[220px]">
           <div className="w-6 h-6 rounded-full bg-[#323030] text-white grid place-items-center text-xs mb-3">2</div>
           <h3 className="font-semibold mb-1">Let Magic Happen</h3>
-          <p className="text-sm text-slate-600 dark:text+[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while everything remain the same.</p>
+          <p className="text-sm text-slate-600 dark:text-[var(--app-muted)]">Fur, face, paws, your puppy gets a whole makeover while everything remain the same.</p>
           <div className="mt-auto pt-4">
             <a href="#app" className="btn btn-primary inline-flex w-[146px] justify-center">Start grooming</a>
           </div>
