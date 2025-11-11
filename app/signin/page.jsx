@@ -573,8 +573,8 @@ function AppFooter() {
    BEFORE/AFTER COMPARE SLIDER
    ================================ */
 function CompareSlider({
-  beforeSrc = '/dog-7.png',   // <-- replace with your "before" image path (in /public)
-  afterSrc  = '/dog-7.png',    // <-- replace with your "after"  image path (in /public)
+  beforeSrc = '/dog-3.jpg',   // <-- replace with your "before" image path (in /public)
+  afterSrc  = '/dog-4.jpg',    // <-- replace with your "after"  image path (in /public)
   beforeAlt = 'Before',
   afterAlt  = 'After',
   start = 50,                  // starting position (percent)
@@ -867,8 +867,8 @@ export default function AuthPage() {
             <div className="auth-hero">
               {/* Update these two image paths to your actual before/after assets in /public */}
               <CompareSlider
-                beforeSrc="/dog-7.png"
-                afterSrc="/dog-7.png"
+                beforeSrc="/dog-3.jpg"
+                afterSrc="/dog-4.jpg"
                 beforeAlt="Before grooming"
                 afterAlt="After grooming"
                 start={50}
