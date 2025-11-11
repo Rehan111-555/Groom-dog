@@ -573,8 +573,8 @@ function AppFooter() {
    BEFORE/AFTER COMPARE SLIDER
    ================================ */
 function CompareSlider({
-  beforeSrc = '/before.jpg',   // <-- replace with your "before" image path (in /public)
-  afterSrc  = '/after.jpg',    // <-- replace with your "after"  image path (in /public)
+  beforeSrc = '/dog-7.png',   // <-- replace with your "before" image path (in /public)
+  afterSrc  = '/dog-7.png',    // <-- replace with your "after"  image path (in /public)
   beforeAlt = 'Before',
   afterAlt  = 'After',
   start = 50,                  // starting position (percent)
