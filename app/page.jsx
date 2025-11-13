@@ -173,7 +173,6 @@ function UploadAndResult(){
   const [progress,setProgress]=useState(0);
   const [imgW, setImgW] = useState(0);
   const [imgH, setImgH] = useState(0);
-  const [urlText, setUrlText] = useState("");
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
@@ -208,12 +207,16 @@ function UploadAndResult(){
       window.removeEventListener('resize', measure);
       ro.disconnect();
     };
-  }, [urlText, previewUrl, panelH]);
+  }, [previewUrl, panelH]);
 
   useEffect(() => {
     return () => {
-      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
-      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
+      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(resultUrl);
+      }
     };
   }, [previewUrl, resultUrl]);
 
@@ -222,50 +225,75 @@ function UploadAndResult(){
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
     const url = URL.createObjectURL(f);
-    setFile(f); setResultUrl(null); setPreviewUrl(url);
-    try { const { w, h } = await readImageSize(url); setImgW(w); setImgH(h); } catch {}
-  };
-  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
-
-  const handleUrlLoad = async () => {
-    const u = urlText.trim();
-    if (!u) return;
-    setError(null);
-    setFile(null);
+    setFile(f);
     setResultUrl(null);
-    setPreviewUrl(u);
-    try { const { w,h } = await readImageSize(u); setImgW(w); setImgH(h); } catch {}
+    setPreviewUrl(url);
+    try {
+      const { w, h } = await readImageSize(url);
+      setImgW(w);
+      setImgH(h);
+    } catch {}
   };
 
-  const resetAll=()=>{ setFile(null); setPreviewUrl(null); setUrlText(""); setResultUrl(null); setProgress(0); setError(null); };
+  const selectFile=(e)=>{ 
+    const f=e?.target?.files?.[0]; 
+    if(f)handleFile(f); 
+  };
+
+  const resetAll=()=>{ 
+    setFile(null); 
+    setPreviewUrl(null); 
+    setResultUrl(null); 
+    setProgress(0); 
+    setError(null); 
+  };
 
   const groom=async()=>{
-    if(!file && !previewUrl) return;
-    setLoading(true); setError(null); setProgress(12);
+    if(!file) return;                 // ← must upload a file now
+    setLoading(true); 
+    setError(null); 
+    setProgress(12);
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
-      if (file) form.append("image",file); else form.append("image_url", previewUrl);
+      form.append("image", file);     // ← only file, no URL mode anymore
       form.append("dog_only","true");
-      if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
+      if (imgW && imgH) {
+        form.append("target_w", String(imgW));
+        form.append("target_h", String(imgH));
+      }
 
       const res=await fetch("/api/groom",{ method:"POST", body:form, signal:controllerRef.current?.signal });
       setProgress(60);
-      if(!res.ok){ const msg=await safeReadText(res); throw new Error(msg||`Backend error (${res.status})`); }
+      if(!res.ok){
+        const msg=await safeReadText(res);
+        throw new Error(msg||`Backend error (${res.status})`);
+      }
       const data=await res.json();
       const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
       try {
         const { w, h } = await readImageSize(url);
-        if (imgW && imgH && (w !== imgW || h !== imgH)) setResultUrl(await padToSize(url, imgW, imgH));
-        else setResultUrl(url);
-      } catch { setResultUrl(url); }
+        if (imgW && imgH && (w !== imgW || h !== imgH)) {
+          setResultUrl(await padToSize(url, imgW, imgH));
+        } else {
+          setResultUrl(url);
+        }
+      } catch {
+        setResultUrl(url);
+      }
       setProgress(100);
-    }catch(e){ setError(e?.message||"Something went wrong."); }
-    finally{ setLoading(false); }
+    }catch(e){
+      setError(e?.message||"Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
+  const cancel=()=>{ 
+    controllerRef.current?.abort(); 
+    setLoading(false); 
+  };
 
   const hasInput = !!previewUrl;
 
@@ -276,35 +304,34 @@ function UploadAndResult(){
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
+            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">
+              Upload a dog photo → AI grooms the dog → compare before &amp; after
+            </p>
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary self-start sm:self-auto" href={resultUrl} download><Icon.Download /> Download</a>
+          <a className="btn btn-primary self-start sm:self-auto" href={resultUrl} download>
+            <Icon.Download /> Download
+          </a>
         ) : <div className="h-9" />}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
+        {/* LEFT: upload */}
         <Card className="p-4">
-          <div ref={leftTopRef}>
-            <div className="mb-2 text-sm font-semibold invisible">Upload</div>
-            <div className="flex flex-col sm:flex-row items-stretch gap-2 mb-3">
-              <input
-                type="url"
-                value={urlText}
-                onChange={(e)=>setUrlText(e.target.value)}
-                placeholder="Paste image URL…"
-                className="flex-1 min-w-0 px-3 py-2 rounded-md ring-1 ring-[var(--app-border)] bg-[var(--app-surface)] text-inherit outline-none"
-              />
-              <button className="btn btn-ghost" onClick={handleUrlLoad}>Load</button>
-            </div>
-          </div>
+          {/* keep ref for alignment logic, but no URL bar */}
+          <div ref={leftTopRef} />
 
-          <div className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]" style={{ height: panelH, position:'relative' }}>
+          <div
+            className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]"
+            style={{ height: panelH, position:'relative' }}
+          >
             <label className="absolute inset-0 grid place-items-center text-center cursor-pointer">
               {!hasInput && (
                 <div className="grid place-items-center gap-3 text-[var(--app-muted)] px-4">
-                  <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]"><Icon.Upload /></div>
+                  <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]">
+                    <Icon.Upload />
+                  </div>
                   <div className="font-medium">Drag &amp; drop or click to upload</div>
                   <div className="text-xs">PNG, JPG up to 12MB</div>
                 </div>
@@ -319,7 +346,7 @@ function UploadAndResult(){
                 </div>
                 <div className="min-w-0 text-xs leading-5">
                   <div className="truncate">Selected image</div>
-                  <div className="opacity-70 truncate">{file?.name || previewUrl}</div>
+                  <div className="opacity-70 truncate">{file?.name}</div>
                 </div>
               </div>
             )}
@@ -328,22 +355,33 @@ function UploadAndResult(){
           <div className="mt-3 h-auto min-h-14 flex flex-wrap items-center gap-3">
             {!loading ? (
               <>
-                <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
-                <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
+                <Button className="btn-primary" onClick={groom}>
+                  <Icon.Wand /> Groom
+                </Button>
+                <Button className="btn-ghost" onClick={resetAll}>
+                  <Icon.Reset /> Reset
+                </Button>
                 {error && <span className="text-red-500 text-sm ml-auto">{String(error)}</span>}
               </>
             ) : (
               <>
-                <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
-                <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
+                <Button className="btn-primary" disabled>
+                  <Icon.Wand /> Working… {progress}%
+                </Button>
+                <Button className="btn-ghost" onClick={cancel}>
+                  <Icon.Reset /> Cancel
+                </Button>
               </>
             )}
           </div>
         </Card>
 
+        {/* RIGHT: result */}
         <Card className="p-4">
           <div style={{ height: spacerH }} aria-hidden="true" />
-          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
+          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">
+            Groomed dog using hornet
+          </div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
             {!resultUrl ? (
               <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)] px-4">
