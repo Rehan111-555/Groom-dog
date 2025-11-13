@@ -178,10 +178,6 @@ function UploadAndResult(){
   const [panelH, setPanelH] = useState(640);
   const ACTION_H = 56;
 
-  const leftTopRef = useRef(null);
-  const rightTitleRef = useRef(null);
-  const [spacerH, setSpacerH] = useState(0);
-
   useEffect(() => {
     const setH = () => {
       const h = Math.round(Math.max(520, Math.min(820, window.innerHeight * 0.72)));
@@ -191,23 +187,6 @@ function UploadAndResult(){
     window.addEventListener('resize', setH);
     return () => window.removeEventListener('resize', setH);
   }, []);
-
-  useEffect(() => {
-    const measure = () => {
-      const L = leftTopRef.current?.getBoundingClientRect()?.height || 0;
-      const R = rightTitleRef.current?.getBoundingClientRect()?.height || 0;
-      setSpacerH(Math.max(0, Math.round(L - R)));
-    };
-    measure();
-    const ro = new ResizeObserver(measure);
-    if (leftTopRef.current) ro.observe(leftTopRef.current);
-    if (rightTitleRef.current) ro.observe(rightTitleRef.current);
-    window.addEventListener('resize', measure);
-    return () => {
-      window.removeEventListener('resize', measure);
-      ro.disconnect();
-    };
-  }, [previewUrl, panelH]);
 
   useEffect(() => {
     return () => {
@@ -249,14 +228,14 @@ function UploadAndResult(){
   };
 
   const groom=async()=>{
-    if(!file) return;                 // ← must upload a file now
+    if(!file) return;                 // must upload a file now
     setLoading(true); 
     setError(null); 
     setProgress(12);
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
-      form.append("image", file);     // ← only file, no URL mode anymore
+      form.append("image", file);
       form.append("dog_only","true");
       if (imgW && imgH) {
         form.append("target_w", String(imgW));
@@ -319,9 +298,6 @@ function UploadAndResult(){
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
         {/* LEFT: upload */}
         <Card className="p-4">
-          {/* keep ref for alignment logic, but no URL bar */}
-          <div ref={leftTopRef} />
-
           <div
             className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]"
             style={{ height: panelH, position:'relative' }}
@@ -378,8 +354,7 @@ function UploadAndResult(){
 
         {/* RIGHT: result */}
         <Card className="p-4">
-          <div style={{ height: spacerH }} aria-hidden="true" />
-          <div ref={rightTitleRef} className="mb-2 text-sm font-semibold">
+          <div className="mb-2 text-sm font-semibold">
             Groomed dog using hornet
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
