@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { signOut } from 'next-auth/react'; // ← added
 
-/* ─────────────────── Icons ─────────────────── */
+/* ─────────────────── Icon ─────────────────── */
 const Icon = {
   Upload: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
