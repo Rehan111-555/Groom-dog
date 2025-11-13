@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { signOut } from 'next-auth/react'; // ← added
+import { signOut } from 'next-auth/react';
 
-/* ─────────────────── Icon ─────────────────── */
+/* ─────────────────── Icons ─────────────────── */
 const Icon = {
   Upload: (p) => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" {...p}>
@@ -176,7 +176,6 @@ function UploadAndResult(){
   const controllerRef=useRef(null);
 
   const [panelH, setPanelH] = useState(640);
-  const ACTION_H = 56;
 
   useEffect(() => {
     const setH = () => {
@@ -190,12 +189,8 @@ function UploadAndResult(){
 
   useEffect(() => {
     return () => {
-      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(previewUrl);
-      }
-      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(resultUrl);
-      }
+      if (previewUrl && typeof previewUrl === 'string' && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+      if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
     };
   }, [previewUrl, resultUrl]);
 
@@ -203,6 +198,11 @@ function UploadAndResult(){
     setError(null);
     const validationError = validateImageFile(f, 12);
     if (validationError){ setError(validationError); return; }
+
+    if (previewUrl && previewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(previewUrl);
+    }
+
     const url = URL.createObjectURL(f);
     setFile(f);
     setResultUrl(null);
@@ -213,13 +213,11 @@ function UploadAndResult(){
       setImgH(h);
     } catch {}
   };
-
-  const selectFile=(e)=>{ 
-    const f=e?.target?.files?.[0]; 
-    if(f)handleFile(f); 
-  };
+  const selectFile=(e)=>{ const f=e?.target?.files?.[0]; if(f)handleFile(f); };
 
   const resetAll=()=>{ 
+    if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
+    if (resultUrl && typeof resultUrl === 'string' && resultUrl.startsWith && resultUrl.startsWith('blob:')) URL.revokeObjectURL(resultUrl);
     setFile(null); 
     setPreviewUrl(null); 
     setResultUrl(null); 
@@ -228,26 +226,20 @@ function UploadAndResult(){
   };
 
   const groom=async()=>{
-    if(!file) return;                 // must upload a file now
+    if(!file) return;
     setLoading(true); 
     setError(null); 
     setProgress(12);
     controllerRef.current=new AbortController();
     try{
       const form=new FormData();
-      form.append("image", file);
+      form.append("image",file);
       form.append("dog_only","true");
-      if (imgW && imgH) {
-        form.append("target_w", String(imgW));
-        form.append("target_h", String(imgH));
-      }
+      if (imgW && imgH) { form.append("target_w", String(imgW)); form.append("target_h", String(imgH)); }
 
       const res=await fetch("/api/groom",{ method:"POST", body:form, signal:controllerRef.current?.signal });
       setProgress(60);
-      if(!res.ok){
-        const msg=await safeReadText(res);
-        throw new Error(msg||`Backend error (${res.status})`);
-      }
+      if(!res.ok){ const msg=await safeReadText(res); throw new Error(msg||`Backend error (${res.status})`); }
       const data=await res.json();
       const url=pickResultUrl(data);
       if(!url) throw new Error("Unexpected response from backend.");
@@ -258,21 +250,19 @@ function UploadAndResult(){
         } else {
           setResultUrl(url);
         }
-      } catch {
-        setResultUrl(url);
+      } catch { 
+        setResultUrl(url); 
       }
       setProgress(100);
-    }catch(e){
-      setError(e?.message||"Something went wrong.");
-    } finally {
-      setLoading(false);
+    }catch(e){ 
+      setError(e?.message||"Something went wrong."); 
+    }
+    finally{ 
+      setLoading(false); 
     }
   };
 
-  const cancel=()=>{ 
-    controllerRef.current?.abort(); 
-    setLoading(false); 
-  };
+  const cancel=()=>{ controllerRef.current?.abort(); setLoading(false); };
 
   const hasInput = !!previewUrl;
 
@@ -283,31 +273,27 @@ function UploadAndResult(){
           <img src="/dog-5.png" alt="logo" className="w-10 h-10 rounded-2xl object-cover bg-white ring-1 ring-black/5 shadow"/>
           <div>
             <h1 className="text-2xl md:text-3xl font-semibold leading-tight text-[#00e1c9]">Joyzze-Dog Groomer</h1>
-            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">
-              Upload a dog photo → AI grooms the dog → compare before &amp; after
-            </p>
+            <p className="text-xs md:text-sm text-slate-600 dark:text-[var(--app-muted)]">Upload a dog photo → AI grooms the dog → compare before &amp; after</p>
           </div>
         </div>
         {resultUrl ? (
-          <a className="btn btn-primary self-start sm:self-auto" href={resultUrl} download>
-            <Icon.Download /> Download
-          </a>
+          <a className="btn btn-primary self-start sm:self-auto" href={resultUrl} download><Icon.Download /> Download</a>
         ) : <div className="h-9" />}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-        {/* LEFT: upload */}
-        <Card className="p-4">
+        {/* LEFT: Upload */}
+        <Card className="p-4 flex flex-col">
+          <div className="mb-2 text-sm font-semibold">Upload</div>
+
           <div
-            className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)]"
-            style={{ height: panelH, position:'relative' }}
+            className="rounded-2xl border border-dashed border-slate-300 dark:border-[var(--app-border)] bg-[var(--app-surface)] relative"
+            style={{ minHeight: panelH }}
           >
             <label className="absolute inset-0 grid place-items-center text-center cursor-pointer">
               {!hasInput && (
                 <div className="grid place-items-center gap-3 text-[var(--app-muted)] px-4">
-                  <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]">
-                    <Icon.Upload />
-                  </div>
+                  <div className="mx-auto w-14 h-14 rounded-2xl bg-[var(--app-surface)] grid place-items-center shadow ring-1 ring-[var(--app-border)]"><Icon.Upload /></div>
                   <div className="font-medium">Drag &amp; drop or click to upload</div>
                   <div className="text-xs">PNG, JPG up to 12MB</div>
                 </div>
@@ -316,57 +302,52 @@ function UploadAndResult(){
             </label>
 
             {hasInput && (
-              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg:white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
+              <div className="absolute top-3 left-3 flex items-center gap-3 rounded-xl px-2.5 py-2 bg-black/5 dark:bg-white/5 ring-1 ring-[var(--app-border)] max-w-[calc(100%-24px)]">
                 <div className="w-14 h-14 rounded-lg overflow-hidden bg-black/10 shrink-0">
                   <img src={previewUrl} alt="thumb" className="w-full h-full object-cover"/>
                 </div>
                 <div className="min-w-0 text-xs leading-5">
                   <div className="truncate">Selected image</div>
-                  <div className="opacity-70 truncate">{file?.name}</div>
+                  <div className="opacity-70 truncate">{file?.name || 'Uploaded image'}</div>
                 </div>
               </div>
             )}
           </div>
 
-          <div className="mt-3 h-auto min-h-14 flex flex-wrap items-center gap-3">
+          {/* Actions row – fixed height so both cards align at bottom */}
+          <div className="mt-3 h-[56px] flex flex-wrap items-center gap-3">
             {!loading ? (
               <>
-                <Button className="btn-primary" onClick={groom}>
-                  <Icon.Wand /> Groom
-                </Button>
-                <Button className="btn-ghost" onClick={resetAll}>
-                  <Icon.Reset /> Reset
-                </Button>
+                <Button className="btn-primary" onClick={groom}><Icon.Wand /> Groom</Button>
+                <Button className="btn-ghost" onClick={resetAll}><Icon.Reset /> Reset</Button>
                 {error && <span className="text-red-500 text-sm ml-auto">{String(error)}</span>}
               </>
             ) : (
               <>
-                <Button className="btn-primary" disabled>
-                  <Icon.Wand /> Working… {progress}%
-                </Button>
-                <Button className="btn-ghost" onClick={cancel}>
-                  <Icon.Reset /> Cancel
-                </Button>
+                <Button className="btn-primary" disabled><Icon.Wand /> Working… {progress}%</Button>
+                <Button className="btn-ghost" onClick={cancel}><Icon.Reset /> Cancel</Button>
               </>
             )}
           </div>
         </Card>
 
-        {/* RIGHT: result */}
-        <Card className="p-4">
-          <div className="mb-2 text-sm font-semibold">
-            Groomed dog using hornet
-          </div>
-          <div className="rounded-2xl overflow-hidden" style={{ height: panelH }}>
+        {/* RIGHT: Result */}
+        <Card className="p-4 flex flex-col">
+          <div className="mb-2 text-sm font-semibold">Groomed dog using hornet</div>
+          <div
+            className="rounded-2xl overflow-hidden border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)]"
+            style={{ minHeight: panelH }}
+          >
             {!resultUrl ? (
-              <div className="h-full grid place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 dark:bg-[var(--app-surface)] dark:border-[var(--app-border)] text-sm text-slate-600 text-center dark:text-[var(--app-muted)] px-4">
+              <div className="h-full grid place-items-center text-sm text-slate-600 text-center dark:text-[var(--app-muted)] px-4">
                 Your groomed image will appear here. After processing, use the slider to compare before/after.
               </div>
             ) : (
               <CompareSlider beforeSrc={previewUrl} afterSrc={resultUrl} />
             )}
           </div>
-          <div style={{ height: ACTION_H }} />
+          {/* bottom spacer so both cards match overall height */}
+          <div className="mt-3 h-[56px]" />
         </Card>
       </div>
     </section>
@@ -390,7 +371,6 @@ function SigninHeader({ theme, onToggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
 
-  // ▼▼▼ Added: small hover-intent delay for the Sign out popover ▼▼▼
   const signoutHoverTimer = useRef(null);
   const HIDE_DELAY_MS = 220;
   const openSignout = () => {
@@ -407,7 +387,6 @@ function SigninHeader({ theme, onToggleTheme }) {
       signoutHoverTimer.current = null;
     }, HIDE_DELAY_MS);
   };
-  // ▲▲▲ End: hover-intent helpers ▲▲▲
 
   const close = () => setOpen(null);
 
@@ -422,7 +401,6 @@ function SigninHeader({ theme, onToggleTheme }) {
     };
   }, []);
 
-  // lock body scroll when mobile drawer open
   useEffect(() => {
     if (mobileOpen) {
       const prev = document.body.style.overflow;
@@ -466,7 +444,7 @@ function SigninHeader({ theme, onToggleTheme }) {
         {/* Top row */}
         <div style={headerStyle} className="relative">
           <div className="relative h-[64px] sm:h-[72px] max-w-[1280px] mx-auto px-3 sm:px-4">
-            {/* Left: hamburger + phone (phone hidden on xs) */}
+            {/* Left: hamburger + phone */}
             <div className="absolute inset-y-0 left-3 sm:left-4 flex items-center gap-2">
               <button
                 className="inline-flex md:hidden items-center justify-center w-10 h-10 rounded-md hover:bg-black/5"
@@ -516,12 +494,10 @@ function SigninHeader({ theme, onToggleTheme }) {
                 </button>
               </div>
 
-              {/* Compare icon aligned */}
               <a className="hidden sm:grid icon-btn w-10 h-10 rounded-md place-items-center" href="/compare" aria-label="Compare">
                 <Icon.Shuffle />
               </a>
 
-              {/* User icon with delayed hover-to-show sign out */}
               <div
                 className="relative"
                 onMouseEnter={openSignout}
@@ -546,7 +522,7 @@ function SigninHeader({ theme, onToggleTheme }) {
                     <button
                       className="w-full text-left hover:opacity-90"
                       onClick={async () => {
-                        await signOut({ callbackUrl: "/signin", redirect: true }); // ← changed
+                        await signOut({ callbackUrl: "/signin", redirect: true });
                       }}
                     >
                       Sign out
@@ -555,7 +531,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                 )}
               </div>
 
-              {/* Bag: hidden on mobile */}
               <a
                 className="icon-btn grid place-items-center w-10 h-10 rounded-md hidden md:grid"
                 href="/cart.php"
@@ -564,7 +539,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <Icon.Bag />
               </a>
 
-              {/* Theme toggle */}
               <button
                 onClick={onToggleTheme}
                 className="theme-toggle icon-btn h-10 px-2 rounded-md flex items-center gap-2"
@@ -577,10 +551,8 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </div>
 
-        {/* Small spacer on desktop only */}
         <div className="hidden md:block" style={{ background: 'var(--header-bg)', height: '0.5in' }} aria-hidden="true" />
 
-        {/* Desktop Navbar */}
         <nav className="nav-dark hidden md:block">
           <div className="max-w-[1280px] mx-auto px-2 lg:px-4 relative">
             <div className="flex items-center">
@@ -610,7 +582,6 @@ function SigninHeader({ theme, onToggleTheme }) {
                 <div className="jz-mega w-[calc(100vw-32px)] max-w-[1280px]">
                   <div className="jz-mega-bg" />
                   <div className="relative grid grid-cols-3 gap-14 p-8">
-                    {/* All Products */}
                     {open === 'all' && (
                       <>
                         <MegaSection title="CLIPPERS">
@@ -745,7 +716,7 @@ function SigninHeader({ theme, onToggleTheme }) {
           </div>
         </nav>
 
-        {/* Mobile Drawer (full screen) */}
+        {/* Mobile Drawer */}
         {mobileOpen && (
           <div className="fixed inset-0 z-[1300] md:hidden">
             <aside className="absolute inset-0 bg-[#1d1f24] text-white shadow-2xl flex flex-col">
@@ -759,11 +730,10 @@ function SigninHeader({ theme, onToggleTheme }) {
               </div>
 
               <div className="overflow-y-auto divide-y divide-white/10">
-                {/* Sign out quick action at top on mobile */}
                 <button
                   className="block w-full text-left px-4 py-3 hover:bg-white/10"
                   onClick={async () => {
-                    await signOut({ callbackUrl: "/signin", redirect: true }); // ← changed
+                    await signOut({ callbackUrl: "/signin", redirect: true });
                   }}
                 >
                   Sign out
@@ -819,7 +789,6 @@ function Hero(){
           </div>
         </div>
 
-        {/* ── Replaced static image with BEFORE/AFTER slider (dog4 → before, dog3 → after) ── */}
         <div className="rounded-3xl overflow-hidden shadow-2xl ring-1 ring-white/10">
           <div className="h-[360px] sm:h-[420px] lg:h-[460px]">
             <CompareSlider
