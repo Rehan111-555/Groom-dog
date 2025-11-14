@@ -3,13 +3,15 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
+/** Prisma singleton to prevent too many connections */
+const g = globalThis;
+const prisma = g.__prisma__ ?? new PrismaClient();
+if (!g.__prisma__) g.__prisma__ = prisma;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function normalizePhone(raw) {
-  // Simple normalization: keep digits, allow leading +
   const cleaned = String(raw || "").trim();
   const plus = cleaned.startsWith("+") ? "+" : "";
   const digits = cleaned.replace(/[^\d]/g, "");
@@ -19,7 +21,6 @@ function normalizePhone(raw) {
 export async function POST(req) {
   try {
     const { name, email, password, phone } = await req.json();
-
     const cleanEmail = String(email || "").toLowerCase().trim();
     const cleanPhone = normalizePhone(phone);
 
@@ -29,7 +30,6 @@ export async function POST(req) {
     if (password.length < 6) {
       return NextResponse.json({ ok: false, error: "Password too short" }, { status: 400 });
     }
-    // Basic sanity checks for phone length (adjust to your needs)
     if (cleanPhone.length < 7 || cleanPhone.length > 20) {
       return NextResponse.json({ ok: false, error: "Invalid phone number" }, { status: 400 });
     }
@@ -39,7 +39,6 @@ export async function POST(req) {
       return NextResponse.json({ ok: false, error: "Email already registered" }, { status: 409 });
     }
 
-    // Also ensure the phone is unique
     const phoneTaken = await prisma.user.findFirst({
       where: { phone: cleanPhone },
       select: { id: true },
@@ -50,25 +49,15 @@ export async function POST(req) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // Either create or upgrade an existing OAuth-only user
     let user;
     if (exists) {
       user = await prisma.user.update({
         where: { email: cleanEmail },
-        data: {
-          name: name || exists.name,
-          passwordHash,
-          phone: cleanPhone,
-        },
+        data: { name: name || exists.name, passwordHash, phone: cleanPhone },
       });
     } else {
       user = await prisma.user.create({
-        data: {
-          name: name || null,
-          email: cleanEmail,
-          passwordHash,
-          phone: cleanPhone,
-        },
+        data: { name: name || null, email: cleanEmail, passwordHash, phone: cleanPhone },
       });
     }
 
