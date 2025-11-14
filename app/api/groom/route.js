@@ -30,7 +30,7 @@ export async function POST(req) {
     // 👉 Hidden default prompt (ENV first, then fallback)
     const defaultPrompt =
       process.env.GROOM_DEFAULT_PROMPT ||
-      "Dog in the image should be trimmed professionally using a 3mm blade.";
+      "Edit the image by Trimming the dog coat professionally with a 3 mm blade, leaving the fur even and clean.";
 
     // Guardrails to preserve composition and ensure an image response
     const hardRules = [
@@ -45,8 +45,8 @@ export async function POST(req) {
       .join("\n");
 
     const guard = dogOnly
-      ? "Edit ONLY the DOG: Dog in the image should be trimmed professionally using a 3mm blade."
-      : "Dog in the image should be trimmed professionally using a 3mm blade.";
+      ? "Edit ONLY the DOG: Edit the image by Trimming the dog coat professionally with a 3 mm blade, leaving the fur even and clean."
+      : "Edit the image by Trimming the dog coat professionally with a 3 mm blade, leaving the fur even and clean.";
 
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
     const body = {
