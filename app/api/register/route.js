@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-/** Prisma singleton to prevent too many connections */
 const g = globalThis;
 const prisma = g.__prisma__ ?? new PrismaClient();
 if (!g.__prisma__) g.__prisma__ = prisma;
