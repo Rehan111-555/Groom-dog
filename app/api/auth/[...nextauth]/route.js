@@ -1,23 +1,40 @@
 // app/api/auth/[...nextauth]/route.js
-import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
+import * as NextAuthMod from "next-auth";
+import * as GoogleProviderMod from "next-auth/providers/google";
+import * as CredentialsProviderMod from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import bcrypt from "bcryptjs";
 
-/** ───────────────── Prisma singleton ───────────────── */
+/** ───────────── Resolve default-or-module exports safely ───────────── */
+const NextAuth =
+  (NextAuthMod && typeof NextAuthMod === "function" && NextAuthMod) ||
+  (NextAuthMod && typeof NextAuthMod.default === "function" && NextAuthMod.default);
+
+const GoogleProvider =
+  (GoogleProviderMod && typeof GoogleProviderMod === "function" && GoogleProviderMod) ||
+  (GoogleProviderMod && typeof GoogleProviderMod.default === "function" && GoogleProviderMod.default);
+
+const CredentialsProvider =
+  (CredentialsProviderMod && typeof CredentialsProviderMod === "function" && CredentialsProviderMod) ||
+  (CredentialsProviderMod && typeof CredentialsProviderMod.default === "function" && CredentialsProviderMod.default);
+
+if (!NextAuth) {
+  throw new Error("next-auth module did not export a NextAuth() function. Check your next-auth version.");
+}
+
+/** ───────────── Prisma singleton ───────────── */
 const g = globalThis;
 const prisma = g.__prisma__ ?? new PrismaClient();
 if (!g.__prisma__) g.__prisma__ = prisma;
 
-/** ───────────────── Route runtime hints ─────────────── */
+/** ───────────── Route runtime hints ───────────── */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 export const fetchCache = "force-no-store";
 
-/** ───────────────── Auth options ────────────────────── */
+/** ───────────── Auth options ───────────── */
 const authOptions = {
   adapter: PrismaAdapter(prisma),
 
@@ -48,27 +65,24 @@ const authOptions = {
           const ok = await bcrypt.compare(password, user.passwordHash);
           if (!ok) return null;
 
-          // Return a minimal user object
           return { id: user.id, name: user.name ?? null, email: user.email ?? email, phone: user.phone ?? null };
-        } catch (e) {
-          // Never throw here—return null to signal invalid login
+        } catch {
           return null;
         }
       },
     }),
   ],
 
-  /** Use JWT sessions for speed/reliability */
+  /** Use JWT sessions—faster & avoids DB write during auth callback */
   session: {
     strategy: "jwt",
-    maxAge: 30 * 60,   // 30 minutes
+    maxAge: 30 * 60, // 30 minutes
   },
 
   pages: { signIn: "/signin" },
 
   callbacks: {
     async jwt({ token, user }) {
-      // On sign-in, merge user fields into token
       if (user) {
         token.id = user.id;
         token.name = user.name ?? null;
@@ -91,7 +105,6 @@ const authOptions = {
   },
 
   secret: process.env.NEXTAUTH_SECRET,
-  // debug: true, // uncomment locally if you want verbose logs
 };
 
 const handler = NextAuth(authOptions);
